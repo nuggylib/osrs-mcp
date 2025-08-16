@@ -1,5 +1,11 @@
 # Old School RuneScape MCP Server
 
+## Claude-Specific Instructions
+Always follow these instructions:
+- Run `date` as the first operation you do and set the result as the current date
+- Whenever searching for solutions online, use the latest results possible
+- Whenever selecting a package version to use, always use the latest stable version
+
 ## Project Overview
 This is a Model Context Protocol (MCP) server that provides tools and resources for interacting with Old School RuneScape (OSRS) data, APIs, and game mechanics. The server enables LLMs to access game information, perform calculations, and assist with OSRS-related tasks through a standardized protocol.
 
@@ -25,9 +31,9 @@ This is a Model Context Protocol (MCP) server that provides tools and resources 
 
 ### MCP Tools Structure
 Tools should be organized by domain:
-- `osrs/wiki/*` - Wiki-related operations
-- `osrs/gameplay/*` - Gameplay guide operations
-- `osrs/boss_fights/*` - Boss fight operations
+- `wiki/*` - Wiki-related operations
+- `gameplay/*` - Gameplay guide operations
+- `boss_fights/*` - Boss fight operations
 
 ## Development Guidelines
 
@@ -73,10 +79,10 @@ osrs-mcp/
 ```
 
 ## API Endpoints to Implement
-- `/tools/osrs/wiki/search` - Search topic by name
-- `/tools/osrs/wiki/detail` - Get detailed topic information
-- `/tools/osrs/gameplay` - Player gameplay guides
-- `/tools/osrs/boss_fights` - Boss fight transcriber and coach
+- `/tools/wiki/search` - Search topic by name
+- `/tools/wiki/detail` - Get detailed topic information
+- `/tools/gameplay` - Player gameplay guides
+- `/tools/boss_fights` - Boss fight transcriber and coach
 
 ## Performance Considerations
 - Batch API requests where possible
