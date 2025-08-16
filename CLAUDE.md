@@ -1,8 +1,17 @@
 # Old School RuneScape MCP Server
 
+## Context
+
+- Current date is !`echo $(date +%F)`.
+- Current git status: !`git status`
+- Current git diff (staged and unstaged changes): !`git diff HEAD`
+- Current branch: !`git branch --show-current`
+- Recent commits: !`git log --oneline -10`
+
 ## Claude-Specific Instructions
+
 Always follow these instructions:
-- Run `date` as the first operation you do and set the result as the current date
+
 - Whenever searching for solutions online, use the latest results possible
 - Whenever selecting a package version to use, always use the latest stable version
 
