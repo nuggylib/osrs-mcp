@@ -52,9 +52,7 @@ Tools should be organized by domain:
 ## Data Sources
 1. **OSRS Wiki API**: Primary source for game data (community-maintained)
 2. **RuneLite API**: Plugin data and enhanced features
-3. **OSRS Hiscores**: Web scraping for player stats (no official API)
-4. **GE Tracker/OSBuddy Exchange**: Real-time Grand Exchange prices
-5. **Community APIs**: Various community-maintained data sources
+5. **User Uploads**: Boss fight videos, specifically
 
 ## Project Structure
 ```
@@ -75,12 +73,10 @@ osrs-mcp/
 ```
 
 ## API Endpoints to Implement
-- `/tools/osrs/items/search` - Search items by name
-- `/tools/osrs/items/detail` - Get detailed item information
-- `/tools/osrs/ge/price` - Get current GE prices
-- `/tools/osrs/skills/calculate` - XP and level calculations
-- `/tools/osrs/player/stats` - Player hiscore lookup
-- `/tools/osrs/quests/requirements` - Quest requirement checker
+- `/tools/osrs/wiki/search` - Search topic by name
+- `/tools/osrs/wiki/detail` - Get detailed topic information
+- `/tools/osrs/gameplay` - Player gameplay guides
+- `/tools/osrs/boss_fights` - Boss fight transcriber and coach
 
 ## Performance Considerations
 - Batch API requests where possible
