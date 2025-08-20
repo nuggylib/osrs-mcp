@@ -1,15 +1,21 @@
+import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import axios from 'axios';
 
-export async function getInformationOnTopic(
+/**
+ * Finds the top `limit` number of pages that match (or partially-match) the given
+ * `searchTerm`. Defaults to 10 results.
+ */
+export async function findMatchesForTopic(
   searchTerm: string,
   limit: number = 10
-): Promise<any> {
+): Promise<CallToolResult> {
   
   if (!searchTerm || searchTerm.trim() === '') {
     throw new Error('Search term cannot be empty');
   }
   
   try {
+    // This does not use the API endpoint; it's the search API that their site uses to find relevant results
     const response = await axios.get<any>(
       'https://oldschool.runescape.wiki/rest.php/v1/search/title',
       {
