@@ -10,7 +10,7 @@ export async function getSummaryForPage(
     pageName: string
 ): Promise<CallToolResult> {
     if (!pageName || pageName.trim() === '') {
-        throw new Error('Topic cannot be empty');
+        throw new Error('pageName cannot be empty');
     }
 
     try {
