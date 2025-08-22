@@ -2,7 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import { findMatchesForTopic } from './tools/wiki/findMatchesForTopic';
-import { getSummaryForPage } from './tools/wiki/getSummaryForTopic';
+import { getSummaryForPage } from './tools/wiki/getSummaryForPage';
 
 const server = new McpServer({
   name: 'osrs-mcp',

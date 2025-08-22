@@ -1,6 +1,6 @@
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import axios from 'axios';
-import { PageResult } from './types.js';
+import { OSRSWikiAPIResult } from './types.js';
 import { osrsApiBaseUrl } from '../../utils/constants.js';
 
 export async function getSummaryForPage(
@@ -14,13 +14,14 @@ export async function getSummaryForPage(
     }
 
     try {
-        const response = await axios.get<PageResult>(
+        const response = await axios.get<OSRSWikiAPIResult>(
             osrsApiBaseUrl,
             {
                 params: {
                     action: 'query',
                     titles: pageName.trim(),
-                    prop: 'extracts',
+                    prop: 'revisions',
+                    rvprop: 'content',
                     format: 'json'
                 },
                 headers: {
@@ -29,7 +30,7 @@ export async function getSummaryForPage(
             }
         );
 
-        const pageResult: PageResult = response.data;
+        const pageResult: OSRSWikiAPIResult = response.data;
         const pageIdx = Object.keys(pageResult.query.pages).at(0) || ''
 
         return {
