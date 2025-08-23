@@ -1,9 +1,13 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import axios from 'axios';
 
+// TODO: Determine if there is an API-based way to perform this search logic.
 /**
  * Finds the top `limit` number of pages that match (or partially-match) the given
  * `searchTerm`. Defaults to 10 results.
+ *
+ * This handler uses a different endpoint than the other OSRS tools because it DOES NOT
+ * use the Wiki API. Instead, it's using their site search API directly.
  */
 export async function findMatchesForTopic(
 	searchTerm: string,
