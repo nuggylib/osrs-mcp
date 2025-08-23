@@ -1,9 +1,10 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+
 import { getPageForTopic } from '../../utils/osrsWiki.js';
 
-export async function getSummaryForPage(
+export async function getRawContentForPage(
 	/**
-     * The page to fetch a summary for
+     * The page to fetch the details for
      */
 	pageName: string,
 ): Promise<CallToolResult> {
@@ -11,14 +12,14 @@ export async function getSummaryForPage(
 		throw new Error('pageName cannot be empty');
 	}
 
-	const page = await getPageForTopic(pageName)
-	const summary = await page.summary()
+	const response = await getPageForTopic(pageName)
+	const pageContent = await response.rawContent()
 
 	return {
 		content: [
 			{
 				type: 'text',
-				text: JSON.stringify(summary, null, 2),
+				text: JSON.stringify(pageContent, null, 2),
 			},
 		],
 	};
