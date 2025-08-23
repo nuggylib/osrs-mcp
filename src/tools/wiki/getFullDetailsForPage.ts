@@ -1,10 +1,11 @@
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { OSRSWikiAPIResult } from "../../types/osrsWiki.js";
-import { makeOsrsWikiAPIQuery } from "../../utils/osrsWikiApiRequest.js";
 
-export async function getSummaryForPage(
+import { OSRSWikiAPIResult } from "../../types/osrsWiki.js";
+import { makeOsrsWikiAPIQuery, SUPPORTED_VALUES_PROP_PARAM } from "../../utils/osrsWikiApiRequest.js";
+
+export async function getFullDetailsForPage(
     /**
-     * The page to fetch a summary for
+     * The page to fetch the details for
      */
     pageName: string
 ): Promise<CallToolResult> {
@@ -15,7 +16,7 @@ export async function getSummaryForPage(
     const response = await makeOsrsWikiAPIQuery({
         params: {
             titles: pageName.trim(),
-            prop: 'extracts',
+            prop: SUPPORTED_VALUES_PROP_PARAM.REVISIONS,
         }
     })
 
@@ -26,7 +27,7 @@ export async function getSummaryForPage(
         content: [
             {
                 type: 'text',
-                text: JSON.stringify(pageResult.query.pages[pageIdx].extract, null, 2)
+                text: JSON.stringify(pageResult.query.pages[pageIdx].revisions, null, 2)
             }
         ]
     };
