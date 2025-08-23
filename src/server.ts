@@ -3,6 +3,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod';
 import { findMatchesForTopic } from './tools/wiki/findMatchesForTopic';
 import { getSummaryForPage } from './tools/wiki/getSummaryForPage';
+import { getFullDetailsForPage } from './tools/wiki/getFullDetailsForPage';
 
 const server = new McpServer({
 	name: 'osrs-mcp',
@@ -26,11 +27,20 @@ server.tool(
 
 server.tool(
 	'get_wiki_summary_for_page_name',
-	'Use this to get the detailed summary for the page name in the OSRS Wiki. This is intended to be used after getting a page title from the ask_wiki_about_topic tool, which ensures this tool is only used for pages that are known to exist.',
+	'Use this to get the summary for the page name in the OSRS Wiki. This is intended to be used after getting a page title from the ask_wiki_about_topic tool, which ensures this tool is only used for pages that are known to exist.',
 	{
 		pageName: z.string().describe('The name of the page to get the summary for; this is the "title" value for results in the ask_wiki_about_topic tool.'),
 	},
 	async ({ pageName }) => getSummaryForPage(pageName),
+)
+
+server.tool(
+	'get_full_wiki_for_page_name',
+	'Use this to get the full Wiki Text for the page name in the OSRS Wiki. This is intended to be used after getting a page title from the ask_wiki_about_topic tool, which ensures this tool is only used for pages that are known to exist.',
+	{
+		pageName: z.string().describe('The name of the page to get the summary for; this is the "title" value for results in the ask_wiki_about_topic tool.'),
+	},
+	async ({ pageName }) => getFullDetailsForPage(pageName),
 )
 
 async function main() {
