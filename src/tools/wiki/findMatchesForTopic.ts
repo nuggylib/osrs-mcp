@@ -1,6 +1,5 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { createOSRSWikiAPIAction, SUPPORTED_API_ACTIONS } from '../../utils/osrsWikiAPIActionFactory';
-import { OSRSWikiAPIOpenSearchActionResult } from '../../types/osrsWiki';
+import { searchForTopic } from '../../utils/osrsWiki';
 
 /**
  * Finds the top `limit` number of pages that match (or partially-match) the given
@@ -15,19 +14,13 @@ export async function findMatchesForTopic(
 		throw new Error('Search term cannot be empty');
 	}
 
-	const openSearchAction = createOSRSWikiAPIAction<OSRSWikiAPIOpenSearchActionResult>(SUPPORTED_API_ACTIONS.OPENSEARCH)
-	const response = await openSearchAction({
-		params: {
-			search: searchTerm.trim(),
-			limit: limit,
-		},
-	})
+	const response = await searchForTopic(searchTerm, limit)
 
 	return {
 		content: [
 			{
 				type: 'text',
-				text: JSON.stringify(response.data[1], null, 2),
+				text: JSON.stringify(response.results, null, 2),
 			},
 		],
 	}
