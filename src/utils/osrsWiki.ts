@@ -7,4 +7,6 @@ const osrsWiki = wiki({
 	origin: null,
 }) as WikiInstance
 
-export const searchForTopic = (topic: string, limit: number) => osrsWiki.search(topic, limit)
+export const searchWikiForTopicMatches = (topic: string, limit: number) => osrsWiki.search(topic, limit)
+export const getPageForTopic = (topic: string) => osrsWiki.page(topic)
+export const getSummaryForTopic = async (topic: string) => (await getPageForTopic(topic)).summary()

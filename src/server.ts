@@ -17,7 +17,7 @@ const server = new McpServer({
 })
 
 server.tool(
-	'ask_wiki_about_topic',
+	'search_wiki_for_topic_matches',
 	'Use whenever the user asks about an Old School RuneScape topic, or if the agent needs to gain further context on a topic to improve a response. Always defer to using the information from the wiki instead of potentially-outdated training data.',
 	{
 		topic: z.string().describe('The specific Old School RuneScape topic to ask the wiki about.'),

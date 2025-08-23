@@ -1,5 +1,5 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { searchForTopic } from '../../utils/osrsWiki';
+import { searchWikiForTopicMatches } from '../../utils/osrsWiki';
 
 /**
  * Finds the top `limit` number of pages that match (or partially-match) the given
@@ -14,7 +14,7 @@ export async function findMatchesForTopic(
 		throw new Error('Search term cannot be empty');
 	}
 
-	const response = await searchForTopic(searchTerm, limit)
+	const response = await searchWikiForTopicMatches(searchTerm, limit)
 
 	return {
 		content: [
