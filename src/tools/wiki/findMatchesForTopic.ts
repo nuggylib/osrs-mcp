@@ -18,7 +18,7 @@ export async function findMatchesForTopic(
 	const openSearchAction = createOSRSWikiAPIAction<OSRSWikiAPIOpenSearchActionResult>(SUPPORTED_API_ACTIONS.OPENSEARCH)
 	const response = await openSearchAction({
 		params: {
-			q: searchTerm.trim(),
+			search: searchTerm.trim(),
 			limit: limit,
 		},
 	})

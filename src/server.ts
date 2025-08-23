@@ -21,10 +21,7 @@ server.tool(
 	{
 		topic: z.string().describe('The specific Old School RuneScape topic to ask the wiki about.'),
 	},
-	async ({ topic }) => {
-		console.error('[ask_wiki_about_topic] searching for topic: ', topic);
-		return findMatchesForTopic(topic)
-	},
+	async ({ topic }) => findMatchesForTopic(topic),
 );
 
 server.tool(
@@ -33,10 +30,7 @@ server.tool(
 	{
 		pageName: z.string().describe('The name of the page to get the summary for; this is the "title" value for results in the ask_wiki_about_topic tool.'),
 	},
-	async ({ pageName }) => {
-		console.error('[get_wiki_summary_for_page_name] getting summary for topic: ', pageName);
-		return getSummaryForPage(pageName)
-	},
+	async ({ pageName }) => getSummaryForPage(pageName),
 )
 
 async function main() {
