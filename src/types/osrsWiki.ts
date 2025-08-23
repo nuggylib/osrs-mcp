@@ -1,5 +1,4 @@
-// Example query: https://runescape.wiki/api.php?action=query&titles=Green%20dragon&prop=extracts&format=json
-export type OSRSWikiAPIResult = {
+export type OSRSWikiAPIQueryActionResult = {
     batchcomplete: string
     warnings?: {
         extracts: {
@@ -53,3 +52,11 @@ export type OSRSWikiAPIResult = {
         }
     }
 }
+
+export type OSRSWikiAPIOpenSearchActionResult = [
+  searchTerm: string,
+  titles: string[],
+  // Often just empty strings; many wikis (including the OSRS Wiki) disable descriptions in OpenSearch results for performance reasons
+  description: string[],
+  urls: string[]
+];

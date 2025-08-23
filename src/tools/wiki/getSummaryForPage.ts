@@ -1,6 +1,6 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { OSRSWikiAPIResult } from '../../types/osrsWiki.js';
-import { makeOsrsWikiAPIQuery } from '../../utils/osrsWikiApiRequest.js';
+import { OSRSWikiAPIQueryActionResult } from '../../types/osrsWiki.js';
+import { createQueryAction } from '../../utils/osrsWikiAPIActionFactory.js';
 
 export async function getSummaryForPage(
 	/**
@@ -12,14 +12,15 @@ export async function getSummaryForPage(
 		throw new Error('pageName cannot be empty');
 	}
 
-	const response = await makeOsrsWikiAPIQuery({
+	const queryAction = createQueryAction()
+	const response = await queryAction({
 		params: {
 			titles: pageName.trim(),
 			prop: 'extracts',
 		},
 	})
 
-	const pageResult: OSRSWikiAPIResult = response.data;
+	const pageResult: OSRSWikiAPIQueryActionResult = response.data;
 	const pageIdx = Object.keys(pageResult.query.pages).at(0) || ''
 
 	return {
