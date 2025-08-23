@@ -7,7 +7,8 @@
 <!-- Instructions on how to test the changes in the MCP Inspector -->
 
 1. Run `yarn build-and-test`
-2. _TODO_
+2. Click "Connect"
+3. _TODO_
 
 ## Client QA
 
