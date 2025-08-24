@@ -1,13 +1,14 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { findMatchesForTopic } from './tools/wiki/findMatchesForTopic';
+import { searchWikiForPage } from './tools/wiki/searchWikiForPage';
 import { getSummaryForPage } from './tools/wiki/getSummaryForPage';
 import { getRawContentForPage } from './tools/wiki/getRawContentForPage';
 import { getBacklinksForPage } from './tools/wiki/getBacklinksForPage';
 import { getCategoriesForPage } from './tools/wiki/getCategoriesForPage';
 import { getMainImageForPage } from './tools/wiki/getMainImageForPage';
 import { getImagesForPage } from './tools/wiki/getImagesForPage';
+import { getTablesForPage } from './tools/wiki/getTablesForPage';
 
 const server = new McpServer({
 	name: 'osrs-mcp',
@@ -26,7 +27,7 @@ server.tool(
 	{
 		topic: z.string().describe('The specific Old School RuneScape topic to search the Wiki for.'),
 	},
-	async ({ topic }) => findMatchesForTopic(topic),
+	async ({ topic }) => searchWikiForPage(topic),
 );
 
 server.tool(
@@ -71,7 +72,7 @@ server.tool(
 	{
 		pageName: z.string().describe('The name of the page to get the tables for.'),
 	},
-	async ({ pageName }) => getCategoriesForPage(pageName),
+	async ({ pageName }) => getTablesForPage(pageName),
 )
 
 server.tool(

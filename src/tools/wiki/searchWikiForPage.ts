@@ -5,7 +5,7 @@ import { searchWikiForTopicMatches } from '../../utils/osrsWiki';
  * Finds the top `limit` number of pages that match (or partially-match) the given
  * `searchTerm`. Defaults to 10 results.
  */
-export async function findMatchesForTopic(
+export async function searchWikiForPage(
 	searchTerm: string,
 	limit: number = 10,
 ): Promise<CallToolResult> {
