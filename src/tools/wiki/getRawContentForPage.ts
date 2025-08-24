@@ -19,7 +19,7 @@ export async function getRawContentForPage(
 		content: [
 			{
 				type: 'text',
-				text: JSON.stringify(pageContent, null, 2),
+				text: pageContent,
 			},
 		],
 	};
