@@ -1,6 +1,7 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 import { getPageForTopic } from '../../utils/osrsWiki.js';
+import axios from 'axios';
 
 export async function getImagesForPage(
 	/**
@@ -13,14 +14,28 @@ export async function getImagesForPage(
 	}
 
 	const response = await getPageForTopic(pageName)
-	const images = await response.images()
+	const imagesUrls = await response.images()
+
+	const imagesArray = [] as {
+		type: 'image',
+		data: string,
+		mimeType: 'image/png',
+	}[]
+
+	await Promise.all(
+		imagesUrls.map(async (imageUrl) => {
+			const mainImageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+			imagesArray.push({
+				type: 'image',
+				data: Buffer.from(mainImageResponse.data).toString('base64'),
+				mimeType: 'image/png',
+			})
+		}),
+	)
 
 	return {
 		content: [
-			{
-				type: 'text',
-				text: JSON.stringify(images, null, 2),
-			},
+			...imagesArray,
 		],
 	};
 }
