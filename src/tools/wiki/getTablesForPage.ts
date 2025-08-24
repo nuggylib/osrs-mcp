@@ -2,7 +2,7 @@ import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 import { getPageForTopic } from '../../utils/osrsWiki.js';
 
-export async function getTablesForContent(
+export async function getTablesForPage(
 	/**
 	 * The page to fetch the tables for
 	 */
@@ -14,7 +14,6 @@ export async function getTablesForContent(
 
 	const response = await getPageForTopic(pageName)
 	const tables = await response.tables()
-
 
 	return {
 		content: [

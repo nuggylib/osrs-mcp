@@ -1,10 +1,11 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 import { getPageForTopic } from '../../utils/osrsWiki.js';
+import axios from 'axios';
 
-export async function getCategoriesForPage(
+export async function getMainImageForPage(
 	/**
-	 * The page to fetch the categories for
+	 * The page to fetch the tables for
 	 */
 	pageName: string,
 ): Promise<CallToolResult> {
@@ -13,14 +14,15 @@ export async function getCategoriesForPage(
 	}
 
 	const response = await getPageForTopic(pageName)
-	const categories = await response.categories()
-
+	const mainImageUrl = await response.mainImage()
+	const mainImageResponse = await axios.get(mainImageUrl, { responseType: 'arraybuffer' });
 
 	return {
 		content: [
 			{
-				type: 'text',
-				text: JSON.stringify(categories, null, 2),
+				type: 'image',
+				data: Buffer.from(mainImageResponse.data).toString('base64'),
+				mimeType: 'image/png',
 			},
 		],
 	};

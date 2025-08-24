@@ -5,7 +5,9 @@ import { findMatchesForTopic } from './tools/wiki/findMatchesForTopic';
 import { getSummaryForPage } from './tools/wiki/getSummaryForPage';
 import { getRawContentForPage } from './tools/wiki/getRawContentForPage';
 import { getBacklinksForPage } from './tools/wiki/getBacklinksForPage';
-import { getCategoriesForContent } from './tools/wiki/getCategoriesForPage';
+import { getCategoriesForPage } from './tools/wiki/getCategoriesForPage';
+import { getMainImageForPage } from './tools/wiki/getMainImageForPage';
+import { getImagesForPage } from './tools/wiki/getImagesForPage';
 
 const server = new McpServer({
 	name: 'osrs-mcp',
@@ -60,7 +62,7 @@ server.tool(
 	{
 		pageName: z.string().describe('The name of the page to get the categories for.'),
 	},
-	async ({ pageName }) => getCategoriesForContent(pageName),
+	async ({ pageName }) => getCategoriesForPage(pageName),
 )
 
 server.tool(
@@ -69,7 +71,25 @@ server.tool(
 	{
 		pageName: z.string().describe('The name of the page to get the tables for.'),
 	},
-	async ({ pageName }) => getCategoriesForContent(pageName),
+	async ({ pageName }) => getCategoriesForPage(pageName),
+)
+
+server.tool(
+	'get_osrs_wiki_page_images',
+	'Use this to get the images for the given page name in the OSRS Wiki.',
+	{
+		pageName: z.string().describe('The name of the page to get the images for.'),
+	},
+	async ({ pageName }) => getImagesForPage(pageName),
+)
+
+server.tool(
+	'get_osrs_wiki_page_main_image',
+	'Use this to get the main image for the given page name in the OSRS Wiki.',
+	{
+		pageName: z.string().describe('The name of the page to get the main image for.'),
+	},
+	async ({ pageName }) => getMainImageForPage(pageName),
 )
 
 async function main() {

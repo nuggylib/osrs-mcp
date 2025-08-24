@@ -2,9 +2,9 @@ import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 import { getPageForTopic } from '../../utils/osrsWiki.js';
 
-export async function getCategoriesForPage(
+export async function getImagesForPage(
 	/**
-	 * The page to fetch the categories for
+	 * The page to fetch the tables for
 	 */
 	pageName: string,
 ): Promise<CallToolResult> {
@@ -13,14 +13,13 @@ export async function getCategoriesForPage(
 	}
 
 	const response = await getPageForTopic(pageName)
-	const categories = await response.categories()
-
+	const images = await response.images()
 
 	return {
 		content: [
 			{
 				type: 'text',
-				text: JSON.stringify(categories, null, 2),
+				text: JSON.stringify(images, null, 2),
 			},
 		],
 	};
