@@ -14,7 +14,6 @@ export async function getTablesForPage(
 
 	const response = await getPageForTopic(pageName)
 	const tables = await response.tables()
-	console.error('TABLES: ', tables)
 
 	return {
 		content: [
