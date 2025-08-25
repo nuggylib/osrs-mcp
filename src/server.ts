@@ -1,14 +1,18 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { searchWikiForPage } from './tools/wiki/searchWikiForPage';
-import { getSummaryForPage } from './tools/wiki/getSummaryForPage';
-import { getRawContentForPage } from './tools/wiki/getRawContentForPage';
-import { getBacklinksForPage } from './tools/wiki/getBacklinksForPage';
-import { getCategoriesForPage } from './tools/wiki/getCategoriesForPage';
-import { getMainImageForPage } from './tools/wiki/getMainImageForPage';
-import { getImagesForPage } from './tools/wiki/getImagesForPage';
-import { getTablesForPage } from './tools/wiki/getTablesForPage';
+import {
+	searchWikiForPage,
+	getSummaryForPage,
+	getRawContentForPage,
+	getBacklinksForPage,
+	getCategoriesForPage,
+	getMainImageForPage,
+	getImagesForPage,
+	getTablesForPage,
+	getReferencesForPage,
+	getLinksForPage,
+} from './tools/wiki';
 
 const server = new McpServer({
 	name: 'osrs-mcp',
@@ -91,6 +95,24 @@ server.tool(
 		pageName: z.string().describe('The name of the page to get the main image for.'),
 	},
 	async ({ pageName }) => getMainImageForPage(pageName),
+)
+
+server.tool(
+	'get_osrs_wiki_page_references',
+	'Use this to get the references for the given page name in the OSRS Wiki.',
+	{
+		pageName: z.string().describe('The name of the page to get the references for.'),
+	},
+	async ({ pageName }) => getReferencesForPage(pageName),
+)
+
+server.tool(
+	'get_osrs_wiki_page_links',
+	'Use this to get the links for the given page name in the OSRS Wiki.',
+	{
+		pageName: z.string().describe('The name of the page to get the links for.'),
+	},
+	async ({ pageName }) => getLinksForPage(pageName),
 )
 
 async function main() {
