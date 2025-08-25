@@ -13,13 +13,13 @@ export async function getRawContentForPage(
 	}
 
 	const response = await getPageForTopic(pageName)
-	const pageContent = await response.content()
+	const pageContent = await response.rawContent()
 
 	return {
 		content: [
 			{
 				type: 'text',
-				text: JSON.stringify(pageContent, null, 2),
+				text: pageContent,
 			},
 		],
 	};
