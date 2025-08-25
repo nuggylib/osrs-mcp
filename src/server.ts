@@ -10,6 +10,8 @@ import {
 	getMainImageForPage,
 	getImagesForPage,
 	getTablesForPage,
+	getReferencesForPage,
+	getLinksForPage,
 } from './tools/wiki';
 
 const server = new McpServer({
@@ -93,6 +95,24 @@ server.tool(
 		pageName: z.string().describe('The name of the page to get the main image for.'),
 	},
 	async ({ pageName }) => getMainImageForPage(pageName),
+)
+
+server.tool(
+	'get_osrs_wiki_page_references',
+	'Use this to get the references for the given page name in the OSRS Wiki.',
+	{
+		pageName: z.string().describe('The name of the page to get the references for.'),
+	},
+	async ({ pageName }) => getReferencesForPage(pageName),
+)
+
+server.tool(
+	'get_osrs_wiki_page_links',
+	'Use this to get the links for the given page name in the OSRS Wiki.',
+	{
+		pageName: z.string().describe('The name of the page to get the links for.'),
+	},
+	async ({ pageName }) => getLinksForPage(pageName),
 )
 
 async function main() {
