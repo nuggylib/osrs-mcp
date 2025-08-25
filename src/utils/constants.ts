@@ -1,1 +1,1 @@
-export const osrsApiBaseUrl = `https://runescape.wiki/api.php`
+export const osrsApiBaseUrl = 'https://oldschool.runescape.wiki/api.php'

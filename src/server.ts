@@ -1,14 +1,16 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { searchWikiForPage } from './tools/wiki/searchWikiForPage';
-import { getSummaryForPage } from './tools/wiki/getSummaryForPage';
-import { getRawContentForPage } from './tools/wiki/getRawContentForPage';
-import { getBacklinksForPage } from './tools/wiki/getBacklinksForPage';
-import { getCategoriesForPage } from './tools/wiki/getCategoriesForPage';
-import { getMainImageForPage } from './tools/wiki/getMainImageForPage';
-import { getImagesForPage } from './tools/wiki/getImagesForPage';
-import { getTablesForPage } from './tools/wiki/getTablesForPage';
+import {
+	searchWikiForPage,
+	getSummaryForPage,
+	getRawContentForPage,
+	getBacklinksForPage,
+	getCategoriesForPage,
+	getMainImageForPage,
+	getImagesForPage,
+	getTablesForPage,
+} from './tools/wiki';
 
 const server = new McpServer({
 	name: 'osrs-mcp',

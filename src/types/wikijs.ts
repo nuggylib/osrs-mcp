@@ -46,13 +46,22 @@ export interface RawPage {
 	editurl: string;
 }
 
+export interface FullInfoResponse {
+	general: {
+		[key: string]: string | object
+	}
+	tables: []
+	bsTables: any
+	lists: []
+}
+
 export interface Page {
 	raw: RawPage;
 	backlinks(aggregated?: boolean, limit?: number): Promise<string[]>;
 	categories(aggregated?: boolean, limit?: number): Promise<string[]>;
 	content(): Promise<string>;
 	coordinates(): Promise<Coordinates>;
-	fullInfo(): Promise<object>;
+	fullInfo(): Promise<FullInfoResponse>;
 	html(): Promise<string>;
 	images(): Promise<string[]>;
 	info(key?: string): Promise<object>;
