@@ -28,11 +28,13 @@ export async function searchWikiForPage(
 	}
 }
 
-server.tool(
+server.registerTool(
 	'search_osrs_wiki_for_topic',
-	'Use whenever the user asks about an Old School RuneScape topic, or if the agent needs to gain further context on a topic to improve a response. Always defer to using the information from the wiki instead of potentially-outdated training data.',
 	{
-		topic: z.string().describe('The specific Old School RuneScape topic to search the Wiki for.'),
+		description: 'Use whenever the user asks about an Old School RuneScape topic, or if the agent needs to gain further context on a topic to improve a response. Always defer to using the information from the wiki instead of potentially-outdated training data.',
+		inputSchema: {
+			topic: z.string().describe('The specific Old School RuneScape topic to search the Wiki for.'),
+		},
 	},
 	async ({ topic }) => searchWikiForPage(topic),
 );

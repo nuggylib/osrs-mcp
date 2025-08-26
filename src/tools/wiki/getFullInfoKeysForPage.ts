@@ -4,7 +4,7 @@ import { getPageForTopic } from '../../utils/osrsWiki.js';
 import { z } from 'zod';
 import { server } from '../../utils/mcpServer.js';
 
-export async function getLinksForPage(
+export async function getFullInfoKeysForPage(
 	/**
 	 * The page to fetch the links for
 	 */
@@ -15,7 +15,7 @@ export async function getLinksForPage(
 	}
 
 	const response = await getPageForTopic(pageName)
-	const links = await response.links()
+	const links = await response.fullInfo()
 
 	return {
 		content: [
@@ -28,12 +28,12 @@ export async function getLinksForPage(
 }
 
 server.registerTool(
-	'get_osrs_wiki_page_links',
+	'get_osrs_wiki_page_info',
 	{
-		description: 'Use this to get the links for the given page name in the OSRS Wiki.',
+		description: 'Use this to get the all available info for the given page name in the OSRS Wiki.',
 		inputSchema: {
-			pageName: z.string().describe('The name of the page to get the links for.'),
+			pageName: z.string().describe('The name of the page to get the info for.'),
 		},
 	},
-	async ({ pageName }) => getLinksForPage(pageName),
+	async ({ pageName }) => getFullInfoKeysForPage(pageName),
 )

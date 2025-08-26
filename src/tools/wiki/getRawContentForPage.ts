@@ -27,11 +27,13 @@ export async function getRawContentForPage(
 	};
 }
 
-server.tool(
+server.registerTool(
 	'get_osrs_wiki_page_full_content',
-	'Use this to get the full Wiki Text for the page name in the OSRS Wiki. Use this when the get_osrs_wiki_page_summary tool does not provide a detailed enough explanation of the given page name.',
 	{
-		pageName: z.string().describe('The name of the page to get the full content for.'),
+		description: 'Use this to get the full Wiki Text for the page name in the OSRS Wiki. Use this when the get_osrs_wiki_page_summary tool does not provide a detailed enough explanation of the given page name.',
+		inputSchema: {
+			pageName: z.string().describe('The name of the page to get the full content for.'),
+		},
 	},
 	async ({ pageName }) => getRawContentForPage(pageName),
 )

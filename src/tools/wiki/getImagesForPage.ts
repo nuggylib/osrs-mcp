@@ -42,11 +42,13 @@ export async function getImagesForPage(
 	};
 }
 
-server.tool(
+server.registerTool(
 	'get_osrs_wiki_page_images',
-	'Use this to get the images for the given page name in the OSRS Wiki.',
 	{
-		pageName: z.string().describe('The name of the page to get the images for.'),
+		description: 'Use this to get the images for the given page name in the OSRS Wiki.',
+		inputSchema: {
+			pageName: z.string().describe('The name of the page to get the images for.'),
+		},
 	},
 	async ({ pageName }) => getImagesForPage(pageName),
 )
