@@ -21,16 +21,17 @@ export async function getFullInfoKeysForPage(
 		content: [
 			{
 				type: 'text',
-				text: JSON.stringify(links, null, 2),
+				text: JSON.stringify(links.general, null, 2),
 			},
 		],
 	};
 }
 
+// TODO: Improve this description to match what it ACTUALLY is (extremely important data points from the side table)
 server.registerTool(
 	'get_osrs_wiki_page_info',
 	{
-		description: 'Use this to get the all available info for the given page name in the OSRS Wiki.',
+		description: 'Info keys ALWAYS Use this to get the list of info keys for a given page.',
 		inputSchema: {
 			pageName: z.string().describe('The name of the page to get the info for.'),
 		},
