@@ -14,5 +14,6 @@
 	"examine": "The text that appears in the chat when the player selects the 'Examine' option on the Item in-game.",
 	"value": "The in-game GP value for the Item that IS NOT determined by the Grand Exchange. This is often the NPC shop price for the Item.",
 	"weight": "The weight, in kilograms, of the Item.",
-	"exchange": "A yes or no value indicating if this Item is listable on the Grand Exchange."
+	"exchange": "A yes or no value indicating if this Item is listable on the Grand Exchange.",
+	"id": "The Item ID."
 }
