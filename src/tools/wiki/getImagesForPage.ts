@@ -2,7 +2,7 @@ import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 import { getPageForTopic } from '../../utils/osrsWiki.js';
 import axios from 'axios';
-import { server } from '../../server.js';
+import { server } from '../../utils/mcpServer.js';
 import { z } from 'zod';
 
 export async function getImagesForPage(

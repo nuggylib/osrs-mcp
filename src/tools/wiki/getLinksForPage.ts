@@ -1,8 +1,8 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 import { getPageForTopic } from '../../utils/osrsWiki.js';
-import { server } from '../../server.js';
 import { z } from 'zod';
+import { server } from '../../utils/mcpServer.js';
 
 export async function getLinksForPage(
 	/**
