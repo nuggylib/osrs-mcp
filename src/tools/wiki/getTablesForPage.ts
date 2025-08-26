@@ -1,6 +1,8 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 import { getPageForTopic } from '../../utils/osrsWiki.js';
+import { server } from '../../server.js';
+import { z } from 'zod';
 
 export async function getTablesForPage(
 	/**
@@ -24,3 +26,12 @@ export async function getTablesForPage(
 		],
 	};
 }
+
+server.tool(
+	'get_osrs_wiki_page_tables',
+	'Use this to get the tables for the given page name in the OSRS Wiki.',
+	{
+		pageName: z.string().describe('The name of the page to get the tables for.'),
+	},
+	async ({ pageName }) => getTablesForPage(pageName),
+)

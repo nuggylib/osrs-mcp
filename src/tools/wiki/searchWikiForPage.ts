@@ -1,5 +1,7 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { searchWikiForTopicMatches } from '../../utils/osrsWiki';
+import { server } from '../../server';
+import { z } from 'zod';
 
 /**
  * Finds the top `limit` number of pages that match (or partially-match) the given
@@ -25,3 +27,12 @@ export async function searchWikiForPage(
 		],
 	}
 }
+
+server.tool(
+	'search_osrs_wiki_for_topic',
+	'Use whenever the user asks about an Old School RuneScape topic, or if the agent needs to gain further context on a topic to improve a response. Always defer to using the information from the wiki instead of potentially-outdated training data.',
+	{
+		topic: z.string().describe('The specific Old School RuneScape topic to search the Wiki for.'),
+	},
+	async ({ topic }) => searchWikiForPage(topic),
+);

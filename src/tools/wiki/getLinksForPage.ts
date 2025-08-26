@@ -1,6 +1,8 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 import { getPageForTopic } from '../../utils/osrsWiki.js';
+import { server } from '../../server.js';
+import { z } from 'zod';
 
 export async function getLinksForPage(
 	/**
@@ -24,3 +26,12 @@ export async function getLinksForPage(
 		],
 	};
 }
+
+server.tool(
+	'get_osrs_wiki_page_links',
+	'Use this to get the links for the given page name in the OSRS Wiki.',
+	{
+		pageName: z.string().describe('The name of the page to get the links for.'),
+	},
+	async ({ pageName }) => getLinksForPage(pageName),
+)

@@ -2,6 +2,8 @@ import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 import { getPageForTopic } from '../../utils/osrsWiki.js';
 import axios from 'axios';
+import { server } from '../../server.js';
+import { z } from 'zod';
 
 export async function getImagesForPage(
 	/**
@@ -39,3 +41,12 @@ export async function getImagesForPage(
 		],
 	};
 }
+
+server.tool(
+	'get_osrs_wiki_page_images',
+	'Use this to get the images for the given page name in the OSRS Wiki.',
+	{
+		pageName: z.string().describe('The name of the page to get the images for.'),
+	},
+	async ({ pageName }) => getImagesForPage(pageName),
+)

@@ -1,5 +1,7 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { getPageForTopic } from '../../utils/osrsWiki.js';
+import { server } from '../../server.js';
+import { z } from 'zod';
 
 export async function getSummaryForPage(
 	/**
@@ -23,3 +25,12 @@ export async function getSummaryForPage(
 		],
 	};
 }
+
+server.tool(
+	'get_osrs_wiki_page_summary',
+	'Use this to get the summary for the page name in the OSRS Wiki. This is intended to be used after getting a page title from the ask_wiki_about_topic tool, which ensures this tool is only used for pages that are known to exist.',
+	{
+		pageName: z.string().describe('The name of the page to get the summary for.'),
+	},
+	async ({ pageName }) => getSummaryForPage(pageName),
+)
