@@ -1,1 +1,1 @@
-import './pageInfoKeys'
+import './monsterPageInfoKeys'
