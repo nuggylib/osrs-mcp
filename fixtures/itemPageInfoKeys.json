@@ -1,0 +1,18 @@
+{
+	"name": "The name of the Item.",
+	"image": "The featured image for the Item.",
+	"release": "Array representing the month and year for the release date of the update that added the Item to the game.",
+	"update": "The release message for the update that added the Item to the game.",
+	"members": "A yes or no value indicating if the content can only be accessed in the game with a paid subscription.",
+	"quest": "The name of the quest that must be completed before the Item can be obtained. If there are no requirements, this value is set to 'No'.",
+	"tradeable": "A yes or no value indicating if the Item is tradeable.",
+	"placeholder": "DON'T USE. This always seems to be set to 'Yes', and it's unclear what it represents.",
+	"equipable": "A yes or no value indicating if this Item is equipable.",
+	"stackable": "A yes or no value indicating if this Item is stackable.",
+	"noteable": "A yes or no value indicating if this Item can be Noted.",
+	"options": "A comma-separated list of options for the Item when right-clicked while in the player's Inventory.",
+	"examine": "The text that appears in the chat when the player selects the 'Examine' option on the Item in-game.",
+	"value": "The in-game GP value for the Item that IS NOT determined by the Grand Exchange. This is often the NPC shop price for the Item.",
+	"weight": "The weight, in kilograms, of the Item.",
+	"exchange": "A yes or no value indicating if this Item is listable on the Grand Exchange."
+}
