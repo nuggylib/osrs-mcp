@@ -42,6 +42,6 @@
 	"immunethrall": "A yes or no value indicating if this monster is immune to damage from Thralls.",
 	"immuneburn": "String indicating if this monster is immune to burns or not, and can be values other than yes or no.",
 	"respawn": "The amount of time, in seconds, that it takes for the monster to respawn.",
-	"dropversion": "TODO",
+	"dropversion": "If this key exists, there are multiple drop table sets for this monster, meaning it's loot table differs depending on where it's killed. Like version, this will only exist with a number appended at the end.",
 	"id": "DO NOT USE - NOT USEFUL. Appears to be internal game IDs, possibly for monster instances in-game."
 }
