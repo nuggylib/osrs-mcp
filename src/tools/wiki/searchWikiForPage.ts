@@ -1,6 +1,6 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { searchWikiForTopicMatches } from '../../utils/osrsWiki';
-import { server } from '../../server';
+import { server } from '../../utils/mcpServer.js';
 import { z } from 'zod';
 
 /**

@@ -1,6 +1,6 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { getPageForTopic } from '../../utils/osrsWiki.js';
-import { server } from '../../server.js';
+import { server } from '../../utils/mcpServer.js';
 import { z } from 'zod';
 
 export async function getSummaryForPage(
@@ -20,7 +20,7 @@ export async function getSummaryForPage(
 		content: [
 			{
 				type: 'text',
-				text: JSON.stringify(summary, null, 2),
+				text: summary,
 			},
 		],
 	};
