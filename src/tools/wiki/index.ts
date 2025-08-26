@@ -9,3 +9,5 @@ import './getLinksForPage.js';
 import './getMainImageForPage.js';
 import './getReferencesForPage.js';
 import './getTablesForPage.js';
+import './getFullInfoKeysForPage.js'
+import './getInfoKeyForPage.js'

@@ -27,11 +27,13 @@ export async function getTablesForPage(
 	};
 }
 
-server.tool(
+server.registerTool(
 	'get_osrs_wiki_page_tables',
-	'Use this to get the tables for the given page name in the OSRS Wiki.',
 	{
-		pageName: z.string().describe('The name of the page to get the tables for.'),
+		description: 'Use this to get the tables for the given page name in the OSRS Wiki.',
+		inputSchema: {
+			pageName: z.string().describe('The name of the page to get the tables for.'),
+		},
 	},
 	async ({ pageName }) => getTablesForPage(pageName),
 )

@@ -30,11 +30,13 @@ export async function getMainImageForPage(
 	};
 }
 
-server.tool(
+server.registerTool(
 	'get_osrs_wiki_page_main_image',
-	'Use this to get the main image for the given page name in the OSRS Wiki.',
 	{
-		pageName: z.string().describe('The name of the page to get the main image for.'),
+		description: 'Use this to get the main image for the given page name in the OSRS Wiki.',
+		inputSchema: {
+			pageName: z.string().describe('The name of the page to get the main image for.'),
+		},
 	},
 	async ({ pageName }) => getMainImageForPage(pageName),
 )

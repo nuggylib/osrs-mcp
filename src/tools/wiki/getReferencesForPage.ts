@@ -27,11 +27,13 @@ export async function getReferencesForPage(
 	};
 }
 
-server.tool(
+server.registerTool(
 	'get_osrs_wiki_page_references',
-	'Use this to get the references for the given page name in the OSRS Wiki.',
 	{
-		pageName: z.string().describe('The name of the page to get the references for.'),
+		description: 'Use this to get the references for the given page name in the OSRS Wiki.',
+		inputSchema: {
+			pageName: z.string().describe('The name of the page to get the references for.'),
+		},
 	},
 	async ({ pageName }) => getReferencesForPage(pageName),
 )
