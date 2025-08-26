@@ -23,6 +23,7 @@ export async function getInfoKeyValueForPage(
 	}
 
 	const response = await getPageForTopic(pageName)
+	// Can be either a string, object or array
 	const infoValue = await response.info(key)
 
 	return {
