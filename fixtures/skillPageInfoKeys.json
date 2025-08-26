@@ -1,0 +1,9 @@
+{
+	"name": "The name of the Skill.",
+	"image": "The featured image for the Skill; the Skill's in-game icon.",
+	"release": "Array representing the month and year for the release date of the update that added the Skill to the game.",
+	"update": "The release message for the update that added the Skill to the game.",
+	"aka": "The alternate name for the Skill.",
+	"members": "A yes or no value indicating if the content can only be accessed in the game with a paid subscription.",
+	"type": "A string representing the 'type' of this Skill. Possible values include 'Combat', 'Gathering', 'Production' and 'Utility'."
+}

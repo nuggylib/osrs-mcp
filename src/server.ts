@@ -1,7 +1,8 @@
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 
-// Import all tools to trigger their registration
+// Import all tools and resources to trigger their registration
 import './tools/index.js';
+import './resources/index.js'
 import { server } from './utils/mcpServer.js';
 
 async function main() {
