@@ -334,9 +334,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@modelcontextprotocol/sdk@npm:^1.12.1":
-  version: 1.17.3
-  resolution: "@modelcontextprotocol/sdk@npm:1.17.3"
+"@modelcontextprotocol/sdk@npm:^1.17.4":
+  version: 1.17.4
+  resolution: "@modelcontextprotocol/sdk@npm:1.17.4"
   dependencies:
     ajv: "npm:^6.12.6"
     content-type: "npm:^1.0.5"
@@ -350,7 +350,7 @@ __metadata:
     raw-body: "npm:^3.0.0"
     zod: "npm:^3.23.8"
     zod-to-json-schema: "npm:^3.24.1"
-  checksum: 10c0/23df0949724279eaa620f2780e3c731dcf746311f3175e3cba602643aacf9ee6dbcf99daeab3fa848296fe9ac971456fc031c79c1b55870dd019baf0263fd080
+  checksum: 10c0/0b549361b713d38d1414809525ad076e91a96a3a550b5e67cac4b91f98d6014e8e79175ba0a738031e053e7a3820bb03d37a55cc528f3f76b662a26b4f18c789
   languageName: node
   linkType: hard
 
@@ -2229,7 +2229,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "osrs-mcp@workspace:."
   dependencies:
-    "@modelcontextprotocol/sdk": "npm:^1.12.1"
+    "@modelcontextprotocol/sdk": "npm:^1.17.4"
     "@types/node": "npm:^24.3.0"
     "@typescript-eslint/eslint-plugin": "npm:^8.40.0"
     "@typescript-eslint/parser": "npm:^8.40.0"
