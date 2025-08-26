@@ -7,7 +7,7 @@ server.registerResource(
 	'file:///fixtures/monsterInfoKeys.json',
 	{
 		name: 'OSRS Wiki Monster Page Info Keys',
-		description: 'List of possible info keys available on OSRS Wiki monster pages (e.g., Green dragon). Use this to understand what each info key represents for Monster pages in the OSRS Wiki. Every key can have a number appended to the end, if there are multiple versions of the Monster (like when there are different leveled versions of the Monster).',
+		description: 'List of possible info keys available on OSRS Wiki monster pages (e.g., Green dragon). Use this to understand what each info key represents for Monster pages in the OSRS Wiki. Every key can have a number appended to the end, if there are multiple versions of the Monster (like when there are different leveled versions of the Monster). If there are multiple versions of a monster, but an info key DOESN\'T have a number appended, then it applies to all versions for that Monster.',
 	},
 	async () => {
 		const filePath = join(process.cwd(), 'fixtures', 'monsterInfoKeys.json');
