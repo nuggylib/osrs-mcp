@@ -1,10 +1,11 @@
-export * from './getBacklinksForPage'
-export * from './getCategoriesForPage'
-export * from './getImagesForPage'
-export * from './getMainImageForPage'
-export * from './getRawContentForPage'
-export * from './getSummaryForPage'
-export * from './getTablesForPage'
-export * from './searchWikiForPage'
-export * from './getReferencesForPage'
-export * from './getLinksForPage'
+// Import all tool files to trigger their registration
+import './getRawContentForPage.js';
+import './getSummaryForPage.js';
+import './searchWikiForPage.js';
+import './getBacklinksForPage.js';
+import './getCategoriesForPage.js';
+import './getImagesForPage.js';
+import './getLinksForPage.js';
+import './getMainImageForPage.js';
+import './getReferencesForPage.js';
+import './getTablesForPage.js';

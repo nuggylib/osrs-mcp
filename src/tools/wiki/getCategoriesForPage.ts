@@ -1,6 +1,8 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 import { getPageForTopic } from '../../utils/osrsWiki.js';
+import { server } from '../../server.js';
+import { z } from 'zod'
 
 export async function getCategoriesForPage(
 	/**
@@ -25,3 +27,12 @@ export async function getCategoriesForPage(
 		],
 	};
 }
+
+server.tool(
+	'get_osrs_wiki_page_categories',
+	'Use this to get the categories for the given page name in the OSRS Wiki.',
+	{
+		pageName: z.string().describe('The name of the page to get the categories for.'),
+	},
+	async ({ pageName }) => getCategoriesForPage(pageName),
+)
