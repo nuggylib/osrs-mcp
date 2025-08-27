@@ -3,7 +3,6 @@
   "packageManager": "yarn@4.1.1",
   "scripts": {
     "build": "docker build -t osrs-mcp:latest .",
-    "build-and-debug": "yarn build && npx @modelcontextprotocol/inspector node build/server.js",
     "docker:run": "docker run -it --rm osrs-mcp:latest",
     "docker:shell": "docker run -it --rm osrs-mcp:latest sh",
     "lint": "eslint src/**/*.ts",
