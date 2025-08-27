@@ -14,21 +14,30 @@ const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
 const app = express();
 app.use(express.json());
 
-// MCP POST endpoint - handles client-to-server communication
-app.post('/mcp', async (req, res) => {
+// Main endpoint - handles client-to-server communication
+app.post('/', async (req, res) => {
 	const sessionId = req.headers['mcp-session-id'] as string | undefined;
+	const proxyToken = req.headers['x-proxy-token'] as string | undefined;
+
+	// Handle MCP Inspector proxy authentication
+	if (proxyToken) {
+		console.log(`Received request with proxy token: ${proxyToken}`);
+	}
 
 	if (sessionId) {
 		console.log(`Received MCP request for session: ${sessionId}`);
 	}
 
+	console.log('Request body:', JSON.stringify(req.body));
+	console.log('Is initialize request:', isInitializeRequest(req.body));
+	
 	try {
 		let transport: StreamableHTTPServerTransport;
 
 		if (sessionId && transports[sessionId]) {
 			// Reuse existing transport
 			transport = transports[sessionId];
-		} else if (!sessionId && isInitializeRequest(req.body)) {
+		} else if (isInitializeRequest(req.body)) {
 			// New initialization request
 			transport = new StreamableHTTPServerTransport({
 				sessionIdGenerator: () => randomUUID(),
@@ -81,9 +90,15 @@ app.post('/mcp', async (req, res) => {
 	}
 });
 
-// MCP GET endpoint - handles server-to-client notifications via SSE
-app.get('/mcp', async (req, res) => {
+// SSE endpoint - handles server-to-client notifications via SSE
+app.get('/sse', async (req, res) => {
 	const sessionId = req.headers['mcp-session-id'] as string | undefined;
+	const proxyToken = req.headers['x-proxy-token'] as string | undefined;
+
+	// Handle MCP Inspector proxy authentication
+	if (proxyToken) {
+		console.log(`SSE request with proxy token: ${proxyToken}`);
+	}
 
 	if (!sessionId || !transports[sessionId]) {
 		res.status(400).send('Invalid or missing session ID');
@@ -101,8 +116,8 @@ app.get('/mcp', async (req, res) => {
 	await transport.handleRequest(req, res);
 });
 
-// MCP DELETE endpoint - handles session termination
-app.delete('/mcp', async (req, res) => {
+// DELETE endpoint - handles session termination
+app.delete('/', async (req, res) => {
 	const sessionId = req.headers['mcp-session-id'] as string | undefined;
 
 	if (!sessionId || !transports[sessionId]) {

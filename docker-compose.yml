@@ -8,8 +8,8 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-    expose:
-      - "3000"
+    ports:
+      - "3000:3000"
     volumes:
       - ./config:/app/config:ro
     networks:
@@ -19,10 +19,10 @@ services:
     image: ghcr.io/modelcontextprotocol/inspector:latest
     container_name: mcp-inspector
     restart: unless-stopped
-    command: ["http://osrs-mcp:3000/mcp"]
+    command: ["http://osrs-mcp:3000"]
     environment:
       - HOST=0.0.0.0
-      - DANGEROUSLY_OMIT_AUTH=true
+      - ALLOWED_ORIGINS=http://localhost:6274,http://127.0.0.1:6274,http://0.0.0.0:6274
     ports:
       - "6274:6274"
       - "6277:6277"
