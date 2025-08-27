@@ -32,12 +32,9 @@ export const mcpPostHandler = async (req: Request, res: Response) => {
 		}
 		return
 	}
-	if (sessionId) {
-		console.log(`Received MCP request for session: ${sessionId}`);
-	}
-	else {
-		console.log('Request body:', req.body);
-	}
+
+	console.log(`Received MCP request for session: ${sessionId}`);
+
 	try {
 		let transport: StreamableHTTPServerTransport;
 		if (sessionId && transports[sessionId]) {
