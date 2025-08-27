@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  osrs-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: osrs-mcp:latest
+    container_name: osrs-mcp-server
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./config:/app/config:ro
+    networks:
+      - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge

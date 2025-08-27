@@ -1,0 +1,17 @@
+node_modules
+build
+.git
+.gitignore
+*.md
+.eslintrc*
+.prettier*
+coverage
+.env*
+*.log
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+*.swp
+*.swo
+*~
