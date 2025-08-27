@@ -1,6 +1,7 @@
 # Tech Stack
 - TypeScript implementation of a Model Context Protocol server using `@modelcontextprotocol/sdk`.
    - Documentation resource (SDK Codebase): https://github.com/modelcontextprotocol/typescript-sdk
+   - Package includes examples in `@modelcontextprotocol/sdk/dist/cjs/examples`
 - Relies heavily on the OSRS Wiki API for all "knowledgebase" operations.
    - Documentation resource: https://runescape.wiki/w/Application_programming_interface
 - MCP Server is built as a Docker Image using `docker-compose`.
