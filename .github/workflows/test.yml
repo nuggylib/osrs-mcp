@@ -37,7 +37,7 @@ jobs:
         echo "Node version: $(node --version)"
         echo "Yarn version: $(yarn --version)"
         echo "TypeScript version:"
-        yarn list typescript || echo "TypeScript not found in dependencies"
+        yarn info typescript || echo "TypeScript not found in dependencies"
         echo "Current directory: $(pwd)"
         echo "Files in project root:"
         ls -la
@@ -45,7 +45,7 @@ jobs:
     - name: Build project
       run: |
         echo "Starting build process..."
-        yarn build --verbose || {
+        yarn build || {
           echo "Primary build command failed with exit code $?"
           echo "Debugging TypeScript availability:"
           which tsc || echo "tsc not found in global PATH"
@@ -70,8 +70,8 @@ jobs:
           echo "Final debug info:"
           echo "tsconfig.json content:"
           cat tsconfig.json
-          echo "Available commands:"
-          yarn bin || echo "yarn bin failed"
+          echo "Available commands in yarn:"
+          yarn run || echo "yarn run failed"
           exit 1
         }
         
