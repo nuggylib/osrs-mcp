@@ -1,4 +1,4 @@
-# `server/` Directory
+# `proxy/` Directory
 This directory contains code for the `express` server that functions as the proxy. The server is
 responsible for routing requests to the underlying MCP Server and back to the client.
 
