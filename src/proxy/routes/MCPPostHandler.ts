@@ -3,12 +3,7 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
 import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
-
-// TODO: Probably need to move this to Redis or some other caching mechanism (rather than in-memory).
-// Map to store transports by session ID
-const transports = {} as {
-	[key: string]: StreamableHTTPServerTransport
-}
+import { transports } from '../cache';
 
 /**
  * MCP Server POST handler.
@@ -32,6 +27,11 @@ export const mcpPostHandler = async (req: Request, res: Response) => {
 		}
 		return
 	}
+
+	// TODO: Eventually support OAuth
+	// if (useOAuth && req.auth) {
+	// 	console.log('Authenticated user:', req.auth);
+	// }
 
 	console.log(`Received MCP request for session: ${sessionId}`);
 
