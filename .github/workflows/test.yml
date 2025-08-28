@@ -32,16 +32,67 @@ jobs:
     - name: Run linting
       run: yarn lint
       
+    - name: Debug environment before build
+      run: |
+        echo "Node version: $(node --version)"
+        echo "Yarn version: $(yarn --version)"
+        echo "TypeScript version:"
+        yarn list typescript || echo "TypeScript not found in dependencies"
+        echo "Current directory: $(pwd)"
+        echo "Files in project root:"
+        ls -la
+        
     - name: Build project
-      run: yarn build
-      
+      run: |
+        echo "Starting build process..."
+        yarn build --verbose || {
+          echo "Primary build command failed with exit code $?"
+          echo "Debugging TypeScript availability:"
+          which tsc || echo "tsc not found in global PATH"
+          yarn exec tsc --version || echo "tsc not available via yarn exec"
+          
+          echo "Trying alternative build methods..."
+          
+          # Try using npx
+          echo "Attempting build with npx tsc..."
+          npx tsc --outDir build && echo "✅ npx build succeeded" && exit 0
+          
+          # Try direct yarn exec
+          echo "Attempting build with yarn exec tsc..."
+          yarn exec tsc --outDir build && echo "✅ yarn exec build succeeded" && exit 0
+          
+          # Try installing TypeScript globally and building
+          echo "Installing TypeScript globally as fallback..."
+          npm install -g typescript
+          tsc --outDir build && echo "✅ global tsc build succeeded" && exit 0
+          
+          echo "❌ All build methods failed"
+          echo "Final debug info:"
+          echo "tsconfig.json content:"
+          cat tsconfig.json
+          echo "Available commands:"
+          yarn bin || echo "yarn bin failed"
+          exit 1
+        }
+        
     - name: Verify build artifacts
       run: |
-        ls -la build/
+        echo "Contents of project root after build:"
+        ls -la
+        echo "Contents of build directory:"
+        ls -la build/ || {
+          echo "Build directory does not exist!"
+          echo "Available directories:"
+          find . -type d -name "*build*" || echo "No build-related directories found"
+          exit 1
+        }
         if [ ! -f "build/server.js" ]; then
-          echo "Build failed: server.js not found"
+          echo "❌ Build failed: server.js not found"
+          echo "Files in build directory:"
+          ls -la build/
           exit 1
         fi
+        echo "✅ Build artifacts verified successfully"
         
     - name: Test server startup
       run: |
