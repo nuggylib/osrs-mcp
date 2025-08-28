@@ -5,11 +5,13 @@ import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
 import { transports } from '../cache';
 
+// TODO: Confirm the accuracy of this doc comment
 /**
  * MCP Server POST handler.
  *
- * This implementation follows the `@modelcontextprotocol/sdk` example, `simpleStreamableHttp.js`. This
- * file can be located in the package itself within `node_modules`.
+ * This method works by opening a new session-based MCP Server connection and making
+ * a request. The connection only remains open for the duration of the request, but the
+ * session ID persists between requests (since it's intended to be cached).
  */
 export const mcpPostHandler = async (req: Request, res: Response) => {
 	const sessionId = req.headers['mcp-session-id'];

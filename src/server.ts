@@ -1,6 +1,9 @@
 import { transports } from './proxy/cache';
 import proxyServer from './proxy/server';
 
+import './tools'
+import './resources'
+
 const MCP_PORT = 3000
 
 proxyServer.listen(MCP_PORT, (error) => {

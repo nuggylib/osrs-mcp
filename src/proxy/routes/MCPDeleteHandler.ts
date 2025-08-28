@@ -1,6 +1,13 @@
 import { Request, Response } from 'express';
 import { transports } from '../cache';
 
+// TODO: Confirm the accuracy of this doc comment
+/**
+ * MCP DELETE Handler to delete an existing session.
+ *
+ * This method works by checking to ensure there is a valid sessionId in the request. If
+ * not, an error is thrown. Otherwise, the request is passed along to the server.
+ */
 export const mcpDeleteHandler = async (req: Request, res: Response) => {
 	const sessionId = req.headers['mcp-session-id'];
 	if (!sessionId || typeof sessionId !== 'string') {

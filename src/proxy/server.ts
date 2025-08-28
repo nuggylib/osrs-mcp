@@ -1,4 +1,3 @@
-import './routes'
 import express from 'express'
 import { mcpPostHandler } from './routes/MCPPostHandler';
 import { mcpGetHandler } from './routes/MCPGetHandler';
