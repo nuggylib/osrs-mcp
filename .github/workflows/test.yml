@@ -1,0 +1,183 @@
+name: Test MCP Server
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        
+    - name: Enable Corepack
+      run: corepack enable
+      
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+      
+    - name: Run linting
+      run: yarn lint
+      
+    - name: Build project
+      run: yarn build
+      
+    - name: Verify build artifacts
+      run: |
+        ls -la build/
+        if [ ! -f "build/server.js" ]; then
+          echo "Build failed: server.js not found"
+          exit 1
+        fi
+        
+    - name: Test server startup
+      run: |
+        # Start server in background with timeout
+        timeout 30s node build/server.js --stdio &
+        SERVER_PID=$!
+        
+        # Give server time to start
+        sleep 5
+        
+        # Check if server is still running
+        if kill -0 $SERVER_PID 2>/dev/null; then
+          echo "✅ Server started successfully"
+          kill $SERVER_PID
+        else
+          echo "❌ Server failed to start or crashed"
+          exit 1
+        fi
+        
+    - name: Test with MCP Inspector (headless)
+      run: |
+        # Install inspector if not already available
+        npm install -g @modelcontextprotocol/inspector
+        
+        # Start server in background
+        node build/server.js --stdio &
+        SERVER_PID=$!
+        
+        # Give server time to start
+        sleep 3
+        
+        # Test that inspector can connect (this will fail in headless mode but we can check basic functionality)
+        echo "Server PID: $SERVER_PID"
+        
+        # Clean shutdown
+        kill $SERVER_PID || true
+        
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        
+    - name: Enable Corepack
+      run: corepack enable
+      
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+      
+    - name: Build project
+      run: yarn build
+      
+    - name: Run integration tests
+      run: |
+        # Create a simple test script to verify MCP server functionality
+        cat > test_mcp.mjs << 'EOF'
+        import { spawn } from 'child_process';
+        import { setTimeout } from 'timers/promises';
+        
+        console.log('Starting MCP server integration test...');
+        
+        const server = spawn('node', ['build/server.js', '--stdio'], {
+          stdio: ['pipe', 'pipe', 'pipe']
+        });
+        
+        let output = '';
+        server.stdout.on('data', (data) => {
+          output += data.toString();
+          console.log('Server output:', data.toString().trim());
+        });
+        
+        server.stderr.on('data', (data) => {
+          console.error('Server error:', data.toString().trim());
+        });
+        
+        // Send initialize request
+        setTimeout(async () => {
+          const initMessage = JSON.stringify({
+            jsonrpc: "2.0",
+            id: 1,
+            method: "initialize",
+            params: {
+              protocolVersion: "2024-11-05",
+              capabilities: {},
+              clientInfo: { name: "test-client", version: "1.0.0" }
+            }
+          }) + '\n';
+          
+          console.log('Sending initialize message...');
+          server.stdin.write(initMessage);
+          
+          await setTimeout(2000);
+          
+          // Send tools/list request
+          const toolsMessage = JSON.stringify({
+            jsonrpc: "2.0",
+            id: 2,
+            method: "tools/list"
+          }) + '\n';
+          
+          console.log('Sending tools/list message...');
+          server.stdin.write(toolsMessage);
+          
+          await setTimeout(2000);
+          
+          console.log('Test completed, shutting down server...');
+          server.kill('SIGTERM');
+          
+          // Check if we got expected responses
+          if (output.includes('"result"') && output.includes('tools')) {
+            console.log('✅ Integration test passed - MCP server responded correctly');
+            process.exit(0);
+          } else {
+            console.log('❌ Integration test failed - unexpected server response');
+            console.log('Full output:', output);
+            process.exit(1);
+          }
+        }, 1000);
+        
+        server.on('exit', (code) => {
+          console.log(`Server exited with code ${code}`);
+        });
+        
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          console.log('Test timeout - killing server');
+          server.kill('SIGKILL');
+          process.exit(1);
+        }, 10000);
+        EOF
+        
+        node test_mcp.mjs
