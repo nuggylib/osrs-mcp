@@ -96,139 +96,138 @@ jobs:
         
     - name: Test server startup
       run: |
-        # Start server in background with timeout
-        timeout 30s node build/server.js --stdio &
-        SERVER_PID=$!
-        
-        # Give server time to start
-        sleep 5
-        
-        # Check if server is still running
-        if kill -0 $SERVER_PID 2>/dev/null; then
-          echo "✅ Server started successfully"
-          kill $SERVER_PID
-        else
-          echo "❌ Server failed to start or crashed"
-          exit 1
-        fi
-        
-    - name: Test with MCP Inspector (headless)
-      run: |
-        # Install inspector if not already available
-        npm install -g @modelcontextprotocol/inspector
-        
-        # Start server in background
-        node build/server.js --stdio &
-        SERVER_PID=$!
-        
-        # Give server time to start
-        sleep 3
-        
-        # Test that inspector can connect (this will fail in headless mode but we can check basic functionality)
-        echo "Server PID: $SERVER_PID"
-        
-        # Clean shutdown
-        kill $SERVER_PID || true
-        
-  integration-test:
-    runs-on: ubuntu-latest
-    needs: test
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        
-    - name: Enable Corepack
-      run: corepack enable
-      
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile
-      
-    - name: Build project
-      run: yarn build
-      
-    - name: Run integration tests
-      run: |
-        # Create a simple test script to verify MCP server functionality
-        cat > test_mcp.mjs << 'EOF'
+        # Create a simple test script for headless MCP server testing
+        cat > test_server.mjs << 'EOF'
         import { spawn } from 'child_process';
-        import { setTimeout } from 'timers/promises';
         
-        console.log('Starting MCP server integration test...');
+        console.log('Testing MCP server startup in CI...');
         
         const server = spawn('node', ['build/server.js', '--stdio'], {
           stdio: ['pipe', 'pipe', 'pipe']
         });
         
-        let output = '';
+        let serverStarted = false;
+        let timeoutId;
+        
+        // Listen for server debug output indicating it started
+        server.stderr.on('data', (data) => {
+          const output = data.toString();
+          console.log('Server stderr:', output.trim());
+          if (output.includes('OSRS MCP Server Running')) {
+            serverStarted = true;
+            console.log('✅ Server startup confirmed');
+            clearTimeout(timeoutId);
+            server.kill('SIGTERM');
+            process.exit(0);
+          }
+        });
+        
+        // Handle server errors
+        server.on('error', (err) => {
+          console.error('❌ Server spawn error:', err);
+          process.exit(1);
+        });
+        
+        // Handle server exit
+        server.on('exit', (code, signal) => {
+          if (serverStarted) {
+            console.log(`✅ Server exited cleanly with code ${code} signal ${signal}`);
+            process.exit(0);
+          } else {
+            console.log(`❌ Server exited unexpectedly with code ${code} signal ${signal}`);
+            process.exit(1);
+          }
+        });
+        
+        // Timeout after 10 seconds
+        timeoutId = setTimeout(() => {
+          console.log('❌ Server startup test timed out');
+          server.kill('SIGKILL');
+          process.exit(1);
+        }, 10000);
+        
+        console.log('Server process started, waiting for confirmation...');
+        EOF
+        
+        node test_server.mjs
+        
+    - name: Test MCP protocol communication
+      run: |
+        # Create a comprehensive MCP protocol test
+        cat > test_protocol.mjs << 'EOF'
+        import { spawn } from 'child_process';
+        
+        console.log('Testing MCP protocol communication...');
+        
+        const server = spawn('node', ['build/server.js', '--stdio'], {
+          stdio: ['pipe', 'pipe', 'pipe']
+        });
+        
+        let responses = [];
+        let testComplete = false;
+        
         server.stdout.on('data', (data) => {
-          output += data.toString();
-          console.log('Server output:', data.toString().trim());
+          const output = data.toString();
+          console.log('📨 Server response:', output.trim());
+          responses.push(output);
+          
+          // Check if we got both initialize and tools/list responses
+          if (responses.length >= 2) {
+            testComplete = true;
+            server.kill('SIGTERM');
+            
+            // Validate responses
+            const hasInitResponse = responses.some(r => r.includes('"protocolVersion"'));
+            const hasToolsResponse = responses.some(r => r.includes('"tools"'));
+            
+            if (hasInitResponse && hasToolsResponse) {
+              console.log('✅ MCP protocol test passed');
+              process.exit(0);
+            } else {
+              console.log('❌ Invalid MCP responses received');
+              process.exit(1);
+            }
+          }
         });
         
         server.stderr.on('data', (data) => {
-          console.error('Server error:', data.toString().trim());
+          console.log('🔧 Server debug:', data.toString().trim());
         });
         
-        // Send initialize request
-        setTimeout(async () => {
-          const initMessage = JSON.stringify({
+        // Send test messages after server starts
+        setTimeout(() => {
+          console.log('📤 Sending initialize message...');
+          const initMsg = JSON.stringify({
             jsonrpc: "2.0",
             id: 1,
             method: "initialize",
             params: {
               protocolVersion: "2024-11-05",
               capabilities: {},
-              clientInfo: { name: "test-client", version: "1.0.0" }
+              clientInfo: { name: "ci-test", version: "1.0.0" }
             }
           }) + '\n';
+          server.stdin.write(initMsg);
           
-          console.log('Sending initialize message...');
-          server.stdin.write(initMessage);
-          
-          await setTimeout(2000);
-          
-          // Send tools/list request
-          const toolsMessage = JSON.stringify({
-            jsonrpc: "2.0",
-            id: 2,
-            method: "tools/list"
-          }) + '\n';
-          
-          console.log('Sending tools/list message...');
-          server.stdin.write(toolsMessage);
-          
-          await setTimeout(2000);
-          
-          console.log('Test completed, shutting down server...');
-          server.kill('SIGTERM');
-          
-          // Check if we got expected responses
-          if (output.includes('"result"') && output.includes('tools')) {
-            console.log('✅ Integration test passed - MCP server responded correctly');
-            process.exit(0);
-          } else {
-            console.log('❌ Integration test failed - unexpected server response');
-            console.log('Full output:', output);
+          setTimeout(() => {
+            console.log('📤 Sending tools/list message...');
+            const toolsMsg = JSON.stringify({
+              jsonrpc: "2.0",
+              id: 2,
+              method: "tools/list"
+            }) + '\n';
+            server.stdin.write(toolsMsg);
+          }, 1000);
+        }, 2000);
+        
+        // Safety timeout
+        setTimeout(() => {
+          if (!testComplete) {
+            console.log('❌ Protocol test timed out');
+            server.kill('SIGKILL');
             process.exit(1);
           }
-        }, 1000);
-        
-        server.on('exit', (code) => {
-          console.log(`Server exited with code ${code}`);
-        });
-        
-        // Timeout after 10 seconds
-        setTimeout(() => {
-          console.log('Test timeout - killing server');
-          server.kill('SIGKILL');
-          process.exit(1);
-        }, 10000);
+        }, 15000);
         EOF
         
-        node test_mcp.mjs
+        node test_protocol.mjs
