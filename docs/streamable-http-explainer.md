@@ -1,5 +1,4 @@
 # Streamable HTTP Explainer
-
 This document serves to explain what the Streamable HTTP Transport is and why we are using it.
 
 ## What is a [Transport](https://modelcontextprotocol.io/docs/learn/architecture#transport-layer)?
