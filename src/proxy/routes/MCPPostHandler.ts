@@ -4,6 +4,7 @@ import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
 import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
 import { transports } from '../cache';
+import { server } from '../../utils/mcpServer';
 
 // TODO: Confirm the accuracy of this doc comment
 /**
@@ -14,28 +15,18 @@ import { transports } from '../cache';
  * session ID persists between requests (since it's intended to be cached).
  */
 export const mcpPostHandler = async (req: Request, res: Response) => {
-	const sessionId = req.headers['mcp-session-id'];
-	if (!sessionId || typeof sessionId !== 'string') {
-		console.error('Invalid or missing sessionId');
-		if (!res.headersSent) {
-			res.status(400).json({
-				jsonrpc: '2.0',
-				error: {
-					code: -32603,
-					message: 'sessionId must be provided',
-				},
-				id: null,
-			});
-		}
-		return
-	}
+	const sessionId = req.headers['mcp-session-id'] as string | undefined;
 
 	// TODO: Eventually support OAuth
 	// if (useOAuth && req.auth) {
 	// 	console.log('Authenticated user:', req.auth);
 	// }
 
-	console.log(`Received MCP request for session: ${sessionId}`);
+	if (sessionId) {
+		console.log(`Received MCP request for session: ${sessionId}`);
+	} else {
+		console.log('Received MCP initialization request');
+	}
 
 	try {
 		let transport: StreamableHTTPServerTransport;
@@ -64,17 +55,31 @@ export const mcpPostHandler = async (req: Request, res: Response) => {
 					delete transports[sid];
 				}
 			};
-			// TODO: CONNECT TO MCP SERVER HERE!!!!
+			await server.connect(transport);
 			await transport.handleRequest(req, res, req.body);
 			return; // Already handled
 		}
-		else {
-			// Invalid request - no session ID or not initialization request
+		else if (sessionId && !transports[sessionId]) {
+			// Session ID provided but not found
+			console.error(`Session ID ${sessionId} not found in transports`);
 			res.status(400).json({
 				jsonrpc: '2.0',
 				error: {
 					code: -32000,
-					message: 'Bad Request: No valid session ID provided',
+					message: 'Session not found or expired',
+				},
+				id: null,
+			});
+			return;
+		}
+		else {
+			// No session ID and not an initialization request
+			console.error('No session ID provided and request is not an initialization request');
+			res.status(400).json({
+				jsonrpc: '2.0',
+				error: {
+					code: -32000,
+					message: 'Session ID required for non-initialization requests',
 				},
 				id: null,
 			});

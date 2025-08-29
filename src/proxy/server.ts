@@ -5,6 +5,9 @@ import { mcpDeleteHandler } from './routes/MCPDeleteHandler';
 
 const app = express()
 
+// Add JSON body parsing middleware
+app.use(express.json())
+
 // TODO: Uncomment if/when we support OAuth
 // if (useOAuth && authMiddleware) {
 // 	app.post('/mcp', authMiddleware, mcpPostHandler);
