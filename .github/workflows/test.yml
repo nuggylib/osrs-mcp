@@ -1,0 +1,233 @@
+name: Test MCP Server
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        
+    - name: Enable Corepack
+      run: corepack enable
+      
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+      
+    - name: Run linting
+      run: yarn lint
+      
+    - name: Debug environment before build
+      run: |
+        echo "Node version: $(node --version)"
+        echo "Yarn version: $(yarn --version)"
+        echo "TypeScript version:"
+        yarn info typescript || echo "TypeScript not found in dependencies"
+        echo "Current directory: $(pwd)"
+        echo "Files in project root:"
+        ls -la
+        
+    - name: Build project
+      run: |
+        echo "Starting build process..."
+        yarn build || {
+          echo "Primary build command failed with exit code $?"
+          echo "Debugging TypeScript availability:"
+          which tsc || echo "tsc not found in global PATH"
+          yarn exec tsc --version || echo "tsc not available via yarn exec"
+          
+          echo "Trying alternative build methods..."
+          
+          # Try using npx
+          echo "Attempting build with npx tsc..."
+          npx tsc --outDir build && echo "✅ npx build succeeded" && exit 0
+          
+          # Try direct yarn exec
+          echo "Attempting build with yarn exec tsc..."
+          yarn exec tsc --outDir build && echo "✅ yarn exec build succeeded" && exit 0
+          
+          # Try installing TypeScript globally and building
+          echo "Installing TypeScript globally as fallback..."
+          npm install -g typescript
+          tsc --outDir build && echo "✅ global tsc build succeeded" && exit 0
+          
+          echo "❌ All build methods failed"
+          echo "Final debug info:"
+          echo "tsconfig.json content:"
+          cat tsconfig.json
+          echo "Available commands in yarn:"
+          yarn run || echo "yarn run failed"
+          exit 1
+        }
+        
+    - name: Verify build artifacts
+      run: |
+        echo "Contents of project root after build:"
+        ls -la
+        echo "Contents of build directory:"
+        ls -la build/ || {
+          echo "Build directory does not exist!"
+          echo "Available directories:"
+          find . -type d -name "*build*" || echo "No build-related directories found"
+          exit 1
+        }
+        if [ ! -f "build/server.js" ]; then
+          echo "❌ Build failed: server.js not found"
+          echo "Files in build directory:"
+          ls -la build/
+          exit 1
+        fi
+        echo "✅ Build artifacts verified successfully"
+        
+    - name: Test server startup
+      run: |
+        # Create a simple test script for headless MCP server testing
+        cat > test_server.mjs << 'EOF'
+        import { spawn } from 'child_process';
+        
+        console.log('Testing MCP server startup in CI...');
+        
+        const server = spawn('node', ['build/server.js', '--stdio'], {
+          stdio: ['pipe', 'pipe', 'pipe']
+        });
+        
+        let serverStarted = false;
+        let timeoutId;
+        
+        // Listen for server debug output indicating it started
+        server.stderr.on('data', (data) => {
+          const output = data.toString();
+          console.log('Server stderr:', output.trim());
+          if (output.includes('OSRS MCP Server Running')) {
+            serverStarted = true;
+            console.log('✅ Server startup confirmed');
+            clearTimeout(timeoutId);
+            server.kill('SIGTERM');
+            process.exit(0);
+          }
+        });
+        
+        // Handle server errors
+        server.on('error', (err) => {
+          console.error('❌ Server spawn error:', err);
+          process.exit(1);
+        });
+        
+        // Handle server exit
+        server.on('exit', (code, signal) => {
+          if (serverStarted) {
+            console.log(`✅ Server exited cleanly with code ${code} signal ${signal}`);
+            process.exit(0);
+          } else {
+            console.log(`❌ Server exited unexpectedly with code ${code} signal ${signal}`);
+            process.exit(1);
+          }
+        });
+        
+        // Timeout after 10 seconds
+        timeoutId = setTimeout(() => {
+          console.log('❌ Server startup test timed out');
+          server.kill('SIGKILL');
+          process.exit(1);
+        }, 10000);
+        
+        console.log('Server process started, waiting for confirmation...');
+        EOF
+        
+        node test_server.mjs
+        
+    - name: Test MCP protocol communication
+      run: |
+        # Create a comprehensive MCP protocol test
+        cat > test_protocol.mjs << 'EOF'
+        import { spawn } from 'child_process';
+        
+        console.log('Testing MCP protocol communication...');
+        
+        const server = spawn('node', ['build/server.js', '--stdio'], {
+          stdio: ['pipe', 'pipe', 'pipe']
+        });
+        
+        let responses = [];
+        let testComplete = false;
+        
+        server.stdout.on('data', (data) => {
+          const output = data.toString();
+          console.log('📨 Server response:', output.trim());
+          responses.push(output);
+          
+          // Check if we got both initialize and tools/list responses
+          if (responses.length >= 2) {
+            testComplete = true;
+            server.kill('SIGTERM');
+            
+            // Validate responses
+            const hasInitResponse = responses.some(r => r.includes('"protocolVersion"'));
+            const hasToolsResponse = responses.some(r => r.includes('"tools"'));
+            
+            if (hasInitResponse && hasToolsResponse) {
+              console.log('✅ MCP protocol test passed');
+              process.exit(0);
+            } else {
+              console.log('❌ Invalid MCP responses received');
+              process.exit(1);
+            }
+          }
+        });
+        
+        server.stderr.on('data', (data) => {
+          console.log('🔧 Server debug:', data.toString().trim());
+        });
+        
+        // Send test messages after server starts
+        setTimeout(() => {
+          console.log('📤 Sending initialize message...');
+          const initMsg = JSON.stringify({
+            jsonrpc: "2.0",
+            id: 1,
+            method: "initialize",
+            params: {
+              protocolVersion: "2024-11-05",
+              capabilities: {},
+              clientInfo: { name: "ci-test", version: "1.0.0" }
+            }
+          }) + '\n';
+          server.stdin.write(initMsg);
+          
+          setTimeout(() => {
+            console.log('📤 Sending tools/list message...');
+            const toolsMsg = JSON.stringify({
+              jsonrpc: "2.0",
+              id: 2,
+              method: "tools/list"
+            }) + '\n';
+            server.stdin.write(toolsMsg);
+          }, 1000);
+        }, 2000);
+        
+        // Safety timeout
+        setTimeout(() => {
+          if (!testComplete) {
+            console.log('❌ Protocol test timed out');
+            server.kill('SIGKILL');
+            process.exit(1);
+          }
+        }, 15000);
+        EOF
+        
+        node test_protocol.mjs
