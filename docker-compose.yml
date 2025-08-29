@@ -12,6 +12,7 @@ services:
       - "3000:3000"
     volumes:
       - ./config:/app/config:ro
+      - ./fixtures:/app/fixtures:ro
     networks:
       - mcp-network
 

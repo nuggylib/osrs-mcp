@@ -14,4 +14,8 @@ This guide will walk you through building, running, and testing the OSRS MCP Ser
 
 ## Testing
 
-Once the Docker container is running, you can connect to it at `http://127.0.0.1:6274/`
+1. Run `docker-compose up -d`
+2. Check the Docker Container logs to get the full URL to the inspector
+	* It will look something like this: `http://0.0.0.0:6274/?MCP_PROXY_AUTH_TOKEN=<SOME_TOKEN>`
+3. Set the URL field to `http://osrs-mcp:3000/mcp`
+4. Click "Connect" and then test as needed
