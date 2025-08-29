@@ -2,18 +2,12 @@
 
 <!-- A summary of the changes -->
 
+Switches the MCP Server architecture from an STDIO-based implementation to Streamable HTTP. This also required the server to be implemented as a Streamable HTTP server instead of an STDIO server.
+
 ## MCP Inspector QA
 
-<!-- Instructions on how to test the changes in the MCP Inspector -->
-
-1. Run `yarn build-and-test`
-2. Click "Connect"
-3. _TODO_
-
-## Client QA
-
-<!-- Instructions on how to test the changes in a client such as Claude or ChatGPT -->
-
-1. Configure your client to use the build artifact as a custom build MCP Server
-2. Run `yarn build`
-3. _TODO_
+1. Run `docker-compose up -d --build` to build the image and start the containers
+2. Open the Docker Logs > Locate the URL with the `MCP_PROXY_AUTH_TOKEN` appended at the end
+3. Click the link to open the MCP Inspector > Set URL to `http://osrs-mcp:3000/mcp`
+4. Click "Connect"
+5. _TODO_
