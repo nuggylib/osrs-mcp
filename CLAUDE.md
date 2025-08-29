@@ -14,4 +14,8 @@
 - ALWAYS use `yarn`, NEVER `npm`.
 
 # Project Structure
+- `.github/` contains GitHub-specific configurations (for things like PR templates and Actions).
+- `.vscode/` contains project-specific VS Code settings.
+- `docs/` contains repository documentation.
+- `fixtures/` contains static files intended to be used as data sources for Resources.
 - `src/` contains all code.
