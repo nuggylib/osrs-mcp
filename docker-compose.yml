@@ -1,0 +1,37 @@
+services:
+  osrs-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: osrs-mcp:latest
+    container_name: osrs-mcp-server
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./config:/app/config:ro
+      - ./fixtures:/app/fixtures:ro
+    networks:
+      - mcp-network
+
+  mcp-inspector:
+    image: ghcr.io/modelcontextprotocol/inspector:latest
+    container_name: mcp-inspector
+    restart: unless-stopped
+    command: ["http://osrs-mcp:3000"]
+    environment:
+      - HOST=0.0.0.0
+      - ALLOWED_ORIGINS=http://localhost:6274,http://127.0.0.1:6274,http://0.0.0.0:6274
+    ports:
+      - "6274:6274"
+      - "6277:6277"
+    networks:
+      - mcp-network
+    depends_on:
+      - osrs-mcp
+
+networks:
+  mcp-network:
+    driver: bridge
