@@ -20,7 +20,6 @@ if/when we want to support the MCP Server performing some action on a RuneLite h
 
 ### Strengths
 An MCP Server built using the Streamble HTTP Transport offers many benefits:
-- Ability to leverage chat memories
 - Session management
 - Events-streaming back to clients
 
