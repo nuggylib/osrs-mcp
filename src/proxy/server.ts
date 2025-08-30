@@ -3,13 +3,9 @@ import cors from 'cors'
 import { mcpPostHandler } from './routes/MCPPostHandler';
 import { mcpGetHandler } from './routes/MCPGetHandler';
 import { mcpDeleteHandler } from './routes/MCPDeleteHandler';
-import {
-	getAuthorizationServerMetadata,
-	registerClient,
-	authorize,
-	token,
-	authenticateToken,
-} from '../auth/oauth';
+import { getAuthorizationServerMetadata } from './util/getAuthorizationServerMetadata';
+import { authorizeGetHandler, registerClientPostHandler, tokenPostHandler } from './routes';
+import { authenticateTokenMiddleware } from './middlewares';
 
 const app = express()
 
@@ -65,13 +61,13 @@ app.get('/.well-known/oauth-authorization-server', (req, res) => {
 });
 
 // OAuth endpoints
-app.post('/register', registerClient);
-app.get('/authorize', authorize);
-app.post('/token', token);
+app.post('/register', registerClientPostHandler);
+app.get('/authorize', authorizeGetHandler);
+app.post('/token', tokenPostHandler);
 
 // MCP endpoints with OAuth protection
-app.post('/mcp', authenticateToken, mcpPostHandler);
-app.get('/mcp', authenticateToken, mcpGetHandler);
-app.delete('/mcp', authenticateToken, mcpDeleteHandler);
+app.post('/mcp', authenticateTokenMiddleware, mcpPostHandler);
+app.get('/mcp', authenticateTokenMiddleware, mcpGetHandler);
+app.delete('/mcp', authenticateTokenMiddleware, mcpDeleteHandler);
 
 export default app;

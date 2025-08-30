@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { transports } from '../cache';
+import { transports } from '../cache/cache';
 
 // TODO: Confirm the accuracy of this doc comment
 /**

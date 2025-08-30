@@ -1,4 +1,4 @@
-import { transports } from './proxy/cache';
+import { transports } from './proxy/cache/cache';
 import proxyServer from './proxy/server';
 import https from 'https';
 import http from 'http';

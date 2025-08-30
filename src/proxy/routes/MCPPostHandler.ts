@@ -3,7 +3,7 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
 import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
-import { transports } from '../cache';
+import { transports } from '../cache/cache';
 import { server } from '../../utils/mcpServer';
 
 // TODO: Confirm the accuracy of this doc comment
