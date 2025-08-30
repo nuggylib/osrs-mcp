@@ -2,13 +2,13 @@
   "name": "osrs-mcp",
   "packageManager": "yarn@4.1.1",
   "scripts": {
-    "build": "docker build -t osrs-mcp:latest .",
+    "docker:build": "docker build -t osrs-mcp:latest .",
     "docker:run": "docker run -it --rm osrs-mcp:latest",
     "docker:shell": "docker run -it --rm osrs-mcp:latest sh",
     "inspector": "NODE_TLS_REJECT_UNAUTHORIZED=0 npx @modelcontextprotocol/inspector@latest https://localhost:3000",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "heroku-postbuild": "tsc --outDir build",
+    "build": "tsc --outDir build",
     "start": "node build/server.js",
     "dev": "tsx src/server.ts"
   },
