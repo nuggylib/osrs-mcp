@@ -8,7 +8,10 @@
    - An MCP Inspector instance is spun up along side the MCP Server.
 
 # Bash Commands
-- `yarn build`: Builds the MCP server.
+- `docker-compose up -d --build` builds the MCP server and starts up the containers described in `docker-compose.yml`.
+	- `-d` flag means "detached" and runs the containers in the background.
+	- `--build` instructs Docker to build the `Dockerfile`.
+- `docker-compose down` stops all containers that were started via the `docker-compose up` command.
 
 # Repository Etiquette
 - ALWAYS use `yarn`, NEVER `npm`.

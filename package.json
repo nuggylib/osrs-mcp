@@ -5,6 +5,7 @@
     "build": "docker build -t osrs-mcp:latest .",
     "docker:run": "docker run -it --rm osrs-mcp:latest",
     "docker:shell": "docker run -it --rm osrs-mcp:latest sh",
+    "inspector": "NODE_TLS_REJECT_UNAUTHORIZED=0 DANGEROUSLY_OMIT_AUTH=true npx @modelcontextprotocol/inspector@latest https://localhost:3000",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix"
   },

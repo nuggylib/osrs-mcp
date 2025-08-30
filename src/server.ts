@@ -1,18 +1,49 @@
 import { transports } from './proxy/cache';
 import proxyServer from './proxy/server';
+import https from 'https';
+import http from 'http';
+import fs from 'fs';
 
 import './tools'
 import './resources'
 
 const MCP_PORT = 3000
 
-proxyServer.listen(MCP_PORT, (error) => {
-	if (error) {
-		console.error('Failed to start server:', error);
-		process.exit(1);
+if (process.env.NODE_ENV === 'production') {
+	// Production HTTPS (self-signed certs from mounted volume)
+	try {
+		const options = {
+			key: fs.readFileSync('/app/certs/server.key'),
+			cert: fs.readFileSync('/app/certs/server.crt'),
+		};
+		https.createServer(options, proxyServer).listen(MCP_PORT, () => {
+			console.log(`HTTPS Server running on port ${MCP_PORT}`);
+		});
+	} catch (error) {
+		console.error('Failed to load certificates:', error);
+		// Fallback to HTTP if certs don't exist
+		http.createServer(proxyServer).listen(MCP_PORT, () => {
+			console.log(`HTTP Server running on port ${MCP_PORT}`);
+		});
 	}
-	console.log(`MCP Streamable HTTP Server listening on port ${MCP_PORT}`);
-});
+} else {
+	// Development HTTPS (self-signed)
+	try {
+		const options = {
+			key: fs.readFileSync('./certs/server.key'),
+			cert: fs.readFileSync('./certs/server.crt'),
+		};
+		https.createServer(options, proxyServer).listen(MCP_PORT, () => {
+			console.log(`HTTPS Server running on https://localhost:${MCP_PORT}`);
+		});
+	} catch {
+		// Fallback to HTTP if certs don't exist
+		http.createServer(proxyServer).listen(MCP_PORT, () => {
+			console.log(`HTTP Server running on http://localhost:${MCP_PORT}`);
+		});
+	}
+}
+
 // Handle server shutdown
 process.on('SIGINT', async () => {
 	console.log('Shutting down server...');
