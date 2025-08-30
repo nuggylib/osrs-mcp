@@ -3,6 +3,13 @@ import cors from 'cors'
 import { mcpPostHandler } from './routes/MCPPostHandler';
 import { mcpGetHandler } from './routes/MCPGetHandler';
 import { mcpDeleteHandler } from './routes/MCPDeleteHandler';
+import {
+	getAuthorizationServerMetadata,
+	registerClient,
+	authorize,
+	token,
+	authenticateToken,
+} from '../auth/oauth';
 
 const app = express()
 
@@ -27,7 +34,10 @@ const corsOptions = {
 			'127.0.0.1',
 			'::1',
 			// Allow Docker host machine access for MCP Inspector
-			'host.docker.internal'
+			'host.docker.internal',
+			// Allow Claude.ai for custom connectors
+			'claude.ai',
+			'www.claude.ai',
 		];
 
 		if (allowedOrigins.includes(originHostname)) {
@@ -38,31 +48,30 @@ const corsOptions = {
 		}
 	},
 	methods: ['GET', 'POST', 'DELETE'],
-	allowedHeaders: ['Content-Type', 'mcp-session-id', 'last-event-id'],
-	credentials: false
+	allowedHeaders: ['Content-Type', 'mcp-session-id', 'last-event-id', 'Authorization'],
+	credentials: true,
 };
 
 // Apply CORS globally for DNS rebinding protection
 app.use(cors(corsOptions));
 
-// Add JSON body parsing middleware
+// Add JSON body parsing middleware and URL encoding
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-// TODO: Uncomment if/when we support OAuth
-// if (useOAuth && authMiddleware) {
-// 	app.post('/mcp', authMiddleware, mcpPostHandler);
-//	app.get('/mcp', authMiddleware, mcpGetHandler);
-//	app.delete('/mcp', authMiddleware, mcpDeleteHandler);
-// }
-// else {
-//	app.post('/mcp', mcpPostHandler);
-//	app.get('/mcp', mcpGetHandler);
-//	app.delete('/mcp', mcpDeleteHandler);
-// }
+// OAuth Server Metadata endpoint (RFC 8414)
+app.get('/.well-known/oauth-authorization-server', (req, res) => {
+	res.json(getAuthorizationServerMetadata());
+});
 
-// TODO: Remove these lines once the conditional OAuth code is uncommented and in-use
-app.post('/mcp', mcpPostHandler);
-app.get('/mcp', mcpGetHandler);
-app.delete('/mcp', mcpDeleteHandler);
+// OAuth endpoints
+app.post('/register', registerClient);
+app.get('/authorize', authorize);
+app.post('/token', token);
+
+// MCP endpoints with OAuth protection
+app.post('/mcp', authenticateToken, mcpPostHandler);
+app.get('/mcp', authenticateToken, mcpGetHandler);
+app.delete('/mcp', authenticateToken, mcpDeleteHandler);
 
 export default app;

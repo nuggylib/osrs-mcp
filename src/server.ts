@@ -7,24 +7,31 @@ import fs from 'fs';
 import './tools'
 import './resources'
 
-const MCP_PORT = 3000
+const MCP_PORT = process.env.PORT || 3000
 
 if (process.env.NODE_ENV === 'production') {
-	// Production HTTPS (self-signed certs from mounted volume)
-	try {
-		const options = {
-			key: fs.readFileSync('/app/certs/server.key'),
-			cert: fs.readFileSync('/app/certs/server.crt'),
-		};
-		https.createServer(options, proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
-			console.log(`HTTPS Server running on https://0.0.0.0:${MCP_PORT}`);
-		});
-	} catch (error) {
-		console.error('Failed to load certificates:', error);
-		// Fallback to HTTP if certs don't exist
+	// Production: Heroku handles HTTPS termination, we serve HTTP
+	if (process.env.HEROKU) {
 		http.createServer(proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
-			console.log(`HTTP Server running on http://0.0.0.0:${MCP_PORT}`);
+			console.log(`HTTP Server running on http://0.0.0.0:${MCP_PORT} (Heroku HTTPS termination)`);
 		});
+	} else {
+		// Other production environments with certs
+		try {
+			const options = {
+				key: fs.readFileSync('/app/certs/server.key'),
+				cert: fs.readFileSync('/app/certs/server.crt'),
+			};
+			https.createServer(options, proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
+				console.log(`HTTPS Server running on https://0.0.0.0:${MCP_PORT}`);
+			});
+		} catch (error) {
+			console.error('Failed to load certificates:', error);
+			// Fallback to HTTP if certs don't exist
+			http.createServer(proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
+				console.log(`HTTP Server running on http://0.0.0.0:${MCP_PORT}`);
+			});
+		}
 	}
 } else {
 	// Development HTTPS (self-signed)
