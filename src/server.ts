@@ -7,7 +7,7 @@ import fs from 'fs';
 import './tools'
 import './resources'
 
-const MCP_PORT = process.env.PORT || 3000
+const MCP_PORT = parseInt(process.env.PORT || '3000', 10)
 
 if (process.env.NODE_ENV === 'production') {
 	// Production: Heroku handles HTTPS termination, we serve HTTP
