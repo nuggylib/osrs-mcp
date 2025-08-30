@@ -16,14 +16,14 @@ if (process.env.NODE_ENV === 'production') {
 			key: fs.readFileSync('/app/certs/server.key'),
 			cert: fs.readFileSync('/app/certs/server.crt'),
 		};
-		https.createServer(options, proxyServer).listen(MCP_PORT, () => {
-			console.log(`HTTPS Server running on port ${MCP_PORT}`);
+		https.createServer(options, proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
+			console.log(`HTTPS Server running on https://0.0.0.0:${MCP_PORT}`);
 		});
 	} catch (error) {
 		console.error('Failed to load certificates:', error);
 		// Fallback to HTTP if certs don't exist
-		http.createServer(proxyServer).listen(MCP_PORT, () => {
-			console.log(`HTTP Server running on port ${MCP_PORT}`);
+		http.createServer(proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
+			console.log(`HTTP Server running on http://0.0.0.0:${MCP_PORT}`);
 		});
 	}
 } else {
@@ -33,13 +33,13 @@ if (process.env.NODE_ENV === 'production') {
 			key: fs.readFileSync('./certs/server.key'),
 			cert: fs.readFileSync('./certs/server.crt'),
 		};
-		https.createServer(options, proxyServer).listen(MCP_PORT, () => {
-			console.log(`HTTPS Server running on https://localhost:${MCP_PORT}`);
+		https.createServer(options, proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
+			console.log(`HTTPS Server running on https://0.0.0.0:${MCP_PORT}`);
 		});
 	} catch {
 		// Fallback to HTTP if certs don't exist
-		http.createServer(proxyServer).listen(MCP_PORT, () => {
-			console.log(`HTTP Server running on http://localhost:${MCP_PORT}`);
+		http.createServer(proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
+			console.log(`HTTP Server running on http://0.0.0.0:${MCP_PORT}`);
 		});
 	}
 }

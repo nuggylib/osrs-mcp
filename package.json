@@ -5,14 +5,16 @@
     "build": "docker build -t osrs-mcp:latest .",
     "docker:run": "docker run -it --rm osrs-mcp:latest",
     "docker:shell": "docker run -it --rm osrs-mcp:latest sh",
-    "inspector": "NODE_TLS_REJECT_UNAUTHORIZED=0 DANGEROUSLY_OMIT_AUTH=true npx @modelcontextprotocol/inspector@latest https://localhost:3000",
+    "inspector": "NODE_TLS_REJECT_UNAUTHORIZED=0 npx @modelcontextprotocol/inspector@latest https://localhost:3000",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.4",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "axios": "^1.11.0",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "tsx": "^4.20.4",
     "typescript": "^5.9.2",

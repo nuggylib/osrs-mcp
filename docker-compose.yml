@@ -10,7 +10,9 @@ services:
       - NODE_ENV=production
       - ALLOW_MCP_INSPECTOR=true
     ports:
-      - "3000:3000"
+      # Bind to localhost only on host machine for security - prevents external network access
+      # while allowing MCP Inspector and local clients to connect via Docker port forwarding
+      - "127.0.0.1:3000:3000"
     volumes:
       - ./config:/app/config:ro
       - ./fixtures:/app/fixtures:ro

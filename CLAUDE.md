@@ -11,6 +11,7 @@
 - `docker-compose up -d --build` builds the MCP server and starts up the containers described in `docker-compose.yml`.
 	- `-d` flag means "detached" and runs the containers in the background.
 	- `--build` instructs Docker to build the `Dockerfile`.
+- `yarn inspector` starts the MCP Inspector, useful for debugging.
 - `docker-compose down` stops all containers that were started via the `docker-compose up` command.
 
 # Repository Etiquette

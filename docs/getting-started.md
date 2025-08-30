@@ -12,17 +12,43 @@ The MCP Server requires SSL certificates in order to run since it uses HTTPS. To
 `cd` into (or create) a `certs/` directory at the project root. Then:
 
 ```sh
+# Create OpenSSL configuration file with Subject Alternative Names
+cat > openssl.conf << EOF
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+C = US
+ST = State
+L = City
+O = Organization
+CN = localhost
+
+[v3_req]
+keyUsage = keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = localhost
+DNS.2 = *.localhost
+IP.1 = 127.0.0.1
+IP.2 = ::1
+EOF
+
 # Generate private key
 openssl genrsa -out server.key 2048
 
-# Generate certificate signing request
-openssl req -new -key server.key -out server.csr -subj "/C=US/ST=State/L=City/O=Organization/CN=localhost"
+# Generate certificate signing request with SAN config
+openssl req -new -key server.key -out server.csr -config openssl.conf
 
-# Generate self-signed certificate (valid for 365 days)
-openssl x509 -req -in server.csr -signkey server.key -out server.crt -days 365
+# Generate self-signed certificate with SANs (valid for 365 days)
+openssl x509 -req -in server.csr -signkey server.key -out server.crt -days 365 -extensions v3_req -extfile openssl.conf
 
-# Clean up CSR file
-rm server.csr
+# Clean up temporary files
+rm server.csr openssl.conf
 ```
 
 > **IMPORTANT**: Do not commit the root `.certs/` folder
