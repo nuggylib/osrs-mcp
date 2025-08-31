@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AuthCode } from '../../types/auth';
+import { AuthCode, OAuthClient } from '../../types/auth';
 import { generateSecureToken } from '../util/helpers';
 import { clients, authCodes } from '../cache/inMemoryStore';
 
@@ -48,12 +48,12 @@ export const authorizeGetHandler = (req: Request, res: Response) => {
 	console.log('CLIENT_ID: ', client_id)
 	// Validate client
 	let client = clients.get(client_id);
-	
+
 	// Auto-register unknown clients (handles cases where storage was cleared)
 	// This is safe because we still validate all OAuth parameters
 	if (!client && client_id && redirect_uri) {
 		console.log('Auto-registering client due to missing registration:', client_id);
-		
+
 		const autoRegisteredClient: OAuthClient = {
 			client_id,
 			client_secret: undefined, // Public client using PKCE
@@ -63,11 +63,11 @@ export const authorizeGetHandler = (req: Request, res: Response) => {
 			client_name: 'Auto-registered Client',
 			created_at: Date.now(),
 		};
-		
+
 		clients.set(client_id, autoRegisteredClient);
 		client = autoRegisteredClient;
 	}
-	
+
 	if (!client) {
 		return res.status(400).json({
 			error: 'invalid_client',
