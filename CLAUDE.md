@@ -25,11 +25,7 @@ This server now supports OAuth 2.1 authentication and can be deployed as a Custo
 - Secure token-based authentication for all MCP endpoints
 
 ## Deployment
-See `DEPLOYMENT.md` for complete deployment instructions including:
-- Environment configuration
-- SSL certificate setup
-- Public deployment options
-- Custom Connector registration in Claude
+See `./docs/deployment.md` for complete deployment instructions.
 
 # Repository Etiquette
 - ALWAYS use `yarn`, NEVER `npm`.
