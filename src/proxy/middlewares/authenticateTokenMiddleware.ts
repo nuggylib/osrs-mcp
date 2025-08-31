@@ -13,6 +13,7 @@ export const authenticateTokenMiddleware = (req: Request, res: Response, next: N
 	}
 
 	const token = authHeader.slice(7); // Remove 'Bearer ' prefix
+	console.log('TOKEN: ', token)
 	const tokenData = tokens.get(token);
 
 	if (!tokenData) {

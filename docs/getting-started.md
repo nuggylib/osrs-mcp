@@ -60,8 +60,45 @@ rm server.csr openssl.conf
 
 ## Testing
 
+### Pre-requisites
+Before testing the MCP Inspector, you'll need to:
+- Generate a `client_id` and `client_secret`
+- Use the `client_id` and `client_secret` to obtain a `Bearer` token
+
+#### Getting the `client_id` and `client_secret`
+Use the following command to obtain a response from the server that contains the `client_id` and 
+`client_secret`:
+```sh
+curl -X POST https://localhost:3000/register \
+    -H "Content-Type: application/json" \
+    -d '{
+      "redirect_uris": ["http://localhost:6274/oauth/callback"],
+      "client_name": "MCP Inspector",
+      "grant_types": ["authorization_code", "client_credentials"]
+    }'
+```
+* This will return a JSON object containing the fields you need
+
+#### Getting the Bearer Token
+Once you have the `client_id` and `client_secret`, you need to request an access token:
+```sh
+curl -X POST https://localhost:3000/token \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -d "grant_type=client_credentials&client_id=<CLIENT_ID>&client_secret=<CLIENT_SECRET>"
+```
+- Replace `<CLIENT_ID>` with your actual client ID
+- Replace `<CLIENT_SECRET>` with your actual client secret
+
+The response object contains the access token to use with the `Bearer` Authorization header.
+
+### Testing steps
+Once you have the bearer token:
 1. Run `docker-compose up -d`
 2. Check the Docker Container logs to get the full URL to the inspector
 	* It will look something like this: `http://0.0.0.0:6274/?MCP_PROXY_AUTH_TOKEN=<SOME_TOKEN>`
-3. Set the URL field to `http://osrs-mcp:3000/mcp`
-4. Click "Connect" and then test as needed
+3. Set the URL field to `https://127.0.0.1:3000/mcp`
+4. Expand the "Authentication" section
+5. In the "Header Name" field, set the value to `Authorization`
+6. In the Bearer Token field, paste the token from the pre-requisites (include the "Bearer " prefix)
+7. In the "Client ID" field, paste the `client_id` value
+8. Click "Connect" and then test as needed

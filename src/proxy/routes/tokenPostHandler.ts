@@ -67,6 +67,7 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 		};
 
 		tokens.set(access_token, tokenData);
+		console.log('SET TOKEN DATA: ', tokenData)
 		authCodes.delete(code); // One-time use
 
 		return res.json({
