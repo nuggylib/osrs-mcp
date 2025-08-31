@@ -12,9 +12,7 @@ export const authenticateTokenMiddleware = (req: Request, res: Response, next: N
 		});
 	}
 
-	console.log('AUTH HEADER: ', authHeader)
 	const token = authHeader.slice(7); // Remove 'Bearer ' prefix
-	console.log('TOKEN: ', token)
 	const tokenData = tokens.get(token);
 
 	if (!tokenData) {
