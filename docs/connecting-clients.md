@@ -4,10 +4,11 @@ Since this server is setup to function using the
 applications, such as Claude Desktop, as though it were a remote MCP Server, even if
 you're running it locally on your machine.
 
-## [Connecting to Remote MCP Servers](https://modelcontextprotocol.io/docs/tutorials/use-remote-mcp-server)
-Follow the documentation in this section heading link to see the full information
-on connecting to a remote MCP Server.
+## Connecting to a Heroku Instance
 
-In summary:
-- If using Claude, connect to a remote MCP Server using a **Custom Connector**
-- Your MCP Server _MUST_ use `https://`
+### Claude Desktop
+1. Open "Settings" > "Connectors"
+2. Click "Add a Custom Connector"
+3. Set the name to whatever you'd like
+4. Set the URL to `https://<SOME_APP_IDENTIFIER>.herokuapp.com/mcp`
+5. Click "Connect"

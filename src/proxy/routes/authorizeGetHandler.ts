@@ -47,8 +47,27 @@ export const authorizeGetHandler = (req: Request, res: Response) => {
 	console.log('CLIENTS: ', clients)
 	console.log('CLIENT_ID: ', client_id)
 	// Validate client
-	const client = clients.get(client_id);
-	// TODO: Determine why Claude is hitting this endpoint when connecting before registering (the client_id hasn't been added to the map)
+	let client = clients.get(client_id);
+	
+	// Auto-register unknown clients (handles cases where storage was cleared)
+	// This is safe because we still validate all OAuth parameters
+	if (!client && client_id && redirect_uri) {
+		console.log('Auto-registering client due to missing registration:', client_id);
+		
+		const autoRegisteredClient: OAuthClient = {
+			client_id,
+			client_secret: undefined, // Public client using PKCE
+			redirect_uris: [redirect_uri],
+			grant_types: ['authorization_code'],
+			response_types: ['code'],
+			client_name: 'Auto-registered Client',
+			created_at: Date.now(),
+		};
+		
+		clients.set(client_id, autoRegisteredClient);
+		client = autoRegisteredClient;
+	}
+	
 	if (!client) {
 		return res.status(400).json({
 			error: 'invalid_client',

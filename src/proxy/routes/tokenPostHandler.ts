@@ -87,9 +87,11 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 
 		const client = clients.get(client_id);
 		if (!client) {
+			console.error('Token exchange failed - unknown client_id:', client_id);
+			console.log('Available clients:', Array.from(clients.keys()));
 			return res.status(401).json({
 				error: 'invalid_client',
-				error_description: 'Unknown client',
+				error_description: 'Unknown client. Client may need to re-authorize.',
 			});
 		}
 
