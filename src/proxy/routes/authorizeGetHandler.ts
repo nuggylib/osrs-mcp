@@ -44,8 +44,11 @@ export const authorizeGetHandler = (req: Request, res: Response) => {
 		});
 	}
 
+	console.log('CLIENTS: ', clients)
+	console.log('CLIENT_ID: ', client_id)
 	// Validate client
 	const client = clients.get(client_id);
+	// TODO: Determine why Claude is hitting this endpoint when connecting (this didn't happen before)
 	if (!client) {
 		return res.status(400).json({
 			error: 'invalid_client',
