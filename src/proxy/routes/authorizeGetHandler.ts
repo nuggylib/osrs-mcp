@@ -48,7 +48,7 @@ export const authorizeGetHandler = (req: Request, res: Response) => {
 	console.log('CLIENT_ID: ', client_id)
 	// Validate client
 	const client = clients.get(client_id);
-	// TODO: Determine why Claude is hitting this endpoint when connecting (this didn't happen before)
+	// TODO: Determine why Claude is hitting this endpoint when connecting before registering (the client_id hasn't been added to the map)
 	if (!client) {
 		return res.status(400).json({
 			error: 'invalid_client',
