@@ -69,4 +69,5 @@ Then, expand the "Authentication" dropdown and set the following configurations:
 - **Redirect URL**: _Not editable._
 - **Scope**: _Leave blank._
 
-Once you have all of the values set correctly, click "Connect" and you're ready to test!
+Once you have all of the values set correctly, click "Connect" and you're ready to test! When
+it comes to knowing what to look for in testing, please review the [Debugging document](./debugging.md).
