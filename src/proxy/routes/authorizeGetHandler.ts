@@ -44,8 +44,6 @@ export const authorizeGetHandler = (req: Request, res: Response) => {
 		});
 	}
 
-	console.log('CLIENTS: ', clients)
-	console.log('CLIENT_ID: ', client_id)
 	// Validate client
 	let client = clients.get(client_id);
 
