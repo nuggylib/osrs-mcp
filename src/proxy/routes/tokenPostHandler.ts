@@ -108,7 +108,7 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 		const tokenData: OAuthToken = {
 			access_token,
 			token_type: 'Bearer',
-			expires_at: Date.now() + (60 * 60 * 1000), // 1 hour
+			expires_at: setTokenExpiration(0, 7),
 			client_id,
 			scope: 'osrs:read',
 		};
