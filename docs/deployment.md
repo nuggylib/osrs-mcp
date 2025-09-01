@@ -9,7 +9,9 @@ origin that you push changes to.
 
 1. Install the `heroku` CLI.
 2. Run `heroku login`.
-3. Once logged in, push changes to the app via `git push heroku <branch>`
+3. Once logged in, push changes to the app via `git push heroku <branch>`.
+4. Wait for the build to run and ensure there were no errors.
+5. Test as-needed.
 
 ### Overriding branch changes
 You can push a branch's changes to another branch, overridding the changes there with whatever
