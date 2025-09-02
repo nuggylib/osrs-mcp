@@ -61,7 +61,7 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 		const tokenData: OAuthToken = {
 			access_token,
 			token_type: 'Bearer',
-			expires_at: setTokenExpiration(0, 7),
+			expires_at: Date.now() + setTokenExpiration(0, 7),
 			client_id,
 			scope: authCode.scope,
 		};
@@ -72,7 +72,7 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 		return res.json({
 			access_token,
 			token_type: 'Bearer',
-			expires_in: 3600,
+			expires_in: setTokenExpiration(0, 7),
 			scope: authCode.scope,
 		});
 
@@ -108,7 +108,7 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 		const tokenData: OAuthToken = {
 			access_token,
 			token_type: 'Bearer',
-			expires_at: setTokenExpiration(0, 7),
+			expires_at: Date.now() + setTokenExpiration(0, 7),
 			client_id,
 			scope: 'osrs:read',
 		};
@@ -118,7 +118,7 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 		return res.json({
 			access_token,
 			token_type: 'Bearer',
-			expires_in: 3600,
+			expires_in: setTokenExpiration(0, 7),
 			scope: 'osrs:read',
 		});
 	}

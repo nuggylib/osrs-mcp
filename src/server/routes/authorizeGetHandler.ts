@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthCode, OAuthClient } from '../../types/auth';
-import { generateSecureToken } from '../util/helpers';
+import { generateSecureToken, setTokenExpiration } from '../util/helpers';
 import { clients, authCodes } from '../cache/inMemoryStore';
 
 // Authorization Endpoint
@@ -89,7 +89,7 @@ export const authorizeGetHandler = (req: Request, res: Response) => {
 		redirect_uri,
 		code_challenge,
 		code_challenge_method: 'S256',
-		expires_at: Date.now() + (10 * 60 * 1000), // 10 minutes
+		expires_at: Date.now() + setTokenExpiration(0, 7),
 		scope: typeof scope === 'string' ? scope : undefined,
 	};
 
