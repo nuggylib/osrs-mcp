@@ -1,10 +1,7 @@
 import express from 'express'
 import cors from 'cors'
-import { mcpPostHandler } from './routes/MCPPostHandler';
-import { mcpGetHandler } from './routes/MCPGetHandler';
-import { mcpDeleteHandler } from './routes/MCPDeleteHandler';
+import { mcpPostHandler, mcpGetHandler, mcpDeleteHandler, authorizeGetHandler, registerClientPostHandler, tokenPostHandler } from './routes';
 import { getAuthorizationServerMetadata } from './util/getAuthorizationServerMetadata';
-import { authorizeGetHandler, registerClientPostHandler, tokenPostHandler } from './routes';
 import { authenticateTokenMiddleware } from './middlewares';
 
 const app = express()

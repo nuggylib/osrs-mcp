@@ -10,8 +10,8 @@
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "build": "tsc --outDir build",
-    "start": "node build/server.js",
-    "dev": "tsx src/server.ts"
+    "start": "node build/index.js",
+    "dev": "tsx src/index.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.4",

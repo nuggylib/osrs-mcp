@@ -1,5 +1,5 @@
-import { transports } from './proxy/cache/cache';
-import proxyServer from './proxy/server';
+import { transports } from './server/cache/cache';
+import proxyServer from './server'
 import https from 'https';
 import http from 'http';
 import fs from 'fs';
@@ -68,3 +68,4 @@ process.on('SIGINT', async () => {
 	console.log('Server shutdown complete');
 	process.exit(0);
 });
+
