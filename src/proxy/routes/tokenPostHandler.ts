@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { OAuthToken } from '../../types/auth';
-import { validatePKCE, generateSecureToken } from '../util/helpers';
+import { validatePKCE, generateSecureToken, setTokenExpiration } from '../util/helpers';
 import { authCodes, tokens, clients } from '../cache/inMemoryStore';
 
 // Token Endpoint
@@ -61,7 +61,7 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 		const tokenData: OAuthToken = {
 			access_token,
 			token_type: 'Bearer',
-			expires_at: Date.now() + (60 * 60 * 1000), // 1 hour
+			expires_at: setTokenExpiration(0, 7),
 			client_id,
 			scope: authCode.scope,
 		};
@@ -108,7 +108,7 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 		const tokenData: OAuthToken = {
 			access_token,
 			token_type: 'Bearer',
-			expires_at: Date.now() + (60 * 60 * 1000), // 1 hour
+			expires_at: setTokenExpiration(0, 7),
 			client_id,
 			scope: 'osrs:read',
 		};
