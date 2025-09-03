@@ -7,11 +7,12 @@ At the moment, the only way to deploy the OSRS MCP server is to do so manually. 
 the process is very simple. You can think of Heroku apps as pretty much the same as a git
 origin that you push changes to.
 
-1. Install the `heroku` CLI.
+1. Install the [`heroku` CLI](https://devcenter.heroku.com/articles/heroku-cli).
 2. Run `heroku login`.
-3. Once logged in, push changes to the app via `git push heroku <branch>`.
-4. Wait for the build to run and ensure there were no errors.
-5. Test as-needed.
+3. After you log in, run `heroku git:remote -a osrs-mcp` to link to the `osrc-mcp` app. See [Heroku's docs on deploying with git](https://devcenter.heroku.com/articles/git).
+4. You can now push changes to the app using `git push heroku <branch>`.
+5. Wait for the build to run and ensure there were no errors.
+6. Test as-needed.
 
 ### Overriding branch changes
 You can push a branch's changes to another branch, overridding the changes there with whatever
