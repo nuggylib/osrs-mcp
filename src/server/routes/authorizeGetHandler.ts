@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { AuthCode, OAuthClient } from '../../types/auth';
 import { generateSecureToken, setTokenExpiration } from '../util/helpers';
-import { clients, authCodes } from '../cache/inMemoryStore';
+import { redisClients, redisAuthCodes } from '../cache/redisStore';
 
 // Authorization Endpoint
-export const authorizeGetHandler = (req: Request, res: Response) => {
+export const authorizeGetHandler = async (req: Request, res: Response) => {
 	const {
 		response_type,
 		client_id,
@@ -45,7 +45,7 @@ export const authorizeGetHandler = (req: Request, res: Response) => {
 	}
 
 	// Validate client
-	let client = clients.get(client_id);
+	let client = await redisClients.get(client_id);
 
 	// Auto-register unknown clients (handles cases where storage was cleared)
 	// This is safe because we still validate all OAuth parameters
@@ -62,7 +62,7 @@ export const authorizeGetHandler = (req: Request, res: Response) => {
 			created_at: Date.now(),
 		};
 
-		clients.set(client_id, autoRegisteredClient);
+		await redisClients.set(client_id, autoRegisteredClient);
 		client = autoRegisteredClient;
 	}
 
@@ -93,7 +93,7 @@ export const authorizeGetHandler = (req: Request, res: Response) => {
 		scope: typeof scope === 'string' ? scope : undefined,
 	};
 
-	authCodes.set(code, authCode);
+	await redisAuthCodes.set(code, authCode);
 
 	// In a real implementation, you would show a consent screen here
 	// For simplicity, we'll auto-approve for OSRS wiki access

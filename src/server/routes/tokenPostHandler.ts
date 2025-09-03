@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { OAuthToken } from '../../types/auth';
 import { validatePKCE, generateSecureToken, setTokenExpiration } from '../util/helpers';
-import { authCodes, tokens, clients } from '../cache/inMemoryStore';
+import { redisAuthCodes, redisTokens, redisClients } from '../cache/redisStore';
 
 // Token Endpoint
-export const tokenPostHandler = (req: Request, res: Response) => {
+export const tokenPostHandler = async (req: Request, res: Response) => {
 	const {
 		grant_type,
 		code,
@@ -23,7 +23,7 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 			});
 		}
 
-		const authCode = authCodes.get(code);
+		const authCode = await redisAuthCodes.get(code);
 		if (!authCode) {
 			return res.status(400).json({
 				error: 'invalid_grant',
@@ -33,7 +33,7 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 
 		// Check expiration
 		if (authCode.expires_at < Date.now()) {
-			authCodes.delete(code);
+			await redisAuthCodes.delete(code);
 			return res.status(400).json({
 				error: 'invalid_grant',
 				error_description: 'Authorization code expired',
@@ -66,8 +66,8 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 			scope: authCode.scope,
 		};
 
-		tokens.set(access_token, tokenData);
-		authCodes.delete(code); // One-time use
+		await redisTokens.set(access_token, tokenData);
+		await redisAuthCodes.delete(code); // One-time use
 
 		return res.json({
 			access_token,
@@ -85,10 +85,10 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 			});
 		}
 
-		const client = clients.get(client_id);
+		const client = await redisClients.get(client_id);
 		if (!client) {
 			console.error('Token exchange failed - unknown client_id:', client_id);
-			console.log('Available clients:', Array.from(clients.keys()));
+			// Client not found in Redis
 			return res.status(401).json({
 				error: 'invalid_client',
 				error_description: 'Unknown client. Client may need to re-authorize.',
@@ -113,7 +113,7 @@ export const tokenPostHandler = (req: Request, res: Response) => {
 			scope: 'osrs:read',
 		};
 
-		tokens.set(access_token, tokenData);
+		await redisTokens.set(access_token, tokenData);
 
 		return res.json({
 			access_token,

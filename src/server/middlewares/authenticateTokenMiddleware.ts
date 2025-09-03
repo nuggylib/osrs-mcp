@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { tokens } from '../cache/inMemoryStore';
+import { redisTokens } from '../cache/redisStore';
 
 // Authentication middleware
-export const authenticateTokenMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const authenticateTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 	const authHeader = req.headers.authorization;
 
 	if (!authHeader?.startsWith('Bearer ')) {
@@ -13,7 +13,7 @@ export const authenticateTokenMiddleware = (req: Request, res: Response, next: N
 	}
 
 	const token = authHeader.slice(7); // Remove 'Bearer ' prefix
-	const tokenData = tokens.get(token);
+	const tokenData = await redisTokens.get(token);
 
 	if (!tokenData) {
 		return res.status(401).json({
@@ -23,7 +23,7 @@ export const authenticateTokenMiddleware = (req: Request, res: Response, next: N
 	}
 
 	if (tokenData.expires_at < Date.now()) {
-		tokens.delete(token);
+		await redisTokens.delete(token);
 		return res.status(401).json({
 			error: 'invalid_token',
 			error_description: 'Token expired',

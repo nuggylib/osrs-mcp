@@ -1,4 +1,5 @@
 import { transports } from './server/cache/cache';
+import { redis } from './server/cache/redisStore';
 import proxyServer from './server'
 import https from 'https';
 import http from 'http';
@@ -64,6 +65,13 @@ process.on('SIGINT', async () => {
 		catch (error) {
 			console.error(`Error closing transport for session ${sessionId}:`, error);
 		}
+	}
+	// Close Redis connection
+	try {
+		await redis.quit();
+		console.log('Redis connection closed');
+	} catch (error) {
+		console.error('Error closing Redis connection:', error);
 	}
 	console.log('Server shutdown complete');
 	process.exit(0);
