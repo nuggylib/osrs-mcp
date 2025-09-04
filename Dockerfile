@@ -36,4 +36,4 @@ COPY --from=builder /app/build ./build
 EXPOSE 3000
 
 # Start the MCP server
-CMD ["node", "build/server.js"]
+CMD ["node", "build/index.js"]

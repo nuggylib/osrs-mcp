@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { isValidRedirectUri, generateSecureToken } from '../util/helpers';
 import { OAuthClient } from '../../types/auth';
-import { clients } from '../cache/inMemoryStore';
+import { redisClients } from '../cache/redisStore';
 
 // Dynamic Client Registration (RFC 7591)
-export const registerClientPostHandler = (req: Request, res: Response) => {
+export const registerClientPostHandler = async (req: Request, res: Response) => {
 	const {
 		redirect_uris,
 		grant_types = ['authorization_code'],
@@ -44,7 +44,7 @@ export const registerClientPostHandler = (req: Request, res: Response) => {
 		created_at: Date.now(),
 	};
 
-	clients.set(client_id, client);
+	await redisClients.set(client_id, client);
 
 	res.json({
 		client_id,

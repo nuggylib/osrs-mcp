@@ -29,5 +29,5 @@ export const setTokenExpiration = (hours: number, days: number) => {
 	const oneHour = (60 * 60 * 1000)
 	const totalHours = oneHour * hours
 	const totalDays = (24 * oneHour) * days
-	return Date.now() + totalHours + totalDays
+	return totalHours + totalDays
 }
