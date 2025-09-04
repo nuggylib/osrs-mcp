@@ -18,6 +18,9 @@ In order to test the server in _any_ setting (local or deployment), you must fir
 
 This is a two-step process.
 
+> [!TIP]
+> Use the `yarn test:deployment` command to automatically complete this two-step process. It accepts a deployment URL (`BASE_URL`)as an argument.
+
 #### Step 1 - Register with the MCP Server
 
 Run the following command to register with the server. Make sure to replace `<BASE_URL>` with the actual base URL of your MCP server. If it's deployed, use the appropriate Heroku deployment URL.
