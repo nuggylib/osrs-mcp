@@ -2,14 +2,16 @@
 
 This guide will walk you through building, running, and testing the OSRS MCP Server as a containerized application.
 
+> **NOTE**: If you are using the Heroku deployment of the OSRS MCP server, please refer to the [Connecting MCP Clients](./connecting-clients.md) document for instructions on how to connect your MCP clients to the deployed server. You don't need to generate self-signed certificates in this case.
+
 ## Prerequisites
 
-- Docker installed on your system
-- Docker Compose (optional, for docker-compose deployment)
+- Docker installed on your system.
+- Docker Compose (optional, for `docker-compose` deployment).
 
 ## Generating Self-Signed Certificates
-The MCP Server requires SSL certificates in order to run since it uses HTTPS. To do this, first
-`cd` into (or create) a `certs/` directory at the project root. Then:
+
+The MCP server requires SSL certificates in order to run since it uses HTTPS. To do this, first `cd` into (or create) a `certs/` directory at the project root. Then:
 
 ```sh
 # Create OpenSSL configuration file with Subject Alternative Names
@@ -51,12 +53,13 @@ openssl x509 -req -in server.csr -signkey server.key -out server.crt -days 365 -
 rm server.csr openssl.conf
 ```
 
-> **IMPORTANT**: Do not commit the root `.certs/` folder
+> **IMPORTANT**: Do not commit the root `.certs/` folder.
 
 ## Building
 
 - `yarn build` to build the Docker image.
-- `docker-compose up -d --build` to build and start the MCP server
+- `docker-compose up -d --build` to build and start the MCP server.
 
 ## Testing
-See the [Testing document](./testing.md) for detailed testing information.
+
+See [Testing](./testing.md) for detailed testing information.
