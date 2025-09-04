@@ -57,7 +57,12 @@ app.use(express.urlencoded({ extended: true }))
 
 // OAuth Server Metadata endpoint (RFC 8414)
 app.get('/.well-known/oauth-authorization-server', (req, res) => {
-	res.json(getAuthorizationServerMetadata());
+	// Extract base URL from request for dynamic deployments
+	const protocol = req.get('x-forwarded-proto') || req.protocol;
+	const host = req.get('host');
+	const baseUrl = `${protocol}://${host}`;
+	
+	res.json(getAuthorizationServerMetadata(baseUrl));
 });
 
 // OAuth endpoints
