@@ -7,5 +7,5 @@
 	"level": "The Prayer level at which this Prayer is unlocked.",
 	"drain": "The drain rate at which this Prayer drains the player's Prayer points.",
 	"effect": "The effect of this Prayer.",
-	"sound": "The name of the sound file (in *.ogg format) that the game plays when this Prayer is activated."
+	"sound": "The name of the .ogg file that plays in-game when the Prayer is activated."
 }
