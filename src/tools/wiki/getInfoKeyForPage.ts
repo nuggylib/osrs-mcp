@@ -39,7 +39,9 @@ export async function getInfoKeyValueForPage(
 server.registerTool(
 	'get_osrs_wiki_page_info_by_key',
 	{
-		description: 'Use this to get the value for a given info key on the given page name in the OSRS Wiki.',
+		description: 'Keys represent crucial data points for a topic. Use this to get the value for a \
+		given info key on the given page name in the OSRS Wiki. Use the appropriate Info Keys resource \
+		JSON file to gain context on what a given key represents.',
 		inputSchema: {
 			pageName: z.string().describe('The name of the page to get the links for.'),
 			key: z.string().describe('The name of the key to get value for.'),
