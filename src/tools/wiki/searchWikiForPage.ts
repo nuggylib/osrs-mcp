@@ -1,6 +1,7 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { searchWikiForTopicMatches } from '../../utils/osrsWiki';
 import { server } from '../../utils/mcpServer.js';
+import { loadPrompt } from '../../utils/promptLoader.js';
 import { z } from 'zod';
 
 /**
@@ -31,7 +32,7 @@ export async function searchWikiForPage(
 server.registerTool(
 	'search_osrs_wiki_for_topic',
 	{
-		description: 'Use whenever the user asks about an Old School RuneScape topic, or if the agent needs to gain further context on a topic to improve a response. Always defer to using the information from the wiki instead of potentially-outdated training data.',
+		description: loadPrompt('search.txt', __dirname),
 		inputSchema: {
 			topic: z.string().describe('The specific Old School RuneScape topic to search the Wiki for.'),
 		},

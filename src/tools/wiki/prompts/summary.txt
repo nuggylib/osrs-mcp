@@ -1,0 +1,5 @@
+Use this to get the summary for the page name in the OSRS Wiki. This is intended to be used after getting a page title from the search_osrs_wiki_for_topic tool, which ensures this tool is only used for pages that are known to exist. This tool takes precedence over the get_osrs_wiki_page_full_content tool; ALWAYS use this tool instead, unless there is not enough information contained in this tool's response.
+
+The summary provides a concise overview of the page content, typically including the most important information about the topic. For items, this usually includes basic stats and uses. For monsters, it covers combat level, notable drops, and locations. For quests, it provides requirements and rewards. For skills, it gives an overview of training methods and benefits.
+
+This tool is optimal for getting a quick understanding of a topic without retrieving the entire page content, which helps maintain efficiency and reduces unnecessary data transfer.
