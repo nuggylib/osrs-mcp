@@ -1,0 +1,64 @@
+name: Deploy to Heroku
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - production
+        - staging
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'production' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:deploy
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run tests before deployment
+        run: |
+          yarn lint
+          yarn build
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.13.15
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ vars.HEROKU_APP_NAME || 'osrs-mcp' }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: false
+          
+      - name: Verify deployment
+        run: |
+          sleep 30
+          curl -f https://${{ vars.HEROKU_APP_NAME || 'osrs-mcp' }}.herokuapp.com/health || exit 1
+
+      - name: Run post-deployment tests
+        run: yarn test:deployment "https://${{ vars.HEROKU_APP_NAME || 'osrs-mcp' }}.herokuapp.com"
