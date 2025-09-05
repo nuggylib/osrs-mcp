@@ -35,6 +35,9 @@ server.registerTool(
 		inputSchema: {
 			pageName: z.string().describe('The name of the page to get the categories for.'),
 		},
+		annotations: {
+			openWorldHint: true,
+		},
 	},
 	async ({ pageName }) => getCategoriesForPage(pageName),
 )

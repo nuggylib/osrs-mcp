@@ -37,6 +37,9 @@ server.registerTool(
 		inputSchema: {
 			pageName: z.string().describe('The name of the page to get the main image for.'),
 		},
+		annotations: {
+			openWorldHint: true,
+		},
 	},
 	async ({ pageName }) => getMainImageForPage(pageName),
 )

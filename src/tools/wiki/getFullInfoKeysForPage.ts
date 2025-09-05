@@ -34,6 +34,9 @@ server.registerTool(
 		inputSchema: {
 			pageName: z.string().describe('The name of the page to get the info for.'),
 		},
+		annotations: {
+			openWorldHint: true,
+		},
 	},
 	async ({ pageName }) => getFullInfoKeysForPage(pageName),
 )

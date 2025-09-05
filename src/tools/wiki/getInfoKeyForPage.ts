@@ -44,6 +44,9 @@ server.registerTool(
 			pageName: z.string().describe('The name of the page to get the links for.'),
 			key: z.string().describe('The name of the key to get value for.'),
 		},
+		annotations: {
+			openWorldHint: true,
+		},
 	},
 	async ({ pageName, key }) => getInfoKeyValueForPage(pageName, key),
 )

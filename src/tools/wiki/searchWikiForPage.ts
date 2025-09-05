@@ -35,6 +35,9 @@ server.registerTool(
 		inputSchema: {
 			topic: z.string().describe('The specific Old School RuneScape topic to search the Wiki for.'),
 		},
+		annotations: {
+			openWorldHint: true,
+		},
 	},
 	async ({ topic }) => searchWikiForPage(topic),
 );

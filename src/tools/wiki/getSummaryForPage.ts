@@ -33,6 +33,9 @@ server.registerTool(
 		inputSchema: {
 			pageName: z.string().describe('The name of the page to get the summary for.'),
 		},
+		annotations: {
+			openWorldHint: true,
+		},
 	},
 	async ({ pageName }) => getSummaryForPage(pageName),
 )
