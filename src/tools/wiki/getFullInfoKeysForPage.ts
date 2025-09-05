@@ -30,10 +30,10 @@ export async function getFullInfoKeysForPage(
 server.registerTool(
 	'get_osrs_wiki_page_info',
 	{
-		description: 'Every Page in the OSRS Wiki has info keys that represent crucial data points \
-		for the given Page. Each Page type (Monster, Skill, Item, etc.) share common keys. \
-		ALWAYS Use this to get the list of info keys for a given page. Use the appropriate Info Keys \
-		resource JSON file to gain context on what a given key represents.',
+		description: 'Every Page in the OSRS Wiki has info keys that represent crucial data points ' +
+			'for the given Page. Each Page type (Monster, Skill, Item, etc.) share common keys. ' +
+			'ALWAYS Use this to get the list of info keys for a given page. Use the appropriate Info Keys ' +
+			'resource JSON file to gain context on what a given key represents.',
 		inputSchema: {
 			pageName: z.string().describe('The name of the page to get the info for.'),
 		},
