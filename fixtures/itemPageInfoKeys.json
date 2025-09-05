@@ -12,7 +12,7 @@
 	"noteable": "A yes or no value indicating if this Item can be Noted.",
 	"options": "A comma-separated list of options for the Item when right-clicked while in the player's Inventory.",
 	"examine": "The text that appears in the chat when the player selects the 'Examine' option on the Item in-game.",
-	"value": "The in-game GP value for the Item that IS NOT determined by the Grand Exchange. This is often the NPC shop price for the Item.",
+	"value": "The in-game GP value for the Item that IS NOT determined by the Grand Exchange. This is the NPC shop price for the Item.",
 	"weight": "The weight, in kilograms, of the Item.",
 	"exchange": "A yes or no value indicating if this Item is listable on the Grand Exchange.",
 	"id": "The Item ID."
