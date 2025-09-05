@@ -1,3 +1,10 @@
 {
-  "outputStyle": "microsoft-style-guide"
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(curl:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
 }

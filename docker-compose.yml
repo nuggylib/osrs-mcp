@@ -1,0 +1,50 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: osrs-mcp-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    ports:
+      - "127.0.0.1:6379:6379"
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  osrs-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: osrs-mcp:latest
+    container_name: osrs-mcp-server
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - ALLOW_MCP_INSPECTOR=true
+      - REDIS_URL=redis://redis:6379
+    ports:
+      # Bind to localhost only on host machine for security - prevents external network access
+      # while allowing MCP Inspector and local clients to connect via Docker port forwarding
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./config:/app/config:ro
+      - ./fixtures:/app/fixtures:ro
+      - ./certs:/app/certs:ro
+    networks:
+      - mcp-network
+    depends_on:
+      redis:
+        condition: service_healthy
+
+
+networks:
+  mcp-network:
+    driver: bridge
+
+volumes:
+  redis-data:
