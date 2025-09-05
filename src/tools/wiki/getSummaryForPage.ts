@@ -30,7 +30,7 @@ export async function getSummaryForPage(
 server.registerTool(
 	'get_osrs_wiki_page_summary',
 	{
-		description: loadPrompt('summary.txt', __dirname),
+		description: loadPrompt('wiki', 'summary.txt'),
 		inputSchema: {
 			pageName: z.string().describe('The name of the page to get the summary for.'),
 		},

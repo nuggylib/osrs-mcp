@@ -32,7 +32,7 @@ export async function searchWikiForPage(
 server.registerTool(
 	'search_osrs_wiki_for_topic',
 	{
-		description: loadPrompt('search.txt', __dirname),
+		description: loadPrompt('wiki', 'search.txt'),
 		inputSchema: {
 			topic: z.string().describe('The specific Old School RuneScape topic to search the Wiki for.'),
 		},
