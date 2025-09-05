@@ -1,12 +1,11 @@
-# Connecting MCP Clients
-
-Since this MCP server is setup to function using the [Streamable HTTP Transport](./streamable-http-explainer.md), you need to connect [MCP client](https://modelcontextprotocol.io/docs/learn/client-concepts) applications, such as Claude Desktop, as though it were a remote MCP Server, even if you're running it locally on your machine.
-
-## Connecting to a Heroku Instance
+# Connecting MCP Clients to a Heroku Instance
 
 You can use an MCP client to connect to a Heroku instance of the OSRS MCP server by using the Heroku app's URL (plus the `/mcp` path).
 
-### Claude Desktop
+> [!NOTE]
+> We can't actually connect Claude Desktop to a locally-running MCP Server due to issues with self-signed certificates. We can change this in the future, but it's not worth the extra effort for now.
+
+## Claude Desktop
 
 Before continuing, make sure you have the Heroku deployment URL. You can get this from the Heroku dashboard.
 

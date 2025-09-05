@@ -15,10 +15,10 @@ The goal with testing the MCP server using an MCP Inspector is to make sure the 
 
 **This is most useful to review the size of your responses.** It's critical to ensure your MCP server doesn't consume unnecessary tokens; testing with the MCP Inspector is _crucial_ since it's the only way to view the raw data response that gets used by connected clients.
 
-The MCP Inspector can be used to debug either a locally-running MCP server, or one hosted in a deployment. The only difference is the endpoint you target. See [testing](./testing.md#using-the-mcp-inspector) for more information.
+The MCP Inspector can be used to debug  a hosted MCP server deployment. It can't be used to test a locally-running MCP server due to issues with self-signed certificates. We can fix this using an `ngrok` tunnel, but it might not be worth the extra effort for now.
 
 ### Debugging Features using an MCP Client
 
-The goal with testing the MCP server using an MCP client is to test how the server's features get used. You're generally looking to see if the client uses the tools as you expect them to.
+The goal with testing the MCP server using an MCP client is to test how the server's features get use`d. You're generally looking to see if the client uses the tools as you expect them to.
 
 If the server's features aren't being used as-expected, the testing process generally involves making tweaks to prompts, descriptions and feature logic and testing your changes. The feature logic changes are a given, but _do not underestimate the importance of editing prompts and descriptions_. If descriptions and prompts are too vague, or inaccurate, the client may not know to use them at the right times.
