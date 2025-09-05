@@ -1,11 +1,10 @@
-# Deployment Guide for OSRS MCP Server as a Custom Connector
-This guide explains how to deploy your OSRS MCP server as a Custom Connector for Claude. The
-server is currently only deployed on Heroku. These docs are written with this in mind.
+# Deployment
 
-## Manual deployment
-At the moment, the only way to deploy the OSRS MCP server is to do so manually. Fortunately,
-the process is very simple. You can think of Heroku apps as pretty much the same as a git
-origin that you push changes to.
+This guide explains how to deploy your OSRS MCP server as a [Custom Connector for Claude](https://support.anthropic.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp). The server is currently only deployed on Heroku. These docs are written with this in mind.
+
+## Manual Deployment
+
+At the moment, the only way to deploy the OSRS MCP server is to do so manually. Fortunately, the process is very simple. You can think of Heroku apps as pretty much the same as a git origin that you push changes to.
 
 1. Install the [`heroku` CLI](https://devcenter.heroku.com/articles/heroku-cli).
 2. Run `heroku login`.
@@ -14,13 +13,12 @@ origin that you push changes to.
 5. Wait for the build to run and ensure there were no errors.
 6. Test as-needed.
 
-### Overriding branch changes
-You can push a branch's changes to another branch, overridding the changes there with whatever
-is on the branch that you pushed. To do push one branch to another branch's deployment:
+### Overriding Branch Changes
+
+You can push a branch's changes to another branch, overriding the changes there with whatever is on the branch that you pushed. To do push one branch to another branch's deployment:
 
 ```sh
 git push heroku <new>:<base>
 ```
 
-For example, if you are on `featureBranch` and want to push the changes to the `main` deployment,
-you can do so with `git push heroku featureBranch:main`.
+For example, if you are on `featureBranch` and want to push the changes to the `main` deployment, you can do so with `git push heroku featureBranch:main`.

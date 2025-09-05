@@ -1,6 +1,10 @@
 // OAuth Server Metadata (RFC 8414)
-export const getAuthorizationServerMetadata = () => {
-	const baseUrl = process.env.BASE_URL || 'https://localhost:3000';
+export const getAuthorizationServerMetadata = (requestBaseUrl?: string) => {
+	// Priority: request-based URL > Heroku app name > BASE_URL env var > localhost fallback
+	const baseUrl = requestBaseUrl 
+		|| (process.env.HEROKU_APP_NAME ? `https://${process.env.HEROKU_APP_NAME}.herokuapp.com` : undefined)
+		|| process.env.BASE_URL 
+		|| 'https://localhost:3000';
 
 	return {
 		issuer: baseUrl,

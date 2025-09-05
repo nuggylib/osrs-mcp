@@ -10,6 +10,7 @@
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "build": "tsc --outDir build",
+    "test:deployment": "./utils/test-deployment.sh \"$@\"",
     "start": "node build/index.js",
     "dev": "tsx src/index.ts"
   },
