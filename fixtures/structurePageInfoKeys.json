@@ -1,0 +1,14 @@
+{
+	"name": "The name of the Structure.",
+	"image": "The featured image for the Structure.",
+	"release": "Array representing the month and year for the release date of the update that added the Structure to the game.",
+	"update": "The release message for the update that added the Structure to the game.",
+	"members": "A yes or no value indicating if the content can only be accessed in the game with a paid subscription.",
+	"floors": "The number of floors in the Structure.",
+	"location": "The name of the location (typically, the name of the Kingdom) that this Structure is located in.",
+	"race": "An array containing the categories of Monsters that can be found in the Structure.",
+	"music": "A string, or array of strings containing the names of the Music Tracks that are played in this Structure.",
+	"map": "The file name of the Structure's map.",
+	"type": "The type of structure this is; for example, 'dungeon' for Dungeons, 'building' for Buildings, etc.",
+	"leagueRegion": "The name of the League Region this structure is located within."
+}

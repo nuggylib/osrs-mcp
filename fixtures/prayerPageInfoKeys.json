@@ -1,0 +1,11 @@
+{
+	"name": "The name of the Prayer.",
+	"image": "The featured image for the Prayer.",
+	"release": "Array representing the month and year for the release date of the update that added the Prayer to the game.",
+	"update": "The release message for the update that added the Prayer to the game.",
+	"members": "A yes or no value indicating if the content can only be accessed in the game with a paid subscription.",
+	"level": "The Prayer level at which this Prayer is unlocked.",
+	"drain": "The drain rate at which this Prayer drains the player's Prayer points.",
+	"effect": "The effect of this Prayer.",
+	"sound": "The name of the .ogg file that plays in-game when the Prayer is activated."
+}

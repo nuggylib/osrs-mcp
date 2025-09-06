@@ -34,6 +34,9 @@ server.registerTool(
 		inputSchema: {
 			pageName: z.string().describe('The name of the page to get the backlinks for.'),
 		},
+		annotations: {
+			openWorldHint: true,
+		},
 	},
 	async ({ pageName }) => getBacklinksForPage(pageName),
 )

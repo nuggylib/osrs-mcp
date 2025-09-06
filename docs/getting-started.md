@@ -8,6 +8,32 @@ This guide will walk you through building, running, and testing the OSRS MCP Ser
 
 - Docker installed on your system.
 - Docker Compose (optional, for `docker-compose` deployment).
+- Node.js with Corepack enabled (for Yarn package manager).
+
+## Setting up Yarn Version
+
+This project uses Yarn 4.1.1 as specified in `package.json`. If you encounter a version mismatch error, follow these steps:
+
+1. Enable Corepack (Node.js's built-in package manager manager):
+   ```sh
+   corepack enable
+   ```
+
+2. Prepare and activate the correct Yarn version:
+   ```sh
+   corepack prepare yarn@4.1.1 --activate
+   ```
+
+3. Verify the installation:
+   ```sh
+   yarn --version
+   # Should output: 4.1.1
+   ```
+
+4. Install project dependencies:
+   ```sh
+   yarn install
+   ```
 
 ## Generating Self-Signed Certificates
 

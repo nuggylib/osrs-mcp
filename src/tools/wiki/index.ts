@@ -1,5 +1,5 @@
 // Import all tool files to trigger their registration
-import './getRawContentForPage.js';
+import './getContentForPage.js';
 import './getSummaryForPage.js';
 import './searchWikiForPage.js';
 import './getBacklinksForPage.js';
