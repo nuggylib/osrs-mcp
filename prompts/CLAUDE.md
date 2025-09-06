@@ -7,3 +7,6 @@ The proper way to load these prompts is:
 const somePrompt = loadPrompt('[subDirName]', '[fileName].txt')
 ```
 * Set the first argument to an empty string to load from the root of the `prompts/` directory
+
+ALWAYS follow the instructions in the [prompts.md documentation](../docs/prompts.md) 
+when creating or editing prompts.
