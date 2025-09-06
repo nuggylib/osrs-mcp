@@ -37,7 +37,8 @@ See `./docs/deployment.md` for complete deployment instructions.
 - `.vscode/` contains project-specific VS Code settings.
 - `docs/` contains repository documentation.
 - `fixtures/` contains static files intended to be used as data sources for Resources.
-- `src/` contains all code.
+- `prompts/` contains static prompt `.txt` files for use with the MCP server as prompts.
+- `src/` contains all application code.
 
 ## Root Files
 - `.env.example` shows what environment variables the application uses.
