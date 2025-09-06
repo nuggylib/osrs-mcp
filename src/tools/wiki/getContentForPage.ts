@@ -15,7 +15,7 @@ export async function getRawContentForPage(
 	}
 
 	const response = await getPageForTopic(pageName)
-	const pageContent = await response.rawContent()
+	const pageContent = await response.content()
 
 	return {
 		content: [
