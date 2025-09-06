@@ -15,6 +15,7 @@ export async function getRawContentForPage(
 	}
 
 	const response = await getPageForTopic(pageName)
+	// TODO: Rip out all of the wikijs code; it conceals a lot of data we need (this value confirms it - there isn't much here but blocks of strings)
 	const pageContent = await response.content()
 
 	return {
