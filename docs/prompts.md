@@ -49,7 +49,7 @@ import { loadPrompt } from '../../utils/promptLoader.js';
 server.registerTool(
   'tool_name',
   {
-    description: loadPrompt('description.txt', __dirname),
+    description: loadPrompt('[subDirName]',  '[fielName].txt'),
     inputSchema: {
       // ... schema definition
     }
