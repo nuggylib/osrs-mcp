@@ -27,12 +27,16 @@ export async function getTablesForPage(
 	};
 }
 
+// TODO: Determine if we should just remove this tool altogether, or if there is a way to
 server.registerTool(
 	'get_osrs_wiki_page_tables',
 	{
-		description: 'Use this to get the tables for the given page name in the OSRS Wiki.',
+		description: 'DO NOT USE. The OSRS Wiki does not appear to return table data for any topic.',
 		inputSchema: {
 			pageName: z.string().describe('The name of the page to get the tables for.'),
+		},
+		annotations: {
+			openWorldHint: true,
 		},
 	},
 	async ({ pageName }) => getTablesForPage(pageName),

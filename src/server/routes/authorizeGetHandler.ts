@@ -89,7 +89,7 @@ export const authorizeGetHandler = async (req: Request, res: Response) => {
 		redirect_uri,
 		code_challenge,
 		code_challenge_method: 'S256',
-		expires_at: Date.now() + setTokenExpiration(0, 7),
+		expires_at: Date.now() + (10 * 60 * 1000), // 10 minutes
 		scope: typeof scope === 'string' ? scope : undefined,
 	};
 

@@ -1,3 +1,6 @@
 import './itemPageInfoKeys'
 import './monsterPageInfoKeys'
 import './skillPageInfoKeys'
+import './prayerPageInfoKeys'
+import './spellPageInfoKeys'
+import './questPageInfoKeys'

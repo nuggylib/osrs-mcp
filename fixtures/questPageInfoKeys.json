@@ -1,0 +1,10 @@
+{
+	"name": "The name of the Quest.",
+	"image": "The featured image for the Quest.",
+	"release": "Array representing the month and year for the release date of the update that added the Quest to the game.",
+	"update": "The release message for the update that added the Quest to the game.",
+	"aka": "The alternate name for the Quest.",
+	"members": "A yes or no value indicating if the content can only be accessed in the game with a paid subscription.",
+	"series": "The name of the Quest Series that this Quest is a part of, or 'None', if it's not part of a Quest Series.",
+	"developer": "The name of the Jagex Developer that created the given Quest."
+}

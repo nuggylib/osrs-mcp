@@ -1,0 +1,19 @@
+{
+	"name": "The name of the Spell.",
+	"image": "The featured image for the Spell.",
+	"release": "Array representing the month and year for the release date of the update that added the Spell to the game.",
+	"update": "The release message for the update that added the Spell to the game.",
+	"members": "A yes or no value indicating if the content can only be accessed in the game with a paid subscription.",
+	"level": "The Magic level required to cast this Spell.",
+	"spellbook": "The Spellbook that this Spell is a part of (e.g., 'Normal', 'Ancient', etc.).",
+	"type": "The type of Spell that this is; e.g., 'Combat', 'Teleport', 'Utility'.",
+	"exp": "The max XP this Spell grants when cast. Combat Spells grant XP based on the damage dealt on-hit. Other Spell types have a flat XP rate.",
+	"element": "The type of elemental damage this Spell does. Applicable for Combat Spells, only.",
+	"damage": "The base damage amount that this Spell does. Applicable for Combat Spells, only.",
+	"maxDamage": "The max damage amount that this Spell can do. Applicable for Combat Spells, only.",
+	"cost": "KEY NOT USEFUL. This key's value is always set to 'RuneReq' for Spells (unless free, like the Lumbridge Home Teleport Spell).",
+	"speed": "The amount of time (in game ticks) that this Spell takes to cast.",
+	"description": "The description of the Spell.",
+	"anim": "The name of the .gif file that depicts the Spell being cast.",
+	"sound": "The name of the .ogg file that plays in-game when the Spell is cast."
+}
