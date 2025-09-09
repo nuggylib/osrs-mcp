@@ -14,7 +14,7 @@ export async function getQuestInfo(
 		throw new Error('pageName cannot be empty');
 	}
 
-	// TODO: Get the base quest info (infobox, required items list, pre-requisites, enemy names): https://oldschool.runescape.wiki/api.php?action=query&titles=[QUEST_NAME]&prop=revisions&rvprop=content&format=json
+	// TODO: Get the base quest info (infobox, required items list, pre-requisites, enemy names): https://oldschool.runescape.wiki/api.php?action=query&titles=[QUEST_NAME]&prop=text|categories|links|templates|sections&rvprop=content&format=json
 
 	// TODO: Get batched item list info: https://oldschool.runescape.wiki/api.php?action=query&titles=[ITEM_LIST]&prop=revisions&rvprop=content&format=json
 	// - ITEM_LIST is a URL-encoded list of strings; one string per item, separated by the '|' character (e.g., Bucket|Egg|Feather for a list containing the items Bucket, Egg and Feather)
@@ -42,7 +42,7 @@ server.registerTool(
 	{
 		description: loadPrompt('wiki', 'getQuestInfo.txt'),
 		inputSchema: {
-			questInfo: z.string().describe('The name of the quest to get the info for.'),
+			questName: z.string().describe('The name of the quest to get the info for.'),
 		},
 		outputSchema: {
 			startingPoint: z.string().describe('The map coordinates of the quest giver\'s location.'),
@@ -81,5 +81,5 @@ server.registerTool(
 			openWorldHint: true,
 		},
 	},
-	async ({ questInfo }) => getQuestInfo(questInfo),
+	async ({ questName }) => getQuestInfo(questName),
 )
