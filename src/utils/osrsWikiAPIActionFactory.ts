@@ -1,66 +1,6 @@
 import axios from 'axios';
 import { osrsApiBaseUrl } from './constants';
-import { OSRSWikiAPIParseActionResult, OSRSWikiAPIQueryActionResult } from '../types/osrsWiki';
-
-/**
- * Supported MediaWiki API actions for the OSRS Wiki
- * @see https://www.mediawiki.org/wiki/API:Main_page
- */
-export enum SUPPORTED_API_ACTIONS {
-    QUERY = 'query',
-    PARSE = 'parse',
-    OPENSEARCH = 'opensearch',
-    EXPANDTEMPLATES = 'expandtemplates',
-    HELP = 'help',
-    PARAMINFO = 'paraminfo'
-}
-
-/**
- * The list of valid values for the `prop` query parameter on the OSRS Wiki API "query" action
- */
-export enum SUPPORTED_VALUES_PROP_PARAM {
-	CATEGORIES = 'categories',
-	INFO = 'info',
-	REVISIONS = 'revisions',
-	LINKS = 'links',
-	IMAGES = 'images',
-	TEMPLATES = 'templates',
-	PAGEPROPS = 'pageprops',
-	EXTRACTS = 'extracts',
-	IMAGEINFO = 'imageinfo',
-	LANGLINKS = 'langlinks',
-	COORDINATES = 'coordinates',
-	DESCRIPTION = 'description'
-}
-
-/**
- * The list of valid values for the `lists` query parameter on the OSRS Wiki API "query" action
- */
-export enum SUPPORTED_VALUES_LISTS_PARAM {
-	ALLPAGES = 'allpages',
-	ALLCATEGORIES = 'allcategories',
-	CATEGORYMEMBERS = 'categorymembers',
-	SEARCH = 'search',
-	RECENTCHANGES = 'recentchanges',
-	BACKLINKS = 'backlinks',
-	EMBEDDEDIN = 'embeddedin',
-	ALLIMAGES = 'allimages',
-	ALLUSERS = 'allusers',
-	USERCONTRIBS = 'usercontribs',
-	RANDOM = 'random',
-	QUERYPAGE = 'querypage'
-}
-
-/**
- * The list of valid values for the `meta` query parameter on the OSRS Wiki API "query" action
- */
-export enum SUPPORTED_VALUES_META_PARAM {
-	SITEINFO = 'siteinfo',
-	USERINFO = 'userinfo',
-	TOKENS = 'tokens',
-	ALLMESSAGES = 'allmessages',
-	LANGUAGEINFO = 'languageinfo'
-}
+import { OSRSWikiAPIParseActionResult, OSRSWikiAPIQueryActionResult, SUPPORTED_API_ACTIONS, ValidParseProp } from '../types/osrsWiki';
 
 /**
  * Factory method that creates a new OSRS Wiki API action function
@@ -125,9 +65,13 @@ export const createQueryAction = (defaultParams?: Record<string, string | number
 	});
 };
 
-export const createParseAction = (defaultParams?: Record<string, string | number>) => {
+/**
+ * Pre-configured factory for creating parse action functions
+ * @param props The list of fields to parse.
+ */
+export const createParseAction = (props: ValidParseProp[], defaultParams?: Record<string, string | number>) => {
 	return createOSRSWikiAPIAction<OSRSWikiAPIParseActionResult>(SUPPORTED_API_ACTIONS.PARSE, {
-		prop: 'text|templates|links',
+		prop: props.join('|'),
 		disablelimitreport: 1,
 		...defaultParams,
 	});

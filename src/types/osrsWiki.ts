@@ -1,3 +1,68 @@
+/**
+ * Supported MediaWiki API actions for the OSRS Wiki
+ * @see https://www.mediawiki.org/wiki/API:Main_page
+ */
+export enum SUPPORTED_API_ACTIONS {
+    QUERY = 'query',
+    PARSE = 'parse',
+    OPENSEARCH = 'opensearch',
+    EXPANDTEMPLATES = 'expandtemplates',
+    HELP = 'help',
+    PARAMINFO = 'paraminfo'
+}
+
+/**
+ * The list of valid values for the `prop` query parameter on the OSRS Wiki API "query" action
+ */
+export enum SUPPORTED_VALUES_QUERY_PROP_PARAM {
+	CATEGORIES = 'categories',
+	INFO = 'info',
+	REVISIONS = 'revisions',
+	LINKS = 'links',
+	IMAGES = 'images',
+	TEMPLATES = 'templates',
+	PAGEPROPS = 'pageprops',
+	EXTRACTS = 'extracts',
+	IMAGEINFO = 'imageinfo',
+	LANGLINKS = 'langlinks',
+	COORDINATES = 'coordinates',
+	DESCRIPTION = 'description'
+}
+
+/**
+ * The valid values for the `prop` query parameter on the OSRS Wiki API "parse" action
+ */
+export type ValidParseProp = 'categories' | 'links' | 'externallinks' | 'images' | 'templates' | 'langlinks' | 'text' | 'sections'
+
+/**
+ * The list of valid values for the `lists` query parameter on the OSRS Wiki API "query" action
+ */
+export enum SUPPORTED_VALUES_QUERY_LISTS_PARAM {
+	ALLPAGES = 'allpages',
+	ALLCATEGORIES = 'allcategories',
+	CATEGORYMEMBERS = 'categorymembers',
+	SEARCH = 'search',
+	RECENTCHANGES = 'recentchanges',
+	BACKLINKS = 'backlinks',
+	EMBEDDEDIN = 'embeddedin',
+	ALLIMAGES = 'allimages',
+	ALLUSERS = 'allusers',
+	USERCONTRIBS = 'usercontribs',
+	RANDOM = 'random',
+	QUERYPAGE = 'querypage'
+}
+
+/**
+ * The list of valid values for the `meta` query parameter on the OSRS Wiki API "query" action
+ */
+export enum SUPPORTED_VALUES_QUERY_META_PARAM {
+	SITEINFO = 'siteinfo',
+	USERINFO = 'userinfo',
+	TOKENS = 'tokens',
+	ALLMESSAGES = 'allmessages',
+	LANGUAGEINFO = 'languageinfo'
+}
+
 export type BaseOSRSWikiFieldType = {
 	'*': string
 }
@@ -19,19 +84,47 @@ export type OSRSWikiLinkOrTemplate = BaseOSRSWikiFieldType & {
     exists?: string
 }
 
+/**
+ * The shape of the data you get when using the `action=parse` Action of the OSRS
+ * Wiki API.
+ */
 export type OSRSWikiAPIParseActionResult = {
     parse: {
         title: string
         pageid: number
         revid: number
-        text: BaseOSRSWikiFieldType
+		/**
+		 * Populated when 'text' is included in the `prop=` argument.
+		 */
+        text?: BaseOSRSWikiFieldType
+		/**
+		 * Populated when 'langlink' is included in the `prop=` argument.
+		 */
         langlinks?: OSRSWikiLangLink[]
+		/**
+		 * Populated when 'categories' is included in the `prop=` argument.
+		 */
         categories?: OSRSWikiCategory[]
+		/**
+		 * Populated when 'links' is included in the `prop=` argument.
+		 */
         links?: OSRSWikiLinkOrTemplate[]
+		/**
+		 * Populated when 'templates' is included in the `prop=` argument.
+		 */
         templates?: OSRSWikiLinkOrTemplate[]
+		/**
+		 * Populated when 'images' is included in the `prop=` argument.
+		 */
         images?: string[]
+		/**
+		 * Populated when 'externallinks' is included in the `prop=` argument.
+		 */
         externallinks?: string[]
-        sections?: Array<{
+		/**
+		 * Populated when 'sections' is included in the `prop=` argument.
+		 */
+        sections?: {
             toclevel: number
             level: string
             line: string
@@ -40,14 +133,18 @@ export type OSRSWikiAPIParseActionResult = {
             fromtitle: string
             byteoffset: number
             anchor: string
-        }>
+        }[]
+		/**
+		 * Only populated if there were errors when running a parse Action. It is possible
+		 * for an error to occur for one prop, but not on others.
+		 */
         parsewarnings?: string[]
         displaytitle?: string
-        iwlinks?: Array<{
+        iwlinks?: {
             prefix: string
             url: string
             '*': string
-        }>
+        }[]
         properties?: {
             [key: string]: string
         }

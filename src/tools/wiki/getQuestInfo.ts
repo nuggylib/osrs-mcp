@@ -3,6 +3,7 @@ import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { server } from '../../utils/mcpServer.js';
 import { z } from 'zod';
 import { loadPrompt } from '../../utils/promptLoader.js';
+import { createParseAction } from '../../utils/osrsWikiAPIActionFactory.js';
 
 export async function getQuestInfo(
 	questName: string,
@@ -11,7 +12,16 @@ export async function getQuestInfo(
 		throw new Error('pageName cannot be empty');
 	}
 
+	const parseAction = createParseAction(['categories', 'externallinks', 'images', 'langlinks', 'links', 'sections', 'templates', 'text'])
+
+	const parseActionResponse = await parseAction({
+		params: {
+			page: questName,
+		},
+	})
+
 	// TODO: Get the base quest info (infobox, required items list, pre-requisites, enemy names): https://oldschool.runescape.wiki/api.php?action=query&titles=[QUEST_NAME]&prop=text|categories|links|templates|sections&rvprop=content&format=json
+	const parseData = parseActionResponse.data
 
 	// TODO: Get batched item list info: https://oldschool.runescape.wiki/api.php?action=query&titles=[ITEM_LIST]&prop=revisions&rvprop=content&format=json
 	// - ITEM_LIST is a URL-encoded list of strings; one string per item, separated by the '|' character (e.g., Bucket|Egg|Feather for a list containing the items Bucket, Egg and Feather)
