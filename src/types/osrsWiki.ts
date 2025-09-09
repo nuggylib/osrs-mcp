@@ -1,33 +1,34 @@
+export type BaseOSRSWikiFieldType = {
+	'*': string
+}
+
+export type OSRSWikiLangLink = BaseOSRSWikiFieldType & {
+	lang: string
+	url: string
+	langname: string
+	autonym: string
+}
+
+export type OSRSWikiCategory = BaseOSRSWikiFieldType & {
+	sortkey: string
+	hidden?: string
+}
+
+export type OSRSWikiLinkOrTemplate = BaseOSRSWikiFieldType & {
+	ns: number
+    exists?: string
+}
+
 export type OSRSWikiAPIParseActionResult = {
     parse: {
         title: string
         pageid: number
         revid: number
-        text: {
-            '*': string  // Rendered HTML content
-        }
-        langlinks?: Array<{
-            lang: string
-            url: string
-            langname: string
-            autonym: string
-            '*': string
-        }>
-        categories?: Array<{
-            sortkey: string
-            '*': string  // Category name
-            hidden?: string
-        }>
-        links?: Array<{
-            ns: number
-            exists?: string
-            '*': string  // Page title
-        }>
-        templates?: Array<{
-            ns: number
-            exists?: string
-            '*': string  // Template name
-        }>
+        text: BaseOSRSWikiFieldType
+        langlinks?: OSRSWikiLangLink[]
+        categories?: OSRSWikiCategory[]
+        links?: OSRSWikiLinkOrTemplate[]
+        templates?: OSRSWikiLinkOrTemplate[]
         images?: string[]
         externallinks?: string[]
         sections?: Array<{

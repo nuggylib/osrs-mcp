@@ -5,9 +5,6 @@ import { z } from 'zod';
 import { loadPrompt } from '../../utils/promptLoader.js';
 
 export async function getQuestInfo(
-	/**
-	 * The page to fetch the tables for
-	 */
 	questName: string,
 ): Promise<CallToolResult> {
 	if (!questName || questName.trim() === '') {
