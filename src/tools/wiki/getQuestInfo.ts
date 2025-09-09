@@ -25,7 +25,7 @@ export async function getQuestInfo(
 
 	// TODO: Get batched enemy data: https://oldschool.runescape.wiki/api.php?action=query&titles=Enemy1|Enemy2&prop=revisions&rvprop=content&format=json
 
-	// TODO: Create an output object that matches the outputSchema in the tool definition.
+	// TODO: Create an output object unifying the data in a way that matches the outputSchema in the tool definition.
 
 	return {
 		content: [
