@@ -1,3 +1,96 @@
+import { ParsedTemplate } from './wikimedia'
+
+/**
+ * The list of possible template titles on quest page parsetree XML documents.
+ *
+ * To obtain full documentation on a template, you can query this endpoint:
+ * - https://oldschool.runescape.wiki/api.php?action=parse&page=Template:[TEMPLATE_NAME]/doc&format=xml
+ */
+export enum SUPPORTED_PARSETREE_TEMPLATE_TITLE {
+	/**
+	 * The External template adds links to the RuneScape Wiki, RuneScape: Dragonwilds Wiki,
+	 * RuneScape Classic Wiki, Meta RuneScape Wiki, and Wikipedia beside the "Discussion"
+	 * tab above an article's title. The links are not added to the mobile skin.
+	 */
+	EXTERNAL = 'External',
+	/**
+	 * The 'Has quick guide' template notifies the user that there is a quick guide page
+	 * for a quest, and links them to it.
+	 */
+	HAS_QUICK_GUIDE = 'Has quick guide',
+	/**
+	 * This template surfaces the following details:
+	 * - "start" - Quest start location.
+	 * - "startmap" - TBD
+	 * - "difficulty" - Official difficulty as-given by Jagex.
+	 * - "length" - Length of the quest.
+	 * - "requirements" - The list of required skills (and whether or not they are boosting will satisfy the requirement).
+	 * - "items" - The list of required items.
+	 * - "recommended" - All recommended items or information.
+	 * - "kills" - Enemies to defeat.
+	 * - "ironman" - Ironman concerns.
+	 */
+	QUEST_DETAILS = 'Quest details',
+	/**
+	 * This template surfaces the following details:
+	 * - "name" - The name of the Quest.
+	 * - "number" - The Quest number.
+	 * - "image" - The featured image for the Quest.
+	 * - "release" - The release date of the Quest.
+	 * - "update" - The release message that accompanied the update adding the Quest to the game.
+	 * - "aka" - The alternative name for the Quest.
+	 * - "members" - Whether or not the Quest is members-only content.
+	 * - "series" - The Quest Series that the Quest is a part of.
+	 * - "developer" - The name of the developer of the Quest.
+	 */
+	INFOBOX_QUEST = 'Infobox Quest',
+	/**
+	 * The SCP template displays a clickable skill icon picture
+	 * (in other words, a "Skill ClickPic") that links to the skill
+	 * page. This can be also be used in other templates that display
+	 * skill icons.
+	 *
+	 * There are often multiple instances of this template in a Quest page.
+	 */
+	SCP = 'SCP',
+	/**
+	 * There may be multiple templates with this title.
+	 */
+	BOOSTABLE = 'Boostable',
+	/**
+	 * There may be multiple templates with this title.
+	 */
+	QUESTREQSTART = 'Questreqstart',
+	/**
+	 * There may be multiple templates with this title.
+	 */
+	FAIRYCODE = 'Fairycode',
+	MAP = 'Map',
+	/**
+	 * There may be multiple templates with this title.
+	 */
+	NEEDED = 'Needed',
+	/**
+	 * There may be multiple templates with this title.
+	 */
+	NO_COINS = 'NoCoins',
+	FLOOR_NUMBER = 'FloorNumber',
+	/**
+	 * There may be multiple templates with this title.
+	 */
+	GEP = 'GEP',
+	QUEST_REWARDS = 'Quest rewards',
+	HAS_TRANSCRIPT = 'Hastranscript',
+	SUBJECT_CHANGES_HEADER = 'Subject changes header',
+	SUBJECT_CHANGES = 'Subject changes',
+	SUBJECT_CHANGES_FOOTER = 'Subject changes footer',
+	/**
+	 * There may be multiple templates with this title.
+	 */
+	CITE_NPC = 'CiteNPC',
+	REFLIST = 'Reflist'
+}
+
 /**
  * Supported MediaWiki API actions for the OSRS Wiki
  * @see https://www.mediawiki.org/wiki/API:Main_page
@@ -213,3 +306,49 @@ export type OSRSWikiAPIOpenSearchActionResult = [
   description: string[],
   urls: string[]
 ];
+
+/**
+ * The possible "official" Quest difficulties, set by Jagex.
+ *
+ * @see https://oldschool.runescape.wiki/w/Quest_Difficulties
+ */
+export type QuestDifficulty = 'Novice' | 'Intermediate' | 'Experienced' | 'Master' | 'Grandmaster' | 'Special'
+
+export type QuestDetailsTemplate = ParsedTemplate & {
+	parameters: {
+		/**
+		 * A string explaining how to start the quest, including who to talk to and where. The
+		 * name of the NPC is wrapped in double-brackets; e.g., `[[Yanni Salika]]`. The locations
+		 * are formatted similar to the following: `[[Shilo Village (location)|Shilo Village]]`.
+		 */
+		start: string
+		/**
+		 * A string representation of the XY coordinated of the start location coordinates on
+		 * the World Map.
+		 */
+		startmap: string
+		/**
+		 * The official difficulty of the Quest.
+		 */
+		difficulty: QuestDifficulty
+		/**
+		 * The description of the Quest, provided by Jagex/the Quest developer.
+		 */
+		description: string
+		/**
+		 * The a string representing the offical length of the quest (e.g., "Short", "Medium", "Long" and more).
+		 */
+		length: string
+		/**
+		 * A string formatted as a bulleted list of requirements. The response
+		 * contains the following things
+		 * - A list of required Quests to needed to complete this Quest.
+		 *    - Each Quest is wrapped in double-brackets; for example [[Rune Mysteries]]
+		 *    - If a pre-requisite Quest has it's own pre-requisites, those are listed beneath the Quest it's required for.
+		 * - A list of required Skills needed to complete the quest.
+		 *    - Each listed Skill is listed as an "SCP" template.
+		 * -
+		 */
+		requirements: string
+	}
+}

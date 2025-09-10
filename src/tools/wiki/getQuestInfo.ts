@@ -3,33 +3,28 @@ import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { server } from '../../utils/mcpServer.js';
 import { z } from 'zod';
 import { loadPrompt } from '../../utils/promptLoader.js';
-import { createOSRSWikiAPIAction, createParseAction } from '../../utils/osrsWikiAPIActionFactory.js';
-import { OSRSWikiAPIParseActionResult, SUPPORTED_API_ACTIONS, ValidParseProp } from '../../types/osrsWiki.js';
+import { createOSRSWikiAPIAction } from '../../utils/osrsWikiAPIActionFactory.js';
+import { SUPPORTED_API_ACTIONS, SUPPORTED_PARSETREE_TEMPLATE_TITLE } from '../../types/osrsWiki.js';
+import { extractTemplatesFromParseTreeXML } from '../../utils/wikimedia/extractTemplatesFromParseTreeXML.js';
 
 export async function getQuestInfo(
 	questName: string,
 ): Promise<CallToolResult> {
-	if (!questName || questName.trim() === '') {
-		throw new Error('pageName cannot be empty');
-	}
-
-	const targetProps: ValidParseProp[] = ['categories', 'externallinks', 'images', 'langlinks', 'links', 'sections', 'templates', 'text']
-
-	const parseAction = createParseAction(targetProps)
-
-	const parseActionResponse = await parseAction({
-		params: {
-			page: questName,
-		},
-	})
-
-	const parseData = parseActionResponse.data
-
-	const parseActionParseTree = createOSRSWikiAPIAction<OSRSWikiAPIParseActionResult>(SUPPORTED_API_ACTIONS.EXPANDTEMPLATES, {
+	const parseActionParseTree = createOSRSWikiAPIAction<XMLDocument>(SUPPORTED_API_ACTIONS.EXPANDTEMPLATES, {
+		page: questName,
 		prop: 'parsetree',
 	}, 'xml')
 
 	const parseTreeResponse = await parseActionParseTree({})
+	const parseTreeXmlDocument = parseTreeResponse.data
+	const parsedTemplates = extractTemplatesFromParseTreeXML(parseTreeXmlDocument)
+
+	const findTemplates = (targetTitle: string) => parsedTemplates.filter(template => template.title === targetTitle)
+
+	const questDetailsTemplate = findTemplates(SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
+	const questInfoboxTemplate = findTemplates(SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST)[0]
+
+	const { start, startmap, difficulty, length, requirements, items, recommended, kills, ironman } = questDetailsTemplate.parameters
 
 	// TODO: Get batched item list info: https://oldschool.runescape.wiki/api.php?action=query&titles=[ITEM_LIST]&prop=revisions&rvprop=content&format=json
 	// - ITEM_LIST is a URL-encoded list of strings; one string per item, separated by the '|' character (e.g., Bucket|Egg|Feather for a list containing the items Bucket, Egg and Feather)
