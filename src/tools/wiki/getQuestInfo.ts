@@ -3,7 +3,8 @@ import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { server } from '../../utils/mcpServer.js';
 import { z } from 'zod';
 import { loadPrompt } from '../../utils/promptLoader.js';
-import { createParseAction } from '../../utils/osrsWikiAPIActionFactory.js';
+import { createOSRSWikiAPIAction, createParseAction } from '../../utils/osrsWikiAPIActionFactory.js';
+import { OSRSWikiAPIParseActionResult, SUPPORTED_API_ACTIONS, ValidParseProp } from '../../types/osrsWiki.js';
 
 export async function getQuestInfo(
 	questName: string,
@@ -12,7 +13,9 @@ export async function getQuestInfo(
 		throw new Error('pageName cannot be empty');
 	}
 
-	const parseAction = createParseAction(['categories', 'externallinks', 'images', 'langlinks', 'links', 'sections', 'templates', 'text'])
+	const targetProps: ValidParseProp[] = ['categories', 'externallinks', 'images', 'langlinks', 'links', 'sections', 'templates', 'text']
+
+	const parseAction = createParseAction(targetProps)
 
 	const parseActionResponse = await parseAction({
 		params: {
@@ -20,8 +23,13 @@ export async function getQuestInfo(
 		},
 	})
 
-	// TODO: Get the base quest info (infobox, required items list, pre-requisites, enemy names): https://oldschool.runescape.wiki/api.php?action=query&titles=[QUEST_NAME]&prop=text|categories|links|templates|sections&rvprop=content&format=json
 	const parseData = parseActionResponse.data
+
+	const parseActionParseTree = createOSRSWikiAPIAction<OSRSWikiAPIParseActionResult>(SUPPORTED_API_ACTIONS.EXPANDTEMPLATES, {
+		prop: 'parsetree',
+	}, 'xml')
+
+	const parseTreeResponse = await parseActionParseTree({})
 
 	// TODO: Get batched item list info: https://oldschool.runescape.wiki/api.php?action=query&titles=[ITEM_LIST]&prop=revisions&rvprop=content&format=json
 	// - ITEM_LIST is a URL-encoded list of strings; one string per item, separated by the '|' character (e.g., Bucket|Egg|Feather for a list containing the items Bucket, Egg and Feather)

@@ -12,7 +12,9 @@ import { OSRSWikiAPIParseActionResult, OSRSWikiAPIQueryActionResult, SUPPORTED_A
 export const createOSRSWikiAPIAction = <T = any>(
 	action: SUPPORTED_API_ACTIONS,
 	defaultParams?: Record<string, string | number>,
+	format?: 'json' | 'xml',
 ) => {
+	if (!format) {format = 'json'}
 	return async ({
 		params,
 	}: {
@@ -26,7 +28,7 @@ export const createOSRSWikiAPIAction = <T = any>(
 				{
 					params: {
 						action,
-						format: 'json',
+						format,
 						...defaultParams,
 						...params,
 					},
