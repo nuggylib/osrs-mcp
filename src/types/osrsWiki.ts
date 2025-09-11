@@ -314,6 +314,53 @@ export type OSRSWikiAPIOpenSearchActionResult = [
  */
 export type QuestDifficulty = 'Novice' | 'Intermediate' | 'Experienced' | 'Master' | 'Grandmaster' | 'Special'
 
+/**
+ * Contains high-level details about a Quest.
+ */
+export type InfoboxQuestTemplate = ParsedTemplate & {
+	parameters: {
+		/**
+		 * The name of the Quest.
+		 */
+		name: string
+		/**
+		 * The number of the Quest.
+		 */
+		number: string
+		/**
+		 * The featured image for the Quest on the Wiki page.
+		 */
+		image: string
+		/**
+		 * The release date of the Quest stored in the following format: `[[28 February]] [[2005]]`
+		 */
+		release: string
+		/**
+		 * The main release message for the update that added the Quest to the game.
+		 */
+		update: string
+		/**
+		 * The alternative name for the Quest.
+		 */
+		aka: string
+		/**
+		 * A 'Yes' or 'No' string indicating if the Quest is members-only content.
+		 */
+		members: string
+		/**
+		 * The name of the Quest Series that the Quest is a part of (or 'None', if it's not part of a Quest Series).
+		 */
+		series: string
+		/**
+		 * The name of the lead developer for the Quest.
+		 */
+		developer: string
+	}
+}
+
+/**
+ * Contains detailed information about the Quest.
+ */
 export type QuestDetailsTemplate = ParsedTemplate & {
 	parameters: {
 		/**
@@ -341,14 +388,42 @@ export type QuestDetailsTemplate = ParsedTemplate & {
 		length: string
 		/**
 		 * A string formatted as a bulleted list of requirements. The response
-		 * contains the following things
+		 * contains the following things:
 		 * - A list of required Quests to needed to complete this Quest.
-		 *    - Each Quest is wrapped in double-brackets; for example [[Rune Mysteries]]
+		 *    - Each Quest is wrapped in double-brackets; for example [[Rune Mysteries]].
 		 *    - If a pre-requisite Quest has it's own pre-requisites, those are listed beneath the Quest it's required for.
-		 * - A list of required Skills needed to complete the quest.
+		 * - A list of required Skills needed to complete the Quest.
 		 *    - Each listed Skill is listed as an "SCP" template.
-		 * -
+		 * - A list of required Items needed to complete the Quest.
+		 *    - Items are wrapped in double-brackets; for example [[Soft Clay]].
+		 *    - This list MAY contain nested Items; for example, "The ingredients required to make a [[Guthix rest]]:"
+		 *    - If the Item is obtainable during the Quest, the list item will contain the text, "(Obtainable during the quest)".
+		 *    - The sub-list may include special pieces of information that applies to the item for the Quest.
 		 */
 		requirements: string
+		/**
+		 * A string formatted as a bulleted list of requirements. The response
+		 * contains the following things:
+		 * - A list of recommended Skills that aide in completing the Quest.
+		 *    - Each listed Skill is listed as an "SCP" template.
+		 * - Fast-travel recommendations formatted as a list of locations (or, locations combined
+		 * with a description on how to get there).
+		 *    - Each Location is formatted similar to the following: `[[Shilo Village (location)|Shilo Village]]`.
+		 *    - Fairy ring locations are listed using the "Fairycode" template.
+		 * - Recommended Items, but is often less-specific than the required Items.
+		 *    - As an example, a common recommendation for Items is `[[Armour]] and some [[food]]`.
+		 *    - Other examples can be "conditional": `[[Lockpick]] to enter the [[H.A.M. Hideout]] if your [[Thieving]] level is low`.
+		 */
+		recommended: string
+		/**
+		 * A string formatted as a bulleted list of enemy Monsters the player needs to kill during the
+		 * Quest.
+		 * - Each list item is a separate Monster, formatted similarly to `[[Slagilith]] ''(level 92)''`.
+		 * - Monsters with multiple levels are formatted similarly to `[[Dwarf gang member]]s ''(level 44/48/49)''`
+		 * - Monster list items may include links to other topics that are relevant to the Monster kills for the Quest, for example `[[Multicombat area]]`.
+		 */
+		kills: string
 	}
 }
+
+

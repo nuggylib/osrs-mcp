@@ -4,8 +4,9 @@ import { server } from '../../utils/mcpServer.js';
 import { z } from 'zod';
 import { loadPrompt } from '../../utils/promptLoader.js';
 import { createOSRSWikiAPIAction } from '../../utils/osrsWikiAPIActionFactory.js';
-import { SUPPORTED_API_ACTIONS, SUPPORTED_PARSETREE_TEMPLATE_TITLE } from '../../types/osrsWiki.js';
+import { SUPPORTED_API_ACTIONS, SUPPORTED_PARSETREE_TEMPLATE_TITLE, QuestDetailsTemplate, InfoboxQuestTemplate } from '../../types/osrsWiki.js';
 import { extractTemplatesFromParseTreeXML } from '../../utils/wikimedia/extractTemplatesFromParseTreeXML.js';
+import { findTemplates } from '../../utils/templateHelpers.js';
 
 export async function getQuestInfo(
 	questName: string,
@@ -19,12 +20,11 @@ export async function getQuestInfo(
 	const parseTreeXmlDocument = parseTreeResponse.data
 	const parsedTemplates = extractTemplatesFromParseTreeXML(parseTreeXmlDocument)
 
-	const findTemplates = (targetTitle: string) => parsedTemplates.filter(template => template.title === targetTitle)
+	const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
+	const infoboxQuestTemplate = findTemplates<InfoboxQuestTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST)[0]
 
-	const questDetailsTemplate = findTemplates(SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
-	const questInfoboxTemplate = findTemplates(SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST)[0]
-
-	const { start, startmap, difficulty, length, requirements, items, recommended, kills, ironman } = questDetailsTemplate.parameters
+	const { start, startmap, difficulty, length, requirements, recommended, kills } = questDetailsTemplate.parameters
+	const { name, number, image, release, update, aka, members, series, developer } = infoboxQuestTemplate.parameters
 
 	// TODO: Get batched item list info: https://oldschool.runescape.wiki/api.php?action=query&titles=[ITEM_LIST]&prop=revisions&rvprop=content&format=json
 	// - ITEM_LIST is a URL-encoded list of strings; one string per item, separated by the '|' character (e.g., Bucket|Egg|Feather for a list containing the items Bucket, Egg and Feather)

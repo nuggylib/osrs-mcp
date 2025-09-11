@@ -12,7 +12,7 @@ export type ParsedTemplate = {
 	 * }
 	 * ```
 	 */
-	parameters: Record<string, string>;
+	parameters: Record<string, any>;
 	// TODO: Determine if we need this
 	lineStart?: number;
 }
