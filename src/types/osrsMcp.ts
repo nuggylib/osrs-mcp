@@ -9,7 +9,11 @@ export type QuestInfoToolResponse = {
 	itemReqs: {
 		[itemName: string]: number
 	},
-	questReqs: string[],
+	questReqs: {
+		[questName: string]: {
+			preReq?: string
+		}
+	},
 	skillReqs: {
 		[skillName: string]: number
 	},
