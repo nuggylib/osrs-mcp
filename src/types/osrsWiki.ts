@@ -308,7 +308,6 @@ export type OSRSWikiAPIOpenSearchActionResult = [
 ];
 
 export type BaseOSRSWikiTemplate = ParsedTemplate & {
-	type: 'infobox_quest' | 'quest_details'
 }
 
 /**
