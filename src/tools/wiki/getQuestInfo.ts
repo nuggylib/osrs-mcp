@@ -7,10 +7,12 @@ import { createOSRSWikiAPIAction } from '../../utils/osrsWikiAPIActionFactory.js
 import { SUPPORTED_API_ACTIONS, SUPPORTED_PARSETREE_TEMPLATE_TITLE, QuestDetailsTemplate, InfoboxQuestTemplate } from '../../types/osrsWiki.js';
 import { extractTemplatesFromParseTreeXML } from '../../utils/wikimedia/extractTemplatesFromParseTreeXML.js';
 import { findTemplates } from '../../utils/templateHelpers.js';
+import { QuestInfoToolResponse } from '../../types/osrsMcp.js';
 
 export async function getQuestInfo(
 	questName: string,
 ): Promise<CallToolResult> {
+	const response: Partial<QuestInfoToolResponse> = {}
 	const parseActionParseTree = createOSRSWikiAPIAction<XMLDocument>(SUPPORTED_API_ACTIONS.EXPANDTEMPLATES, {
 		page: questName,
 		prop: 'parsetree',
@@ -20,10 +22,20 @@ export async function getQuestInfo(
 	const parseTreeXmlDocument = parseTreeResponse.data
 	const parsedTemplates = extractTemplatesFromParseTreeXML(parseTreeXmlDocument)
 
-	const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS, 'quest_details')[0]
-	const infoboxQuestTemplate = findTemplates<InfoboxQuestTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST, 'infobox_quest')[0]
+	const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
+	const infoboxQuestTemplate = findTemplates<InfoboxQuestTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST)[0]
 
 	const { start, startmap, difficulty, length, requirements, recommended, kills } = questDetailsTemplate.parameters
+	// TODO: Parse `start` for the questGiver
+	response.startingPoint = startmap
+	response.difficulty = difficulty
+	response.length = length
+	// TODO: parse `requirements` for itemReqs
+	// TODO: parse `requirements` for questReqs
+	// TODO: parse `requirements` for skillReqs
+	// TODO: parse `recommended` for recommendedItems
+	// TODO: parse `recommended` for recommendedSkills
+	// TODO: pase `kills` for enemiesToDefeat
 	const { name, number, image, release, update, aka, members, series, developer } = infoboxQuestTemplate.parameters
 
 	// TODO: Get batched item list info: https://oldschool.runescape.wiki/api.php?action=query&titles=[ITEM_LIST]&prop=revisions&rvprop=content&format=json
@@ -31,7 +43,7 @@ export async function getQuestInfo(
 
 	// TODO: Get location map data: https://oldschool.runescape.wiki/api.php?action=query&titles=[LOCATION]&prop=revisions&rvprop=content&format=json
 	// - LOCATION is a URL-encoded string name of the location to get the info for
-	// - Need to make sure this targets the given quest's quest giver.
+	// - Need to make sure this targets the given Quest's Quest giver.
 
 	// TODO: Get batched enemy data: https://oldschool.runescape.wiki/api.php?action=query&titles=Enemy1|Enemy2&prop=revisions&rvprop=content&format=json
 
@@ -41,7 +53,7 @@ export async function getQuestInfo(
 		content: [
 			{
 				type: 'text',
-				text: '',
+				text: JSON.stringify(response, null),
 			},
 		],
 	};
@@ -52,27 +64,28 @@ server.registerTool(
 	{
 		description: loadPrompt('wiki', 'getQuestInfo.txt'),
 		inputSchema: {
-			questName: z.string().describe('The name of the quest to get the info for.'),
+			questName: z.string().describe('The name of the Quest to get the info for.'),
 		},
 		outputSchema: {
-			startingPoint: z.string().describe('The map coordinates of the quest giver\'s location.'),
-			difficulty: z.string().describe('The official difficulty of this quest as-set by Jagex.'),
-			length: z.string().describe('The official length of this quest as-set by Jagex.'),
+			questGiver: z.string().describe('The name of the Quest giver.'),
+			startingPoint: z.string().describe('The map coordinates of the Quest giver\'s location.'),
+			difficulty: z.string().describe('The official difficulty of this Quest as-set by Jagex.'),
+			length: z.string().describe('The official length of this Quest as-set by Jagex.'),
 			itemReqs: z.set(
 				z.string().describe('The Item name'),
-			).describe('The Items required to complete this quest.'),
+			).describe('The Items required to complete this Quest.'),
 			questReqs: z.set(
 				z.string().describe('The pre-requisite Quest name'),
 			).describe('The Quests that need to be completed before this Quest can be completed.'),
 			skillReqs: z.record(
 				z.string().describe('The Skill name'),
-			).describe('The Skill levels required for to complete this quest.'),
+			).describe('The Skill levels required for to complete this Quest.'),
 			recommendedItems: z.set(
 				z.string().describe('The Item name'),
-			).describe('The recommended Items for this quest that will make completing it easier.'),
+			).describe('The recommended Items for this Quest that will make completing it easier.'),
 			recommendedSkills: z.record(
 				z.string().describe('The Skill name'),
-			).describe('The Skill levels recommended for this quest that will make completing it easier.'),
+			).describe('The Skill levels recommended for this Quest that will make completing it easier.'),
 			enemiesToDefeat: z.set(
 				z.string().describe('The name of an enemy Monster'),
 			).describe('The list of enemies that need to be defeated to complete this Quest.'),
@@ -82,7 +95,7 @@ server.registerTool(
 			).describe('The Items awarded to the player upon completion of this Quest with the number of how many of each are awarded.'),
 			xpRewards: z.record(
 				z.string().describe('The name of the Skill granted XP.'),
-			).describe('The Skills which are granted reward XP upon completion of this quest, as well as how much XP is granted for each.'),
+			).describe('The Skills which are granted reward XP upon completion of this Quest, as well as how much XP is granted for each.'),
 			uniqueRewards: z.set(
 				z.string().describe('A description of the unique reward.'),
 			).describe('The list of unique rewards granted upon completion of this Quest.'),

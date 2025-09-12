@@ -1,6 +1,7 @@
 export type QuestInfoToolResponse = {
 	startingPoint: string,
 	difficulty: string,
+	developer: string,
 	length: string,
 	itemReqs: string[],
 	questReqs: string[],
