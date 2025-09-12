@@ -6,7 +6,9 @@ export type QuestInfoToolResponse = {
 	difficulty: string,
 	developer: string,
 	length: string,
-	itemReqs: string[],
+	itemReqs: {
+		[itemName: string]: number
+	},
 	questReqs: string[],
 	skillReqs: {
 		[skillName: string]: number
