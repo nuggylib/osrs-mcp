@@ -26,16 +26,28 @@ export async function getQuestInfo(
 	const infoboxQuestTemplate = findTemplates<InfoboxQuestTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST)[0]
 
 	const { start, startmap, difficulty, length, requirements, recommended, kills } = questDetailsTemplate.parameters
-	// TODO: Parse `start` for the questGiver
+
 	response.startingPoint = startmap
 	response.difficulty = difficulty
 	response.length = length
-	// TODO: parse `requirements` for itemReqs
+
+	// Parse `start` for the questGiver (pattern is generally "Speak/Talk to [[NPC_NAME]] at/in..." followed by location)
+	const questGiverMatch = start.match(/(?:Speak|Talk)\s+(?:to|with)\s+\[\[([^\]]+)\]\]/i)
+	if (questGiverMatch) {
+		// Extract the NPC name, handling cases where it might have a pipe for display text
+		const npcNameRaw = questGiverMatch[1]
+		// If there's a pipe, the actual NPC name is before it
+		response.questGiver = npcNameRaw.split('|')[0].trim()
+	}
+
+
+	// TODO: parse `requirements` for itemReqs (see documentation for requirements on how this string is structured)
 	// TODO: parse `requirements` for questReqs
 	// TODO: parse `requirements` for skillReqs
 	// TODO: parse `recommended` for recommendedItems
 	// TODO: parse `recommended` for recommendedSkills
 	// TODO: pase `kills` for enemiesToDefeat
+
 	const { name, number, image, release, update, aka, members, series, developer } = infoboxQuestTemplate.parameters
 
 	// TODO: Get batched item list info: https://oldschool.runescape.wiki/api.php?action=query&titles=[ITEM_LIST]&prop=revisions&rvprop=content&format=json

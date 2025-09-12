@@ -1,4 +1,7 @@
+// TODO: Implement tooling to generate types from Zod validators
+// This type should align with the output schema for the getQuestInfo tool
 export type QuestInfoToolResponse = {
+	questGiver: string,
 	startingPoint: string,
 	difficulty: string,
 	developer: string,
