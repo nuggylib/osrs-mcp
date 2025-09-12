@@ -20,8 +20,8 @@ export async function getQuestInfo(
 	const parseTreeXmlDocument = parseTreeResponse.data
 	const parsedTemplates = extractTemplatesFromParseTreeXML(parseTreeXmlDocument)
 
-	const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
-	const infoboxQuestTemplate = findTemplates<InfoboxQuestTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST)[0]
+	const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS, 'quest_details')[0]
+	const infoboxQuestTemplate = findTemplates<InfoboxQuestTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST, 'infobox_quest')[0]
 
 	const { start, startmap, difficulty, length, requirements, recommended, kills } = questDetailsTemplate.parameters
 	const { name, number, image, release, update, aka, members, series, developer } = infoboxQuestTemplate.parameters

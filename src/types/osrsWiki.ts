@@ -307,6 +307,10 @@ export type OSRSWikiAPIOpenSearchActionResult = [
   urls: string[]
 ];
 
+export type BaseOSRSWikiTemplate = ParsedTemplate & {
+	type: 'infobox_quest' | 'quest_details'
+}
+
 /**
  * The possible "official" Quest difficulties, set by Jagex.
  *
@@ -317,7 +321,7 @@ export type QuestDifficulty = 'Novice' | 'Intermediate' | 'Experienced' | 'Maste
 /**
  * Contains high-level details about a Quest.
  */
-export type InfoboxQuestTemplate = ParsedTemplate & {
+export type InfoboxQuestTemplate = BaseOSRSWikiTemplate & {
 	parameters: {
 		/**
 		 * The name of the Quest.
@@ -361,7 +365,7 @@ export type InfoboxQuestTemplate = ParsedTemplate & {
 /**
  * Contains detailed information about the Quest.
  */
-export type QuestDetailsTemplate = ParsedTemplate & {
+export type QuestDetailsTemplate = BaseOSRSWikiTemplate & {
 	parameters: {
 		/**
 		 * A string explaining how to start the quest, including who to talk to and where. The
