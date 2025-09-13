@@ -5,7 +5,8 @@ import { z } from 'zod';
 import { loadPrompt } from '../../utils/promptLoader.js';
 import { createOSRSWikiAPIAction } from '../../utils/osrsWikiAPIActionFactory.js';
 import { SUPPORTED_API_ACTIONS, SUPPORTED_PARSETREE_TEMPLATE_TITLE, QuestDetailsTemplate, InfoboxQuestTemplate } from '../../types/osrsWiki.js';
-import { extractTemplatesFromParseTreeXML } from '../../utils/wikimedia/extractTemplatesFromParseTreeXML.js';
+import { extractTemplatesFromXML as extractTemplatesFromXML } from '../../utils/wikimedia/extractTemplatesFromXML.js';
+import { extractTemplatesFromString } from '../../utils/wikimedia/extractTemplatesFromString.js';
 import { findTemplates } from '../../utils/templateHelpers.js';
 import { QuestInfoToolResponse } from '../../types/osrsMcp.js';
 
@@ -20,13 +21,14 @@ export async function getQuestInfo(
 
 	const parseTreeResponse = await parseActionParseTree({})
 	const parseTreeXmlDocument = parseTreeResponse.data
-	const parsedTemplates = extractTemplatesFromParseTreeXML(parseTreeXmlDocument)
+	const parsedTemplates = extractTemplatesFromXML(parseTreeXmlDocument)
 
 	const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
 	const infoboxQuestTemplate = findTemplates<InfoboxQuestTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST)[0]
 
 	const { start, startmap, difficulty, length, requirements, recommended, kills } = questDetailsTemplate.parameters
 
+	// TODO: Parse this differently to store the X and Y individually for easier use.
 	response.startingPoint = startmap
 	response.difficulty = difficulty
 	response.length = length
@@ -136,9 +138,122 @@ export async function getQuestInfo(
 		}
 	}
 	response.questReqs = questReqs
-	// TODO: parse `requirements` for skillReqs - see documentation for requirements field to understand the string structure.
-	// TODO: parse `recommended` for recommendedItems
-	// TODO: parse `recommended` for recommendedSkills
+
+	// Parse skill requirements from the requirements string
+	const skillReqs: Record<string, number> = {}
+	if (requirements) {
+		// Extract SCP templates from the requirements string
+		const scpTemplates = extractTemplatesFromString(requirements)
+
+		// Filter for SCP templates (skill clickpic templates)
+		const skillTemplates = scpTemplates.filter(template =>
+			template.title === 'SCP' || template.title === 'Scp' || template.title === 'scp',
+		)
+
+		// Process each SCP template to extract skill and level
+		for (const template of skillTemplates) {
+			// SCP template typically has parameters:
+			// 1 = skill name (e.g., "Mining", "Smithing")
+			// 2 = skill level required (e.g., "50", "30")
+			const skillName = template.parameters['1']?.trim()
+			const levelStr = template.parameters['2']?.trim()
+
+			if (skillName && levelStr) {
+				const level = parseInt(levelStr, 10)
+				if (!isNaN(level)) {
+					// Store the skill requirement
+					// If the same skill appears multiple times, keep the highest requirement
+					if (!skillReqs[skillName] || skillReqs[skillName] < level) {
+						skillReqs[skillName] = level
+					}
+				}
+			}
+		}
+	}
+	response.skillReqs = skillReqs
+
+	// Parse recommended items from the recommended string
+	const recommendedItems: Record<string, number> = {}
+	if (recommended) {
+		// Split by lines to process each item entry
+		const lines = recommended.split('\n')
+
+		for (const line of lines) {
+			// Match patterns like "4 [[steel bar]]s" or "[[Bronze bar]]" or "2 [[Guam leaves]]"
+			// First try to match with a number prefix
+			const quantityMatch = line.match(/(\d+)\s*\[\[([^\]]+)\]\]/)
+			if (quantityMatch) {
+				const quantity = parseInt(quantityMatch[1], 10)
+				const itemName = quantityMatch[2].split('|')[0].trim()
+
+				// Filter out non-item links (locations, skills, etc.)
+				const nonItemKeywords = [
+					'Fairy Rings', 'Fairy rings', 'fairy rings',
+					'Balloon transport', 'Gnome Glider', 'gnome glider',
+					'Eagle transport', 'eagle transport',
+					'Grouping', 'grouping',
+					'Multicombat', 'multicombat',
+				]
+
+				if (itemName && !isNaN(quantity) &&
+					!nonItemKeywords.some(keyword => itemName.includes(keyword))) {
+					// Add to existing quantity if item already exists
+					recommendedItems[itemName] = (recommendedItems[itemName] || 0) + quantity
+				}
+			} else {
+				// Try to match without a number (default to 1)
+				const simpleMatch = line.match(/\[\[([^\]]+)\]\]/)
+				if (simpleMatch) {
+					const itemName = simpleMatch[1].split('|')[0].trim()
+
+					// Filter out non-item links
+					const nonItemKeywords = [
+						'Fairy Rings', 'Fairy rings', 'fairy rings',
+						'Balloon transport', 'Gnome Glider', 'gnome glider',
+						'Eagle transport', 'eagle transport',
+						'Grouping', 'grouping',
+						'Multicombat', 'multicombat',
+					]
+
+					if (itemName &&
+						!nonItemKeywords.some(keyword => itemName.includes(keyword))) {
+						// Add 1 to existing quantity if item already exists
+						recommendedItems[itemName] = (recommendedItems[itemName] || 0) + 1
+					}
+				}
+			}
+		}
+	}
+	response.recommendedItems = recommendedItems
+
+	// Parse recommended skills from the recommended string
+	const recommendedSkills: Record<string, number> = {}
+	if (recommended) {
+		// Extract SCP templates from the recommended string
+		const templates = extractTemplatesFromString(recommended)
+
+		// Filter for SCP templates (skill clickpic templates) - exact match only
+		const skillTemplates = templates.filter(template => template.title === 'SCP')
+
+		// Process each SCP template to extract skill and level
+		for (const template of skillTemplates) {
+			const skillName = template.parameters['1']?.trim()
+			const levelStr = template.parameters['2']?.trim()
+
+			if (skillName && levelStr) {
+				const level = parseInt(levelStr, 10)
+				if (!isNaN(level)) {
+					// Store the recommended skill level
+					// If the same skill appears multiple times, keep the highest
+					if (!recommendedSkills[skillName] || recommendedSkills[skillName] < level) {
+						recommendedSkills[skillName] = level
+					}
+				}
+			}
+		}
+	}
+	response.recommendedSkills = recommendedSkills
+
 	// TODO: pase `kills` for enemiesToDefeat
 
 	const { name, number, image, release, update, aka, members, series, developer } = infoboxQuestTemplate.parameters
@@ -183,10 +298,12 @@ server.registerTool(
 				z.string().describe('The pre-requisite Quest name'),
 			).describe('The Quests that need to be completed before this Quest can be completed.'),
 			skillReqs: z.record(
-				z.string().describe('The Skill name'),
+				z.string().describe('The Skill name.'),
+				z.number().describe('The required Skill level.'),
 			).describe('The Skill levels required for to complete this Quest.'),
 			recommendedItems: z.record(
 				z.string().describe('The Item name'),
+				z.number().describe('The quantity recommended'),
 			).describe('The recommended Items for this Quest that will make completing it easier.'),
 			recommendedSkills: z.record(
 				z.string().describe('The Skill name'),

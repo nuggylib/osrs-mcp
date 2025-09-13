@@ -1,13 +1,6 @@
 import { ParsedTemplate } from '../../types/wikimedia';
 
-/**
- * Extracts templates from a action=parse, props=parsetree response from the OSRS WIKI API.
- * The response must be in an XML format.
- *
- * @param xmlDoc The XML-formatted API response to extract templates from.
- * @returns Array of ParsedTemplate objects; one for each template extracted.
- */
-export function extractTemplatesFromParseTreeXML(xmlDoc: XMLDocument): ParsedTemplate[] {
+export function extractTemplatesFromXML(xmlDoc: XMLDocument): ParsedTemplate[] {
 	const templates = xmlDoc.querySelectorAll('template');
 
 	return Array.from(templates).map(template => {
