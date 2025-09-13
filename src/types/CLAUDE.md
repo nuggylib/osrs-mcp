@@ -1,4 +1,6 @@
 # Directory Structure
 This directory contains files with TypeScript definitions to be used throughout the project.
-- `wikijs.ts` contains type definitions that align with what the `wikijs` package is using.
-	- `wikijs` does not export its types, so we have to make sure our types align with what we find in `node_modules` for this package.
+- `auth.ts` contains authentication-related types.
+- `osrsMcp.ts` contains app-specific types, generally inferred (using `zod`) from the objects defined in the `../zod/` directory.
+- `osrsWiki.ts` contains types that reflect the shape of data responses from the OSRS Wiki API.
+- 
