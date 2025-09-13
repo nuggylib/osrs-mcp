@@ -8,12 +8,14 @@ import { SUPPORTED_API_ACTIONS, SUPPORTED_PARSETREE_TEMPLATE_TITLE, QuestDetails
 import { extractTemplatesFromXML as extractTemplatesFromXML } from '../../utils/wikimedia/extractTemplatesFromXML.js';
 import { extractTemplatesFromString } from '../../utils/wikimedia/extractTemplatesFromString.js';
 import { findTemplates } from '../../utils/templateHelpers.js';
-import { QuestInfoToolResponse } from '../../types/osrsMcp.js';
+import { QuestInfoToolResponse } from '../../zod';
+import { QuestInfoToolResponseType } from '../../types/osrsMcp.js';
+import { getItemRequirements } from '../../core/quest/getItemRequirements.js';
 
 export async function getQuestInfo(
 	questName: string,
 ): Promise<CallToolResult> {
-	const response: Partial<QuestInfoToolResponse> = {}
+	const response: Partial<QuestInfoToolResponseType> = {}
 	const parseActionParseTree = createOSRSWikiAPIAction<XMLDocument>(SUPPORTED_API_ACTIONS.EXPANDTEMPLATES, {
 		page: questName,
 		prop: 'parsetree',
@@ -43,42 +45,9 @@ export async function getQuestInfo(
 	}
 
 
-	// Parse item requirements from the requirements string
-	const itemReqs: Record<string, number> = {}
 	if (requirements) {
-		// Extract the items section which starts with "items ="
-		const itemsMatch = requirements.match(/items\s*=\s*=\s*<value>([\s\S]*?)(?:<\/value>|$)/)
-		if (itemsMatch) {
-			const itemsSection = itemsMatch[1]
-			// Split by lines to process each item entry
-			const lines = itemsSection.split('\n')
-
-			for (const line of lines) {
-				// Match patterns like "4 [[steel bar]]s" or "[[Bronze bar]]" or "2 [[Guam leaves]]"
-				// First try to match with a number prefix
-				const quantityMatch = line.match(/(\d+)\s*\[\[([^\]]+)\]\]/)
-				if (quantityMatch) {
-					const quantity = parseInt(quantityMatch[1], 10)
-					const itemName = quantityMatch[2].split('|')[0].trim()
-					if (itemName && !isNaN(quantity)) {
-						// Add to existing quantity if item already exists
-						itemReqs[itemName] = (itemReqs[itemName] || 0) + quantity
-					}
-				} else {
-					// Try to match without a number (default to 1)
-					const simpleMatch = line.match(/\[\[([^\]]+)\]\]/)
-					if (simpleMatch) {
-						const itemName = simpleMatch[1].split('|')[0].trim()
-						if (itemName) {
-							// Add 1 to existing quantity if item already exists
-							itemReqs[itemName] = (itemReqs[itemName] || 0) + 1
-						}
-					}
-				}
-			}
-		}
+		response.itemReqs = getItemRequirements(requirements)
 	}
-	response.itemReqs = itemReqs
 
 	// Parse quest requirements from the requirements string
 	const questReqs: Record<string, { preReq?: string }> = {}
@@ -254,7 +223,46 @@ export async function getQuestInfo(
 	}
 	response.recommendedSkills = recommendedSkills
 
-	// TODO: pase `kills` for enemiesToDefeat
+	// Parse enemies to defeat from the kills string
+	const enemiesToDefeat: Record<string, { levels: number[] }> = {}
+	if (kills) {
+		// Split by lines to process each enemy entry
+		const lines = kills.split('\n')
+
+		for (const line of lines) {
+			// Match patterns like "* [[Slagilith]] ''(level 92)''" or "* [[Dwarf gang member]]s ''(level 44/48/49)'' ([[Multicombat area]])"
+			// The pattern looks for lines starting with asterisks followed by [[Enemy Name]]
+			const enemyMatch = line.match(/^\*+\s*\[\[([^\]]+)\]\]/)
+			if (enemyMatch) {
+				const enemyNameRaw = enemyMatch[1]
+				// If there's a pipe, the actual enemy name is before it
+				const enemyName = enemyNameRaw.split('|')[0].trim()
+
+				if (enemyName) {
+					// Extract level information from the line
+					// Look for patterns like ''(level 92)'' or ''(level 44/48/49)''
+					const levelMatch = line.match(/''?\(level\s+([^)]+)\)''?/)
+					const levels: number[] = []
+
+					if (levelMatch) {
+						const levelStr = levelMatch[1]
+						// Handle multiple levels separated by slashes
+						const levelParts = levelStr.split('/')
+						for (const part of levelParts) {
+							const level = parseInt(part.trim(), 10)
+							if (!isNaN(level)) {
+								levels.push(level)
+							}
+						}
+					}
+
+					// If we found levels, use them; otherwise default to empty array
+					enemiesToDefeat[enemyName] = { levels }
+				}
+			}
+		}
+	}
+	response.enemiesToDefeat = enemiesToDefeat
 
 	const { name, number, image, release, update, aka, members, series, developer } = infoboxQuestTemplate.parameters
 
@@ -286,42 +294,7 @@ server.registerTool(
 		inputSchema: {
 			questName: z.string().describe('The name of the Quest to get the info for.'),
 		},
-		outputSchema: {
-			questGiver: z.string().describe('The name of the Quest giver.'),
-			startingPoint: z.string().describe('The map coordinates of the Quest giver\'s location.'),
-			difficulty: z.string().describe('The official difficulty of this Quest as-set by Jagex.'),
-			length: z.string().describe('The official length of this Quest as-set by Jagex.'),
-			itemReqs: z.record(
-				z.string().describe('The Item name'),
-			).describe('The Items required to complete this Quest.'),
-			questReqs: z.record(
-				z.string().describe('The pre-requisite Quest name'),
-			).describe('The Quests that need to be completed before this Quest can be completed.'),
-			skillReqs: z.record(
-				z.string().describe('The Skill name.'),
-				z.number().describe('The required Skill level.'),
-			).describe('The Skill levels required for to complete this Quest.'),
-			recommendedItems: z.record(
-				z.string().describe('The Item name'),
-				z.number().describe('The quantity recommended'),
-			).describe('The recommended Items for this Quest that will make completing it easier.'),
-			recommendedSkills: z.record(
-				z.string().describe('The Skill name'),
-			).describe('The Skill levels recommended for this Quest that will make completing it easier.'),
-			enemiesToDefeat: z.set(
-				z.string().describe('The name of an enemy Monster'),
-			).describe('The list of enemies that need to be defeated to complete this Quest.'),
-			questPoints: z.number().describe('The number of Quest Points this Quest awards on completion.'),
-			itemRewards: z.record(
-				z.string().describe('The name of the Item reward.'),
-			).describe('The Items awarded to the player upon completion of this Quest with the number of how many of each are awarded.'),
-			xpRewards: z.record(
-				z.string().describe('The name of the Skill granted XP.'),
-			).describe('The Skills which are granted reward XP upon completion of this Quest, as well as how much XP is granted for each.'),
-			uniqueRewards: z.set(
-				z.string().describe('A description of the unique reward.'),
-			).describe('The list of unique rewards granted upon completion of this Quest.'),
-		},
+		outputSchema: QuestInfoToolResponse,
 		annotations: {
 			openWorldHint: true,
 		},
