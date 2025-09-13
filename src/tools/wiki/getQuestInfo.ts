@@ -66,7 +66,6 @@ export async function getQuestInfo(
 	questInfoToolResponse.questNumber = parseInt(number)
 	questInfoToolResponse.featuredImageName = image
 
-	// Parse the release string, which is formatted similarly to `[[28 February]] [[2005]]`
 	if (release) {
 		const releaseParts = getReleaseParts(release)
 		questInfoToolResponse.releaseDay = parseInt(releaseParts[1])
@@ -74,6 +73,7 @@ export async function getQuestInfo(
 		questInfoToolResponse.releaseYear = releaseParts[3]
 	}
 
+	questInfoToolResponse.update = update
 	questInfoToolResponse.aka = aka
 
 	if (members.toLowerCase() === 'yes') {
@@ -83,6 +83,9 @@ export async function getQuestInfo(
 	if (members.toLowerCase() === 'no') {
 		questInfoToolResponse.membersOnly = false
 	}
+
+	questInfoToolResponse.series = series
+	questInfoToolResponse.developer = developer
 
 	// TODO: Get batched item list info: https://oldschool.runescape.wiki/api.php?action=query&titles=[ITEM_LIST]&prop=revisions&rvprop=content&format=json
 	// - ITEM_LIST is a URL-encoded list of strings; one string per item, separated by the '|' character (e.g., Bucket|Egg|Feather for a list containing the items Bucket, Egg and Feather)
