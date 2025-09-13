@@ -52,6 +52,7 @@ export async function getQuestInfo(
 	if (recommended) {
 		response.recommendedItems = getRecommendedItems(recommended)
 		response.recommendedSkills = getRecommendedSkills(recommended)
+		// TODO: Travel recommendations (e.g., fairy rings, glider paths, gnome tree usage, etc.)
 	}
 
 	if (kills) {
@@ -68,8 +69,6 @@ export async function getQuestInfo(
 	// - Need to make sure this targets the given Quest's Quest giver.
 
 	// TODO: Get batched enemy data: https://oldschool.runescape.wiki/api.php?action=query&titles=Enemy1|Enemy2&prop=revisions&rvprop=content&format=json
-
-	// TODO: Create an output object unifying the data in a way that matches the outputSchema in the tool definition.
 
 	return {
 		content: [
