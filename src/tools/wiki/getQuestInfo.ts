@@ -14,7 +14,7 @@ import { getRequiredItems, getRequiredQuests, getRequiredSkills, getRecommendedI
 export async function getQuestInfo(
 	questName: string,
 ): Promise<CallToolResult> {
-	const response: Partial<QuestInfoToolResponseType> = {}
+	const questInfoToolResponse: Partial<QuestInfoToolResponseType> = {}
 	const parseActionParseTree = createOSRSWikiAPIAction<XMLDocument>(SUPPORTED_API_ACTIONS.EXPANDTEMPLATES, {
 		page: questName,
 		prop: 'parsetree',
@@ -30,9 +30,9 @@ export async function getQuestInfo(
 	const { start, startmap, difficulty, length, requirements, recommended, kills } = questDetailsTemplate.parameters
 
 	// TODO: Parse this differently to store the X and Y individually for easier use.
-	response.startingPoint = startmap
-	response.difficulty = difficulty
-	response.length = length
+	questInfoToolResponse.startingPoint = startmap
+	questInfoToolResponse.difficulty = difficulty
+	questInfoToolResponse.length = length
 
 	// Parse `start` for the questGiver (pattern is generally "Speak/Talk to [[NPC_NAME]] at/in..." followed by location)
 	const questGiverMatch = start.match(/(?:Speak|Talk)\s+(?:to|with)\s+\[\[([^\]]+)\]\]/i)
@@ -40,23 +40,23 @@ export async function getQuestInfo(
 		// Extract the NPC name, handling cases where it might have a pipe for display text
 		const npcNameRaw = questGiverMatch[1]
 		// If there's a pipe, the actual NPC name is before it
-		response.questGiver = npcNameRaw.split('|')[0].trim()
+		questInfoToolResponse.questGiver = npcNameRaw.split('|')[0].trim()
 	}
 
 	if (requirements) {
-		response.itemReqs = getRequiredItems(requirements)
-		response.questReqs = getRequiredQuests(requirements)
-		response.skillReqs = getRequiredSkills(requirements)
+		questInfoToolResponse.requiredItems = getRequiredItems(requirements)
+		questInfoToolResponse.requiredQuests = getRequiredQuests(requirements)
+		questInfoToolResponse.requiredSkills = getRequiredSkills(requirements)
 	}
 
 	if (recommended) {
-		response.recommendedItems = getRecommendedItems(recommended)
-		response.recommendedSkills = getRecommendedSkills(recommended)
+		questInfoToolResponse.recommendedItems = getRecommendedItems(recommended)
+		questInfoToolResponse.recommendedSkills = getRecommendedSkills(recommended)
 		// TODO: Travel recommendations (e.g., fairy rings, glider paths, gnome tree usage, etc.)
 	}
 
 	if (kills) {
-		response.enemiesToDefeat = getEnemiesToKill(kills)
+		questInfoToolResponse.enemiesToDefeat = getEnemiesToKill(kills)
 	}
 
 	const { name, number, image, release, update, aka, members, series, developer } = infoboxQuestTemplate.parameters
@@ -74,7 +74,7 @@ export async function getQuestInfo(
 		content: [
 			{
 				type: 'text',
-				text: JSON.stringify(response, null),
+				text: JSON.stringify(questInfoToolResponse, null),
 			},
 		],
 	};
