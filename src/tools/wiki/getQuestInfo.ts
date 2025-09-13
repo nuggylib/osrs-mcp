@@ -61,6 +61,9 @@ export async function getQuestInfo(
 
 	const { name, number, image, release, update, aka, members, series, developer } = infoboxQuestTemplate.parameters
 
+	questInfoToolResponse.name = name
+	questInfoToolResponse.questNumber = parseInt(number)
+	questInfoToolResponse.featuredImageName = image
 	// TODO: Get batched item list info: https://oldschool.runescape.wiki/api.php?action=query&titles=[ITEM_LIST]&prop=revisions&rvprop=content&format=json
 	// - ITEM_LIST is a URL-encoded list of strings; one string per item, separated by the '|' character (e.g., Bucket|Egg|Feather for a list containing the items Bucket, Egg and Feather)
 
