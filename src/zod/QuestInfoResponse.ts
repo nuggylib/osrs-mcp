@@ -14,6 +14,7 @@ export const QuestInfoToolResponse = {
 	questGiver: z.string().describe('The name of the Quest giver.'),
 	startingPoint: z.string().describe('The map coordinates of the Quest giver\'s location.'),
 	difficulty: z.string().describe('The official difficulty of this Quest as-set by Jagex.'),
+	aka: z.string().describe('The alternative name for this Quest.'),
 	length: z.string().describe('The official length of this Quest as-set by Jagex.'),
 	requiredItems: z.record(
 		z.string().describe('The Item name.'),

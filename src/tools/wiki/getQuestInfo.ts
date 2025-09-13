@@ -10,6 +10,7 @@ import { findTemplates } from '../../utils/templateHelpers.js';
 import { QuestInfoToolResponse } from '../../zod';
 import { QuestInfoToolResponseType } from '../../types/osrsMcp.js';
 import { getRequiredItems, getRequiredQuests, getRequiredSkills, getRecommendedItems, getRecommendedSkills, getEnemiesToKill } from '../../workflows/quest/index.js';
+import { getReleaseParts } from '../../workflows/quest/getReleaseParts.js';
 
 export async function getQuestInfo(
 	questName: string,
@@ -67,13 +68,13 @@ export async function getQuestInfo(
 
 	// Parse the release string, which is formatted similarly to `[[28 February]] [[2005]]`
 	if (release) {
-		const releaseMatch = release.match(/\[\[(\d+)\s+([^\]]+)\]\]\s*\[\[(\d+)\]\]/)
-		if (releaseMatch) {
-			questInfoToolResponse.releaseDay = parseInt(releaseMatch[1])
-			questInfoToolResponse.releaseMonth = releaseMatch[2]
-			questInfoToolResponse.releaseYear = releaseMatch[3]
-		}
+		const releaseParts = getReleaseParts(release)
+		questInfoToolResponse.releaseDay = parseInt(releaseParts[1])
+		questInfoToolResponse.releaseMonth = releaseParts[2]
+		questInfoToolResponse.releaseYear = releaseParts[3]
 	}
+
+	questInfoToolResponse.aka = aka
 
 	if (members.toLowerCase() === 'yes') {
 		questInfoToolResponse.membersOnly = true
