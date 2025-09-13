@@ -75,6 +75,14 @@ export async function getQuestInfo(
 		}
 	}
 
+	if (members.toLowerCase() === 'yes') {
+		questInfoToolResponse.membersOnly = true
+	}
+
+	if (members.toLowerCase() === 'no') {
+		questInfoToolResponse.membersOnly = false
+	}
+
 	// TODO: Get batched item list info: https://oldschool.runescape.wiki/api.php?action=query&titles=[ITEM_LIST]&prop=revisions&rvprop=content&format=json
 	// - ITEM_LIST is a URL-encoded list of strings; one string per item, separated by the '|' character (e.g., Bucket|Egg|Feather for a list containing the items Bucket, Egg and Feather)
 
@@ -84,14 +92,14 @@ export async function getQuestInfo(
 
 	// TODO: Get batched enemy data: https://oldschool.runescape.wiki/api.php?action=query&titles=Enemy1|Enemy2&prop=revisions&rvprop=content&format=json
 
-	return {
+	{return {
 		content: [
 			{
 				type: 'text',
 				text: JSON.stringify(questInfoToolResponse, null),
 			},
 		],
-	};
+	};}
 }
 
 server.registerTool(

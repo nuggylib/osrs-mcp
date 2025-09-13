@@ -10,6 +10,7 @@ export const QuestInfoToolResponse = {
 	releaseDay: z.number().describe('The numeric day (of the month) within the release month that this Quest was added to the game.'),
 	releaseMonth: z.string().describe('The release month of when this Quest was added to the game.'),
 	releaseYear: z.string().describe('The release year of when this Quest was added to the game.'),
+	membersOnly: z.boolean().describe('Whether or not this Quest is members-only content.'),
 	questGiver: z.string().describe('The name of the Quest giver.'),
 	startingPoint: z.string().describe('The map coordinates of the Quest giver\'s location.'),
 	difficulty: z.string().describe('The official difficulty of this Quest as-set by Jagex.'),
