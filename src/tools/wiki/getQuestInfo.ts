@@ -12,6 +12,8 @@ import { QuestInfoToolResponse } from '../../zod';
 import { QuestInfoToolResponseType } from '../../types/osrsMcp.js';
 import { getItemRequirements, getQuestPreRequisites } from '../../core/quest';
 import { getSkillRequirements } from '../../core/quest/getSkillRequirements.js';
+import { getRecommendedItems } from '../../core/quest/getRecommendedItems.js';
+import { getRecommendedSkills } from '../../core/quest/getRecommendedSkills.js';
 
 export async function getQuestInfo(
 	questName: string,
@@ -51,87 +53,10 @@ export async function getQuestInfo(
 		response.skillReqs = getSkillRequirements(requirements)
 	}
 
-	// Parse recommended items from the recommended string
-	const recommendedItems: Record<string, number> = {}
 	if (recommended) {
-		// Split by lines to process each item entry
-		const lines = recommended.split('\n')
-
-		for (const line of lines) {
-			// Match patterns like "4 [[steel bar]]s" or "[[Bronze bar]]" or "2 [[Guam leaves]]"
-			// First try to match with a number prefix
-			const quantityMatch = line.match(/(\d+)\s*\[\[([^\]]+)\]\]/)
-			if (quantityMatch) {
-				const quantity = parseInt(quantityMatch[1], 10)
-				const itemName = quantityMatch[2].split('|')[0].trim()
-
-				// Filter out non-item links (locations, skills, etc.)
-				const nonItemKeywords = [
-					'Fairy Rings', 'Fairy rings', 'fairy rings',
-					'Balloon transport', 'Gnome Glider', 'gnome glider',
-					'Eagle transport', 'eagle transport',
-					'Grouping', 'grouping',
-					'Multicombat', 'multicombat',
-				]
-
-				if (itemName && !isNaN(quantity) &&
-					!nonItemKeywords.some(keyword => itemName.includes(keyword))) {
-					// Add to existing quantity if item already exists
-					recommendedItems[itemName] = (recommendedItems[itemName] || 0) + quantity
-				}
-			} else {
-				// Try to match without a number (default to 1)
-				const simpleMatch = line.match(/\[\[([^\]]+)\]\]/)
-				if (simpleMatch) {
-					const itemName = simpleMatch[1].split('|')[0].trim()
-
-					// Filter out non-item links
-					const nonItemKeywords = [
-						'Fairy Rings', 'Fairy rings', 'fairy rings',
-						'Balloon transport', 'Gnome Glider', 'gnome glider',
-						'Eagle transport', 'eagle transport',
-						'Grouping', 'grouping',
-						'Multicombat', 'multicombat',
-					]
-
-					if (itemName &&
-						!nonItemKeywords.some(keyword => itemName.includes(keyword))) {
-						// Add 1 to existing quantity if item already exists
-						recommendedItems[itemName] = (recommendedItems[itemName] || 0) + 1
-					}
-				}
-			}
-		}
+		response.recommendedItems = getRecommendedItems(recommended)
+		response.recommendedSkills = getRecommendedSkills(recommended)
 	}
-	response.recommendedItems = recommendedItems
-
-	// Parse recommended skills from the recommended string
-	const recommendedSkills: Record<string, number> = {}
-	if (recommended) {
-		// Extract SCP templates from the recommended string
-		const templates = extractTemplatesFromString(recommended)
-
-		// Filter for SCP templates (skill clickpic templates) - exact match only
-		const skillTemplates = templates.filter(template => template.title === 'SCP')
-
-		// Process each SCP template to extract skill and level
-		for (const template of skillTemplates) {
-			const skillName = template.parameters['1']?.trim()
-			const levelStr = template.parameters['2']?.trim()
-
-			if (skillName && levelStr) {
-				const level = parseInt(levelStr, 10)
-				if (!isNaN(level)) {
-					// Store the recommended skill level
-					// If the same skill appears multiple times, keep the highest
-					if (!recommendedSkills[skillName] || recommendedSkills[skillName] < level) {
-						recommendedSkills[skillName] = level
-					}
-				}
-			}
-		}
-	}
-	response.recommendedSkills = recommendedSkills
 
 	// Parse enemies to defeat from the kills string
 	const enemiesToDefeat: Record<string, { levels: number[] }> = {}
