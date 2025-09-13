@@ -1,4 +1,4 @@
-export const getQuestPreRequisites = (requirements: string) => {
+export const getRequiredQuests = (requirements: string) => {
 	// Parse quest requirements from the requirements string
 	const questReqs: Record<string, { preReq?: string }> = {}
 

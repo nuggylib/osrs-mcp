@@ -1,4 +1,4 @@
-export const getItemRequirements = (requirements: string) => {
+export const getRequiredItems = (requirements: string) => {
 // Parse item requirements from the requirements string
 	const itemReqs: Record<string, number> = {}
 

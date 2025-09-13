@@ -1,6 +1,6 @@
 import { extractTemplatesFromString } from '../../utils/wikimedia/extractTemplatesFromString'
 
-export const getSkillRequirements = (requirements: string) => {
+export const getRequiredSkills = (requirements: string) => {
 	// Parse skill requirements from the requirements string
 	const skillReqs: Record<string, number> = {}
 

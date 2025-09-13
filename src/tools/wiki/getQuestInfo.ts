@@ -6,14 +6,10 @@ import { loadPrompt } from '../../utils/promptLoader.js';
 import { createOSRSWikiAPIAction } from '../../utils/osrsWikiAPIActionFactory.js';
 import { SUPPORTED_API_ACTIONS, SUPPORTED_PARSETREE_TEMPLATE_TITLE, QuestDetailsTemplate, InfoboxQuestTemplate } from '../../types/osrsWiki.js';
 import { extractTemplatesFromXML as extractTemplatesFromXML } from '../../utils/wikimedia/extractTemplatesFromXML.js';
-import { extractTemplatesFromString } from '../../utils/wikimedia/extractTemplatesFromString.js';
 import { findTemplates } from '../../utils/templateHelpers.js';
 import { QuestInfoToolResponse } from '../../zod';
 import { QuestInfoToolResponseType } from '../../types/osrsMcp.js';
-import { getItemRequirements, getQuestPreRequisites } from '../../core/quest';
-import { getSkillRequirements } from '../../core/quest/getSkillRequirements.js';
-import { getRecommendedItems } from '../../core/quest/getRecommendedItems.js';
-import { getRecommendedSkills } from '../../core/quest/getRecommendedSkills.js';
+import { getRequiredItems, getRequiredQuests, getRequiredSkills, getRecommendedItems, getRecommendedSkills } from '../../core/quest';
 
 export async function getQuestInfo(
 	questName: string,
@@ -48,9 +44,9 @@ export async function getQuestInfo(
 	}
 
 	if (requirements) {
-		response.itemReqs = getItemRequirements(requirements)
-		response.questReqs = getQuestPreRequisites(requirements)
-		response.skillReqs = getSkillRequirements(requirements)
+		response.itemReqs = getRequiredItems(requirements)
+		response.questReqs = getRequiredQuests(requirements)
+		response.skillReqs = getRequiredSkills(requirements)
 	}
 
 	if (recommended) {
