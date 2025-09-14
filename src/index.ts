@@ -1,56 +1,17 @@
 import { transports } from './server/cache/cache';
 import { redis } from './server/cache/redisStore';
 import proxyServer from './server'
-import https from 'https';
 import http from 'http';
-import fs from 'fs';
 
 import './tools'
 import './resources'
 
 const MCP_PORT = parseInt(process.env.PORT || '3000', 10)
 
-if (process.env.NODE_ENV === 'production') {
-	// Production: Heroku handles HTTPS termination, we serve HTTP
-	if (process.env.HEROKU) {
-		http.createServer(proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
-			console.log(`HTTP Server running on http://0.0.0.0:${MCP_PORT} (Heroku HTTPS termination)`);
-		});
-	} else {
-		// Other production environments with certs
-		try {
-			const options = {
-				key: fs.readFileSync('/app/certs/server.key'),
-				cert: fs.readFileSync('/app/certs/server.crt'),
-			};
-			https.createServer(options, proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
-				console.log(`HTTPS Server running on https://0.0.0.0:${MCP_PORT}`);
-			});
-		} catch (error) {
-			console.error('Failed to load certificates:', error);
-			// Fallback to HTTP if certs don't exist
-			http.createServer(proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
-				console.log(`HTTP Server running on http://0.0.0.0:${MCP_PORT}`);
-			});
-		}
-	}
-} else {
-	// Development HTTPS (self-signed)
-	try {
-		const options = {
-			key: fs.readFileSync('./certs/server.key'),
-			cert: fs.readFileSync('./certs/server.crt'),
-		};
-		https.createServer(options, proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
-			console.log(`HTTPS Server running on https://0.0.0.0:${MCP_PORT}`);
-		});
-	} catch {
-		// Fallback to HTTP if certs don't exist
-		http.createServer(proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
-			console.log(`HTTP Server running on http://0.0.0.0:${MCP_PORT}`);
-		});
-	}
-}
+// Always use HTTP - SSL termination is handled by reverse proxy/registrar
+http.createServer(proxyServer).listen(MCP_PORT, '0.0.0.0', () => {
+	console.log(`HTTP Server running on http://0.0.0.0:${MCP_PORT}`);
+});
 
 // Handle server shutdown
 process.on('SIGINT', async () => {
