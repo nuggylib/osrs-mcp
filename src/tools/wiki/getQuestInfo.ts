@@ -16,13 +16,15 @@ export async function getQuestInfo(
 	questName: string,
 ): Promise<CallToolResult> {
 	const questInfoToolResponse: Partial<QuestInfoToolResponseType> = {}
-	const parseActionParseTree = createOSRSWikiAPIAction<XMLDocument>(SUPPORTED_API_ACTIONS.EXPANDTEMPLATES, {
+	const parseActionParseTree = createOSRSWikiAPIAction<string>(SUPPORTED_API_ACTIONS.EXPANDTEMPLATES, {
 		page: questName,
 		prop: 'parsetree',
 	}, 'xml')
 
 	const parseTreeResponse = await parseActionParseTree({})
-	const parseTreeXmlDocument = parseTreeResponse.data
+	console.log('PARSETREE RES: ', parseTreeResponse)
+	const parser = new DOMParser()
+	const parseTreeXmlDocument = parser.parseFromString(parseTreeResponse.data, 'text/xml')
 	const parsedTemplates = extractTemplatesFromXML(parseTreeXmlDocument)
 
 	const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
