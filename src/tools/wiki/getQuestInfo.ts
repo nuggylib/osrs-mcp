@@ -22,9 +22,9 @@ export async function getQuestInfo(
 	}, 'xml')
 
 	const parseTreeResponse = await parseActionParseTree({})
-	console.log('PARSETREE RES: ', parseTreeResponse)
 	const parser = new DOMParser()
 	const parseTreeXmlDocument = parser.parseFromString(parseTreeResponse.data, 'text/xml')
+	console.log('XML DOC: ', parseTreeXmlDocument)
 	const parsedTemplates = extractTemplatesFromXML(parseTreeXmlDocument)
 
 	const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
