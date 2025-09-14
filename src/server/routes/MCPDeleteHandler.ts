@@ -27,6 +27,20 @@ export const mcpDeleteHandler = async (req: Request, res: Response) => {
 	console.log(`Received session termination request for session ${sessionId}`);
 	try {
 		const transport = transports[sessionId];
+		if (!transport) {
+			console.log(`Session ${sessionId} not found or already terminated`);
+			if (!res.headersSent) {
+				res.status(404).json({
+					jsonrpc: '2.0',
+					error: {
+						code: -32000,
+						message: 'Session not found or already terminated',
+					},
+					id: null,
+				});
+			}
+			return;
+		}
 		await transport.handleRequest(req, res);
 	}
 	catch (error) {

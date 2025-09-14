@@ -31,6 +31,11 @@ export async function getQuestInfo(
 
 	const { start, startmap, difficulty, length, requirements, recommended, kills } = questDetailsTemplate.parameters
 
+	server.server.sendLoggingMessage({
+		level: 'debug',
+		data: questDetailsTemplate,
+	})
+
 	// TODO: Parse this differently to store the X and Y individually for easier use.
 	questInfoToolResponse.startingPoint = startmap
 	questInfoToolResponse.difficulty = difficulty
