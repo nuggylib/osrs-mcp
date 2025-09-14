@@ -13,11 +13,11 @@ docker-compose up -d --build
 This will:
 1. Start the MCP server on port 3000 (internal HTTP, Docker network only)
 2. Start Nginx reverse proxy on port 80 (mapped to localhost:80)
-3. Route requests from `osrs-mcp.dev.mcnuggies.dev` to the MCP server
+3. Route requests from `dev-osrs-mcp.mcnuggies.dev` to the MCP server
 
 ## Accessing the Server
 
-- **Via domain**: `http://osrs-mcp.dev.mcnuggies.dev` (or `https://` if your registrar handles SSL)
+- **Via domain**: `http://dev-osrs-mcp.mcnuggies.dev` (or `https://` if your registrar handles SSL)
 - **Via localhost**: `http://localhost`
 
 ## SSL/HTTPS Support
