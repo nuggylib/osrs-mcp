@@ -35,6 +35,7 @@ services:
       - ./config:/app/config:ro
       - ./fixtures:/app/fixtures:ro
       - ./certs:/app/certs:ro
+      - ./prompts:/app/prompts:ro
     networks:
       - mcp-network
     depends_on:

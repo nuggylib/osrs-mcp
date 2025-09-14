@@ -13,7 +13,9 @@ import { join } from 'path';
  * const description = loadPrompt('wiki', 'search.txt');
  */
 export function loadPrompt(category: string, promptFileName: string): string {
-	const promptPath = join(process.cwd(), 'prompts', category, promptFileName);
+	const promptPath = category 
+		? join(process.cwd(), 'prompts', category, promptFileName)
+		: join(process.cwd(), 'prompts', promptFileName);
 
 	try {
 		return readFileSync(promptPath, 'utf-8').trim();
