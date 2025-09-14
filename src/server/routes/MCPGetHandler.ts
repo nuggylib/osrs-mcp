@@ -37,5 +37,19 @@ export const mcpGetHandler = async (req: Request, res: Response) => {
 		console.log(`Establishing new SSE stream for session ${sessionId}`);
 	}
 	const transport = transports[sessionId];
+	if (!transport) {
+		console.error(`Transport not found for session: ${sessionId}`);
+		if (!res.headersSent) {
+			res.status(400).json({
+				jsonrpc: '2.0',
+				error: {
+					code: -32000,
+					message: 'Session not found or expired',
+				},
+				id: null,
+			});
+		}
+		return;
+	}
 	await transport.handleRequest(req, res);
 }

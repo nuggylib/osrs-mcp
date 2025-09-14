@@ -5,7 +5,7 @@
     "docker:build": "docker build -t osrs-mcp:latest .",
     "docker:run": "docker run -it --rm osrs-mcp:latest",
     "docker:shell": "docker run -it --rm osrs-mcp:latest sh",
-    "inspector:local": "npx @modelcontextprotocol/inspector@latest https://localhost:3000",
+    "inspector:local": "npx @modelcontextprotocol/inspector@latest https://dev-osrs-mcp.mcnuggies.dev",
     "inspector:heroku": "npx @modelcontextprotocol/inspector@latest https://osrs-mcp.nuggylib.com",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",

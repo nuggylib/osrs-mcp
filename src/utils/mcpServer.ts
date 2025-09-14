@@ -1,17 +1,21 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { SetLevelRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { loadPrompt } from './promptLoader';
-import { LoggingLevelSchema } from '@modelcontextprotocol/sdk/types.js';
 
 export const server = new McpServer({
 	name: 'osrs-mcp',
 	version: '0.0.1',
+}, {
+	instructions: loadPrompt('', 'server.txt'),
 	capabilities: {
 		resources: {},
 		tools: {},
-		logging: {
-			level: LoggingLevelSchema.Enum.debug,
-		},
+		logging: {},
 	},
-}, {
-	instructions: loadPrompt('', 'server.txt'),
 })
+
+server.server.setRequestHandler(SetLevelRequestSchema, async (request) => {
+	const { level } = request.params
+	return {}
+})
+
