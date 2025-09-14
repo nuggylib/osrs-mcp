@@ -1,7 +1,7 @@
 import Redis from 'ioredis';
 
-// Either use the REDISCLOUD_URL variable (set by Redis Cloud addon), or the local address
-const REDIS_URL = process.env.REDISCLOUD_URL || 'redis://localhost:6379';
+// Either use the REDISCLOUD_URL, REDIS_URL variables, or fallback to local address
+const REDIS_URL = process.env.REDISCLOUD_URL || process.env.REDIS_URL || 'redis://localhost:6379';
 
 export const redis = new Redis(REDIS_URL, {
 	retryStrategy: (times: number) => {
