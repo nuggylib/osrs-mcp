@@ -29,12 +29,12 @@ export async function getQuestInfo(
 	const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
 	const infoboxQuestTemplate = findTemplates<InfoboxQuestTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST)[0]
 
-	const { start, startmap, difficulty, length, requirements, recommended, kills } = questDetailsTemplate.parameters
-
 	server.server.sendLoggingMessage({
 		level: 'debug',
 		data: questDetailsTemplate,
 	})
+
+	const { start, startmap, difficulty, length, requirements, recommended, kills } = questDetailsTemplate.parameters
 
 	// TODO: Parse this differently to store the X and Y individually for easier use.
 	questInfoToolResponse.startingPoint = startmap
