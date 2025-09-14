@@ -1,7 +1,8 @@
 import { ParsedTemplate } from '../../types/wikimedia';
+import { JSDOM } from 'jsdom'
 
-export function extractTemplatesFromXML(xmlDoc: XMLDocument): ParsedTemplate[] {
-	const templates = xmlDoc.querySelectorAll('template');
+export function extractTemplatesFromXML(jsDom: JSDOM): ParsedTemplate[] {
+	const templates = jsDom.window.document.querySelectorAll('template');
 
 	return Array.from(templates).map(template => {
 		const title = template.querySelector('title')?.textContent?.trim() || '';

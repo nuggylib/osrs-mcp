@@ -1,4 +1,5 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { JSDOM } from 'jsdom'
 
 import { server } from '../../utils/mcpServer.js';
 import { z } from 'zod';
@@ -22,10 +23,8 @@ export async function getQuestInfo(
 	}, 'xml')
 
 	const parseTreeResponse = await parseActionParseTree({})
-	const parser = new DOMParser()
-	const parseTreeXmlDocument = parser.parseFromString(parseTreeResponse.data, 'text/xml')
-	console.log('XML DOC: ', parseTreeXmlDocument)
-	const parsedTemplates = extractTemplatesFromXML(parseTreeXmlDocument)
+	const parseTreeJsDOM = new JSDOM(parseTreeResponse.data)
+	const parsedTemplates = extractTemplatesFromXML(parseTreeJsDOM)
 
 	const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
 	const infoboxQuestTemplate = findTemplates<InfoboxQuestTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST)[0]
