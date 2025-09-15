@@ -21,23 +21,12 @@ export async function getQuestInfo(
 ): Promise<CallToolResult> {
 	const questInfoToolResponse: Partial<QuestInfoToolResponseType> = {}
 	try {
-		await sendLog(serverContext, 'debug', 'getQuestInfo', {
-			message: 'Starting quest info extraction',
-			questName,
-		})
-
 		const parseActionParseTree = createOSRSWikiAPIAction<string>(SUPPORTED_API_ACTIONS.PARSE, {
 			page: questName,
 			prop: 'parsetree',
 		}, 'xml')
 
 		const parseTreeResponse = await parseActionParseTree({})
-
-		await sendLog(serverContext, 'debug', 'getQuestInfo', {
-			message: 'Obtained parsetree response data',
-			data: parseTreeResponse.data,
-		})
-
 		// First parse the outer XML response to get the parsetree content
 		const outerJsDOM = new JSDOM(parseTreeResponse.data, {
 			contentType: 'text/xml',
@@ -60,19 +49,7 @@ export async function getQuestInfo(
 			contentType: 'text/xml',
 		})
 
-		await sendLog(serverContext, 'debug', 'getQuestInfo', {
-			message: 'Obtained parsetree JSDOM',
-			decodedXMLLength: decodedParsetreeXML.length,
-			templateCount: parseTreeJsDOM.window.document.querySelectorAll('template').length,
-		})
-
 		const parsedTemplates = extractTemplatesFromXML(parseTreeJsDOM)
-
-		await sendLog(serverContext, 'debug', 'getQuestInfo', {
-			message: 'Obtained parsetree templates',
-			parsedTemplates,
-		})
-
 		const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
 		const infoboxQuestTemplate = findTemplates<InfoboxQuestTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST)[0]
 
@@ -81,6 +58,7 @@ export async function getQuestInfo(
 			questName,
 			foundQuestDetails: !!questDetailsTemplate,
 			foundInfoboxQuest: !!infoboxQuestTemplate,
+			xmlDocTemplates: parsedTemplates,
 			questDetailsParams: questDetailsTemplate?.parameters ? Object.keys(questDetailsTemplate.parameters) : [],
 			infoboxParams: infoboxQuestTemplate?.parameters ? Object.keys(infoboxQuestTemplate.parameters) : [],
 		})

@@ -1,4 +1,5 @@
 import { ParsedTemplate } from '../../types/wikimedia';
+import { JSDOM } from 'jsdom'
 
 /**
  * Extracts templates from a string containing XML content.
@@ -9,24 +10,21 @@ import { ParsedTemplate } from '../../types/wikimedia';
  * @returns An array of parsed templates found in the string
  */
 export function extractTemplatesFromString(xmlString: string): ParsedTemplate[] {
-	// Create a new DOMParser instance
-	const parser = new DOMParser();
-
 	// Wrap the string in a root element to ensure valid XML
 	const wrappedXml = `<root>${xmlString}</root>`;
-
-	// Parse the XML string
-	const xmlDoc = parser.parseFromString(wrappedXml, 'text/xml');
+	const jsDom = new JSDOM(wrappedXml, {
+		contentType: 'text/xml',
+	})
 
 	// Check for parsing errors
-	const parserError = xmlDoc.querySelector('parsererror');
+	const parserError = jsDom.window.document.querySelector('parsererror');
 	if (parserError) {
 		console.warn('XML parsing error in extractTemplatesFromString:', parserError.textContent);
 		return [];
 	}
 
 	// Find all template elements
-	const templates = xmlDoc.querySelectorAll('template');
+	const templates = jsDom.window.document.querySelectorAll('template');
 
 	return Array.from(templates).map(template => {
 		const title = template.querySelector('title')?.textContent?.trim() || '';
