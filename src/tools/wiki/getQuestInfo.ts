@@ -1,4 +1,4 @@
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { CallToolResult, ServerNotification, ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 import { JSDOM } from 'jsdom'
 
 import { server } from '../../utils/mcpServer.js';
@@ -13,10 +13,11 @@ import { QuestInfoToolResponseType } from '../../types/osrsMcp.js';
 import { getRequiredItems, getRequiredQuests, getRequiredSkills, getRecommendedItems, getRecommendedSkills, getEnemiesToKill } from '../../workflows/quest/index.js';
 import { getReleaseParts } from '../../workflows/quest/getReleaseParts.js';
 import { sendLog } from '../../utils/sendLog.js';
+import { RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 
 export async function getQuestInfo(
 	questName: string,
-	serverContext?: any,
+	serverContext?: RequestHandlerExtra<ServerRequest, ServerNotification>,
 ): Promise<CallToolResult> {
 	const questInfoToolResponse: Partial<QuestInfoToolResponseType> = {}
 	try {
@@ -25,7 +26,7 @@ export async function getQuestInfo(
 			questName,
 		})
 
-		const parseActionParseTree = createOSRSWikiAPIAction<string>(SUPPORTED_API_ACTIONS.EXPANDTEMPLATES, {
+		const parseActionParseTree = createOSRSWikiAPIAction<string>(SUPPORTED_API_ACTIONS.PARSE, {
 			page: questName,
 			prop: 'parsetree',
 		}, 'xml')
@@ -33,15 +34,36 @@ export async function getQuestInfo(
 		const parseTreeResponse = await parseActionParseTree({})
 
 		await sendLog(serverContext, 'debug', 'getQuestInfo', {
-			message: 'Obtained parsetree response',
-			parseTreeResponse,
+			message: 'Obtained parsetree response data',
+			data: parseTreeResponse.data,
 		})
 
-		const parseTreeJsDOM = new JSDOM(parseTreeResponse.data)
+		// First parse the outer XML response to get the parsetree content
+		const outerJsDOM = new JSDOM(parseTreeResponse.data, {
+			contentType: 'text/xml',
+		})
+
+		// Extract the parsetree content (which is HTML-encoded XML)
+		const parsetreeElement = outerJsDOM.window.document.querySelector('parsetree')
+		if (!parsetreeElement) {
+			throw new Error('No parsetree element found in API response')
+		}
+
+		// Get the decoded XML content from the parsetree element
+		const decodedParsetreeXML = parsetreeElement.textContent
+		if (!decodedParsetreeXML) {
+			throw new Error('Parsetree element is empty')
+		}
+
+		// Now parse the actual template XML
+		const parseTreeJsDOM = new JSDOM(decodedParsetreeXML, {
+			contentType: 'text/xml',
+		})
 
 		await sendLog(serverContext, 'debug', 'getQuestInfo', {
 			message: 'Obtained parsetree JSDOM',
-			parseTreeJsDOM,
+			decodedXMLLength: decodedParsetreeXML.length,
+			templateCount: parseTreeJsDOM.window.document.querySelectorAll('template').length,
 		})
 
 		const parsedTemplates = extractTemplatesFromXML(parseTreeJsDOM)
@@ -136,22 +158,22 @@ export async function getQuestInfo(
 			questName,
 			extractedFields: Object.keys(questInfoToolResponse),
 		})
+		// Always return a compatible result, even if there was a failure. Logging should inform of the issue.
+		return {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify(questInfoToolResponse, null),
+				},
+			],
+		}
 	} catch (error) {
 		await sendLog(serverContext, 'error', 'getQuestInfo', {
 			message: 'Error during quest info extraction',
 			questName,
 			error: error instanceof Error ? error.message : String(error),
 		})
-
-	}
-	// Always return a compatible result, even if there was a failure. Logging should inform of the issue.
-	return {
-		content: [
-			{
-				type: 'text',
-				text: JSON.stringify(questInfoToolResponse, null),
-			},
-		],
+		throw error
 	}
 }
 
@@ -167,7 +189,5 @@ server.registerTool(
 			openWorldHint: true,
 		},
 	},
-	async ({ questName }, extra) => {
-		return getQuestInfo(questName, extra)
-	},
+	async ({ questName }, extra) => getQuestInfo(questName, extra),
 )

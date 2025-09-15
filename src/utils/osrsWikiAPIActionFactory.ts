@@ -38,6 +38,9 @@ export const createOSRSWikiAPIAction = <T = any>(
 				},
 			);
 
+			const fullUrl = response.config.url + '?' + new URLSearchParams(response.config.params as Record<string, string>).toString();
+			console.log('REQUESTING: ', fullUrl);
+
 			return response;
 		} catch (error) {
 			if (axios.isAxiosError(error)) {
