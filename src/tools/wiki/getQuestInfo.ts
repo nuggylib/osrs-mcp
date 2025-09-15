@@ -12,19 +12,17 @@ import { QuestInfoToolResponse } from '../../zod';
 import { QuestInfoToolResponseType } from '../../types/osrsMcp.js';
 import { getRequiredItems, getRequiredQuests, getRequiredSkills, getRecommendedItems, getRecommendedSkills, getEnemiesToKill } from '../../workflows/quest/index.js';
 import { getReleaseParts } from '../../workflows/quest/getReleaseParts.js';
+import { sendLog } from '../../utils/sendLog.js';
 
 export async function getQuestInfo(
 	questName: string,
+	serverContext?: any,
 ): Promise<CallToolResult> {
 	const questInfoToolResponse: Partial<QuestInfoToolResponseType> = {}
 	try {
-		await server.server.sendLoggingMessage({
-			level: 'debug',
-			logger: 'getQuestInfo',
-			data: {
-				message: 'Starting quest info extraction',
-				questName,
-			},
+		await sendLog(serverContext, 'debug', 'getQuestInfo', {
+			message: 'Starting quest info extraction',
+			questName,
 		})
 
 		const parseActionParseTree = createOSRSWikiAPIAction<string>(SUPPORTED_API_ACTIONS.EXPANDTEMPLATES, {
@@ -34,51 +32,35 @@ export async function getQuestInfo(
 
 		const parseTreeResponse = await parseActionParseTree({})
 
-		await server.server.sendLoggingMessage({
-			level: 'debug',
-			logger: 'getQuestInfo',
-			data: {
-				message: 'Obtained parsetree response',
-				parseTreeResponse,
-			},
+		await sendLog(serverContext, 'debug', 'getQuestInfo', {
+			message: 'Obtained parsetree response',
+			parseTreeResponse,
 		})
 
 		const parseTreeJsDOM = new JSDOM(parseTreeResponse.data)
 
-		await server.server.sendLoggingMessage({
-			level: 'debug',
-			logger: 'getQuestInfo',
-			data: {
-				message: 'Obtained parsetree JSDOM',
-				parseTreeJsDOM,
-			},
+		await sendLog(serverContext, 'debug', 'getQuestInfo', {
+			message: 'Obtained parsetree JSDOM',
+			parseTreeJsDOM,
 		})
 
 		const parsedTemplates = extractTemplatesFromXML(parseTreeJsDOM)
 
-		await server.server.sendLoggingMessage({
-			level: 'debug',
-			logger: 'getQuestInfo',
-			data: {
-				message: 'Obtained parsetree templates',
-				parsedTemplates,
-			},
+		await sendLog(serverContext, 'debug', 'getQuestInfo', {
+			message: 'Obtained parsetree templates',
+			parsedTemplates,
 		})
 
 		const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
 		const infoboxQuestTemplate = findTemplates<InfoboxQuestTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST)[0]
 
-		await server.server.sendLoggingMessage({
-			level: 'debug',
-			logger: 'getQuestInfo',
-			data: {
-				message: 'Quest templates extracted from wiki',
-				questName,
-				foundQuestDetails: !!questDetailsTemplate,
-				foundInfoboxQuest: !!infoboxQuestTemplate,
-				questDetailsParams: questDetailsTemplate?.parameters ? Object.keys(questDetailsTemplate.parameters) : [],
-				infoboxParams: infoboxQuestTemplate?.parameters ? Object.keys(infoboxQuestTemplate.parameters) : [],
-			},
+		await sendLog(serverContext, 'debug', 'getQuestInfo', {
+			message: 'Quest templates extracted from wiki',
+			questName,
+			foundQuestDetails: !!questDetailsTemplate,
+			foundInfoboxQuest: !!infoboxQuestTemplate,
+			questDetailsParams: questDetailsTemplate?.parameters ? Object.keys(questDetailsTemplate.parameters) : [],
+			infoboxParams: infoboxQuestTemplate?.parameters ? Object.keys(infoboxQuestTemplate.parameters) : [],
 		})
 
 		const { start, startmap, difficulty, length, requirements, recommended, kills } = questDetailsTemplate.parameters
@@ -149,24 +131,16 @@ export async function getQuestInfo(
 
 		// TODO: Get batched enemy data: https://oldschool.runescape.wiki/api.php?action=query&titles=Enemy1|Enemy2&prop=revisions&rvprop=content&format=json
 
-		await server.server.sendLoggingMessage({
-			level: 'debug',
-			logger: 'getQuestInfo',
-			data: {
-				message: 'Quest info extraction completed',
-				questName,
-				extractedFields: Object.keys(questInfoToolResponse),
-			},
+		await sendLog(serverContext, 'debug', 'getQuestInfo', {
+			message: 'Quest info extraction completed',
+			questName,
+			extractedFields: Object.keys(questInfoToolResponse),
 		})
 	} catch (error) {
-		await server.server.sendLoggingMessage({
-			level: 'error',
-			logger: 'getQuestInfo',
-			data: {
-				message: 'Error during quest info extraction',
-				questName,
-				error: error instanceof Error ? error.message : String(error),
-			},
+		await sendLog(serverContext, 'error', 'getQuestInfo', {
+			message: 'Error during quest info extraction',
+			questName,
+			error: error instanceof Error ? error.message : String(error),
 		})
 
 	}
@@ -193,5 +167,7 @@ server.registerTool(
 			openWorldHint: true,
 		},
 	},
-	async ({ questName }) => getQuestInfo(questName),
+	async ({ questName }, extra) => {
+		return getQuestInfo(questName, extra)
+	},
 )
