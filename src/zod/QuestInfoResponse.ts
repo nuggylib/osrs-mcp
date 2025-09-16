@@ -5,15 +5,14 @@ import z from 'zod';
  * set for a Quest requirement.
  */
 export const QuestRequirement = z.record(
-	z.string().describe('The key for the data.'),
+	z.string(),
 	z.record(
 		z.string(),
-		z.record(
-			z.string(),
-			z.any(),
-		).or(z.array(z.string().or(z.number()))).or(z.string()).or(z.number()),
-	).describe('The data for the Quest requirement.'),
+		z.any(),
+	).or(z.array(z.string().or(z.number()))).or(z.string()).or(z.number()),
 ).describe('The general shape of requirement data for a Quest (Skills, Items and Quests).')
+
+export const QuestRequirementsRecord = z.record(z.string(), QuestRequirement)
 
 /**
  * The output schema for the Quest Info Tool response.
@@ -34,9 +33,9 @@ export const QuestInfoToolResponse = {
 	difficulty: z.string().describe('The official difficulty of this Quest as-set by Jagex.'),
 	aka: z.string().describe('The alternative name for this Quest.'),
 	length: z.string().describe('The official length of this Quest as-set by Jagex.'),
-	requiredItems: z.array(QuestRequirement).describe('The Items required to complete this Quest.'),
-	requiredQuests: z.array(QuestRequirement).describe('The Quests that need to be completed before this Quest can be completed.').optional(),
-	requiredSkills: z.array(QuestRequirement).describe('The Skill levels required for to complete this Quest.').optional(),
+	requiredItems: QuestRequirementsRecord.describe('The Items required to complete this Quest.'),
+	requiredQuests: QuestRequirementsRecord.describe('The Quests that need to be completed before this Quest can be completed.').optional(),
+	requiredSkills: QuestRequirementsRecord.describe('The Skill levels required for to complete this Quest.').optional(),
 	recommendedItems: z.record(
 		z.string().describe('The Item name.'),
 		z.number().describe('The quantity recommended.'),
