@@ -80,6 +80,7 @@ export async function getQuestInfo(
 		}
 
 		if (requirements) {
+			// TODO: Debug why this isn't getting values
 			questInfoToolResponse.requiredItems = getRequiredItems(requirements)
 			questInfoToolResponse.requiredQuests = getRequiredQuests(requirements)
 			questInfoToolResponse.requiredSkills = getRequiredSkills(requirements)
@@ -134,7 +135,7 @@ export async function getQuestInfo(
 		await sendLog(serverContext, 'debug', 'getQuestInfo', {
 			message: 'Quest info extraction completed',
 			questName,
-			extractedFields: Object.keys(questInfoToolResponse),
+			data: questInfoToolResponse,
 		})
 		// Always return a compatible result, even if there was a failure. Logging should inform of the issue.
 		return {

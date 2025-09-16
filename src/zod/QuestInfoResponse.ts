@@ -1,6 +1,21 @@
 import z from 'zod';
 
 /**
+ * Flexible type to accommodate the possible data fields that can be
+ * set for a Quest requirement.
+ */
+export const QuestRequirement = z.record(
+	z.string().describe('The key for the data.'),
+	z.record(
+		z.string(),
+		z.record(
+			z.string(),
+			z.any(),
+		).or(z.array(z.string().or(z.number()))).or(z.string()).or(z.number()),
+	).describe('The data for the Quest requirement.'),
+).describe('The general shape of requirement data for a Quest (Skills, Items and Quests).')
+
+/**
  * The output schema for the Quest Info Tool response.
  */
 export const QuestInfoToolResponse = {
@@ -19,20 +34,9 @@ export const QuestInfoToolResponse = {
 	difficulty: z.string().describe('The official difficulty of this Quest as-set by Jagex.'),
 	aka: z.string().describe('The alternative name for this Quest.'),
 	length: z.string().describe('The official length of this Quest as-set by Jagex.'),
-	requiredItems: z.record(
-		z.string().describe('The Item name.'),
-		z.number().describe('The quantity required.'),
-	).describe('The Items required to complete this Quest.'),
-	requiredQuests: z.record(
-		z.string().describe('The Quest name.'),
-		z.object({
-			preReq: z.string().optional().describe('The prerequisite quest that must be completed first.'),
-		}),
-	).describe('The Quests that need to be completed before this Quest can be completed.').optional(),
-	requiredSkills: z.record(
-		z.string().describe('The Skill name.'),
-		z.number().describe('The required Skill level.'),
-	).describe('The Skill levels required for to complete this Quest.').optional(),
+	requiredItems: z.array(QuestRequirement).describe('The Items required to complete this Quest.'),
+	requiredQuests: z.array(QuestRequirement).describe('The Quests that need to be completed before this Quest can be completed.').optional(),
+	requiredSkills: z.array(QuestRequirement).describe('The Skill levels required for to complete this Quest.').optional(),
 	recommendedItems: z.record(
 		z.string().describe('The Item name.'),
 		z.number().describe('The quantity recommended.'),
