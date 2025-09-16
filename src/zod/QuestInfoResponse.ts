@@ -2,9 +2,9 @@ import z from 'zod';
 
 /**
  * Flexible type to accommodate the possible data fields that can be
- * set for a Quest requirement.
+ * set for a Quest requirement or recommendation.
  */
-export const QuestRequirement = z.record(
+export const QuestRequirementOrRec = z.record(
 	z.string(),
 	z.record(
 		z.string(),
@@ -12,7 +12,7 @@ export const QuestRequirement = z.record(
 	).or(z.array(z.string().or(z.number()))).or(z.string()).or(z.number()),
 ).describe('The general shape of requirement data for a Quest (Skills, Items and Quests).')
 
-export const QuestRequirementsRecord = z.record(z.string(), QuestRequirement)
+export const QuestRequirementsOrRecsRecord = z.record(z.string(), QuestRequirementOrRec)
 
 /**
  * The output schema for the Quest Info Tool response.
@@ -33,17 +33,11 @@ export const QuestInfoToolResponse = {
 	difficulty: z.string().describe('The official difficulty of this Quest as-set by Jagex.'),
 	aka: z.string().describe('The alternative name for this Quest.'),
 	length: z.string().describe('The official length of this Quest as-set by Jagex.'),
-	requiredItems: QuestRequirementsRecord.describe('The Items required to complete this Quest.'),
-	requiredQuests: QuestRequirementsRecord.describe('The Quests that need to be completed before this Quest can be completed.').optional(),
-	requiredSkills: QuestRequirementsRecord.describe('The Skill levels required for to complete this Quest.').optional(),
-	recommendedItems: z.record(
-		z.string().describe('The Item name.'),
-		z.number().describe('The quantity recommended.'),
-	).describe('The recommended Items for this Quest that will make completing it easier.').optional(),
-	recommendedSkills: z.record(
-		z.string().describe('The Skill name.'),
-		z.number().describe('The recommended skill level.'),
-	).describe('The Skill levels recommended for this Quest that will make completing it easier.').optional(),
+	requiredItems: QuestRequirementsOrRecsRecord.describe('The Items required to complete this Quest.'),
+	requiredQuests: QuestRequirementsOrRecsRecord.describe('The Quests that need to be completed before this Quest can be completed.').optional(),
+	requiredSkills: QuestRequirementsOrRecsRecord.describe('The Skill levels required for to complete this Quest.').optional(),
+	recommendedItems: QuestRequirementsOrRecsRecord.describe('The recommended Items for this Quest that will make completing it easier.').optional(),
+	recommendedSkills: QuestRequirementsOrRecsRecord.describe('The Skill levels recommended for this Quest that will make completing it easier.').optional(),
 	enemiesToDefeat: z.record(
 		z.string().describe('The name of an enemy Monster.'),
 		z.object({
