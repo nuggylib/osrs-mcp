@@ -397,13 +397,18 @@ export type QuestDetailsTemplate = BaseOSRSWikiTemplate & {
 		 *    - If a pre-requisite Quest has it's own pre-requisites, those are listed beneath the Quest it's required for.
 		 * - A list of required Skills needed to complete the Quest.
 		 *    - Each listed Skill is listed as an "SCP" template.
+		 */
+		requirements: string
+		/**
+		 * A string formatted as a bulleted list of required Items. The response
+		 * contains the following things:
 		 * - A list of required Items needed to complete the Quest.
 		 *    - Items are wrapped in double-brackets; for example [[Soft Clay]].
 		 *    - This list MAY contain nested Items; for example, "The ingredients required to make a [[Guthix rest]]:"
 		 *    - If the Item is obtainable during the Quest, the list item will contain the text, "(Obtainable during the quest)".
 		 *    - The sub-list may include special pieces of information that applies to the item for the Quest.
 		 */
-		requirements: string
+		items: string
 		/**
 		 * A string formatted as a bulleted list of requirements. The response
 		 * contains the following things:

@@ -31,6 +31,7 @@ See `./docs/deployment.md` for complete deployment instructions.
 
 # Repository Etiquette
 - ALWAYS use `yarn`, NEVER `npm`.
+- NEVER cast as `any` or `unkown`.
 
 # Project Structure
 

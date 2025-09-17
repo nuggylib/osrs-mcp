@@ -6,13 +6,13 @@ import z from 'zod';
  */
 export const QuestRequirementOrRecommended = z.record(
 	z.string(),
-	z.record(
+	z.union([
 		z.string(),
-		z.any(),
-	).or(z.array(z.string().or(z.number()))),
+		z.number(),
+		z.record(z.string(), z.union([z.string(), z.number()])),
+	]),
 ).describe('The general shape of requirement data for a Quest (Skills, Items and Quests).')
 
-export const QuestRequirementsOrRecsRecord = z.record(z.string(), QuestRequirementOrRecommended.or(z.string()).or(z.number()))
 
 /**
  * The output schema for the Quest Info Tool response.
@@ -33,11 +33,11 @@ export const QuestInfoToolResponse = {
 	difficulty: z.string().describe('The official difficulty of this Quest as-set by Jagex.'),
 	aka: z.string().describe('The alternative name for this Quest.'),
 	length: z.string().describe('The official length of this Quest as-set by Jagex.'),
-	requiredItems: QuestRequirementsOrRecsRecord.describe('The Items required to complete this Quest.'),
-	requiredQuests: QuestRequirementsOrRecsRecord.describe('The Quests that need to be completed before this Quest can be completed.').optional(),
-	requiredSkills: QuestRequirementsOrRecsRecord.describe('The Skill levels required for to complete this Quest.').optional(),
-	recommendedItems: QuestRequirementsOrRecsRecord.describe('The recommended Items for this Quest that will make completing it easier.').optional(),
-	recommendedSkills: QuestRequirementsOrRecsRecord.describe('The Skill levels recommended for this Quest that will make completing it easier.').optional(),
+	requiredItems: QuestRequirementOrRecommended.describe('The Items required to complete this Quest.'),
+	requiredQuests: QuestRequirementOrRecommended.describe('The Quests that need to be completed before this Quest can be completed.').optional(),
+	requiredSkills: QuestRequirementOrRecommended.describe('The Skill levels required for to complete this Quest.').optional(),
+	recommendedItems: QuestRequirementOrRecommended.describe('The recommended Items for this Quest that will make completing it easier.').optional(),
+	recommendedSkills: QuestRequirementOrRecommended.describe('The Skill levels recommended for this Quest that will make completing it easier.').optional(),
 	enemiesToDefeat: z.record(
 		z.string().describe('The name of an enemy Monster.'),
 		z.object({

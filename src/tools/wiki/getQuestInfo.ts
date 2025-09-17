@@ -63,7 +63,7 @@ export async function getQuestInfo(
 			infoboxParams: infoboxQuestTemplate?.parameters ? Object.keys(infoboxQuestTemplate.parameters) : [],
 		})
 
-		const { start, startmap, difficulty, length, requirements, recommended, kills } = questDetailsTemplate.parameters
+		const { start, startmap, difficulty, length, requirements, items, recommended, kills } = questDetailsTemplate.parameters
 
 		// TODO: Parse this differently to store the X and Y individually for easier use.
 		questInfoToolResponse.startingPoint = startmap
@@ -80,8 +80,7 @@ export async function getQuestInfo(
 		}
 
 		if (requirements) {
-			// TODO: Debug why this isn't getting values
-			questInfoToolResponse.requiredItems = getRequiredItems(requirements)
+			questInfoToolResponse.requiredItems = getRequiredItems(items)
 			questInfoToolResponse.requiredQuests = getRequiredQuests(requirements)
 			questInfoToolResponse.requiredSkills = getRequiredSkills(requirements)
 		}
