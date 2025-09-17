@@ -7,6 +7,7 @@
     "docker:shell": "docker run -it --rm osrs-mcp:latest sh",
     "inspector:local": "npx @modelcontextprotocol/inspector@latest https://dev-osrs-mcp.mcnuggies.dev",
     "inspector:heroku": "npx @modelcontextprotocol/inspector@latest https://osrs-mcp.nuggylib.com",
+	"typescript:check": "tsc --project ./tsconfig.json",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "build": "tsc --outDir build",

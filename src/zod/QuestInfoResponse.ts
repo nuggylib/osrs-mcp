@@ -4,15 +4,15 @@ import z from 'zod';
  * Flexible type to accommodate the possible data fields that can be
  * set for a Quest requirement or recommendation.
  */
-export const QuestRequirementOrRec = z.record(
+export const QuestRequirementOrRecommended = z.record(
 	z.string(),
 	z.record(
 		z.string(),
 		z.any(),
-	).or(z.array(z.string().or(z.number()))).or(z.string()).or(z.number()),
+	).or(z.array(z.string().or(z.number()))),
 ).describe('The general shape of requirement data for a Quest (Skills, Items and Quests).')
 
-export const QuestRequirementsOrRecsRecord = z.record(z.string(), QuestRequirementOrRec)
+export const QuestRequirementsOrRecsRecord = z.record(z.string(), QuestRequirementOrRecommended.or(z.string()).or(z.number()))
 
 /**
  * The output schema for the Quest Info Tool response.

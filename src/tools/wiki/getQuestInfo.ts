@@ -89,7 +89,7 @@ export async function getQuestInfo(
 		if (recommended) {
 			questInfoToolResponse.recommendedItems = getRecommendedItems(recommended)
 			questInfoToolResponse.recommendedSkills = getRecommendedSkills(recommended)
-		// TODO: Travel recommendations (e.g., fairy rings, glider paths, gnome tree usage, etc.)
+			// TODO: Travel recommendations (e.g., fairy rings, glider paths, gnome tree usage, etc.)
 		}
 
 		if (kills) {

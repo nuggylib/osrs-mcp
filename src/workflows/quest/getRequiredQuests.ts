@@ -1,6 +1,6 @@
 export const getRequiredQuests = (requirements: string) => {
 	// Parse quest requirements from the requirements string
-	const questReqs: Record<string, { preReq?: string }> = {}
+	const questReqs: Record<string, Record<string, any>> = {}
 
 	// Quest requirements are typically at the beginning of the requirements string
 	// They follow a pattern like:
@@ -50,7 +50,7 @@ export const getRequiredQuests = (requirements: string) => {
 					const preReq = depth > 0 ? questStack[depth - 1] : undefined
 
 					// Add the quest with its prerequisite
-					questReqs[questName] = preReq ? { preReq } : {}
+					questReqs[questName] = preReq ? { preReq: preReq } : {}
 				}
 			}
 		}
