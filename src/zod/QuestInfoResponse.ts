@@ -9,7 +9,7 @@ export const QuestRequirementOrRecommended = z.record(
 	z.union([
 		z.string(),
 		z.number(),
-		z.record(z.string(), z.union([z.string(), z.number()])),
+		z.record(z.string(), z.union([z.string(), z.number()]).optional()),
 	]),
 ).describe('The general shape of requirement data for a Quest (Skills, Items and Quests).')
 

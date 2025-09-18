@@ -110,9 +110,9 @@ export async function getQuestInfo(
 
 		if (release) {
 			const releaseParts = getReleaseParts(release)
-			questInfoToolResponse.releaseDay = parseInt(releaseParts[1])
-			questInfoToolResponse.releaseMonth = releaseParts[2]
-			questInfoToolResponse.releaseYear = releaseParts[3]
+			questInfoToolResponse.releaseDay = parseInt(releaseParts[0])
+			questInfoToolResponse.releaseMonth = releaseParts[1]
+			questInfoToolResponse.releaseYear = releaseParts[2]
 		}
 
 		questInfoToolResponse.update = update
@@ -148,9 +148,10 @@ export async function getQuestInfo(
 			content: [
 				{
 					type: 'text',
-					text: JSON.stringify(questInfoToolResponse, null),
+					text: '',
 				},
 			],
+			structuredContent: questInfoToolResponse,
 		}
 	} catch (error) {
 		await sendLog(serverContext, 'error', 'getQuestInfo', {
