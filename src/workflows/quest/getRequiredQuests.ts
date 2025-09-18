@@ -1,3 +1,5 @@
+import { toSnakeCase } from '../../utils/stringHelpers'
+
 export const getRequiredQuests = (requirements: string) => {
 	// Parse quest requirements from the requirements string
 	const questReqs: Record<string, Record<string, any>> = {}
@@ -49,8 +51,12 @@ export const getRequiredQuests = (requirements: string) => {
 					// Determine the prerequisite (parent quest at depth - 1)
 					const preReq = depth > 0 ? questStack[depth - 1] : undefined
 
-					// Add the quest with its prerequisite
-					questReqs[questName] = preReq ? { preReq: preReq } : {}
+					// Add the quest with its name and prerequisite using snake-cased key
+					const snakeKey = toSnakeCase(questName)
+					questReqs[snakeKey] = {
+						name: questName,
+						preReq: preReq,
+					}
 				}
 			}
 		}

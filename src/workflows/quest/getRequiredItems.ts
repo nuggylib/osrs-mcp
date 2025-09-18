@@ -1,9 +1,4 @@
-const toSnakeCase = (str: string): string => {
-	return str
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, '_')
-		.replace(/^_+|_+$/g, '')
-}
+import { toSnakeCase } from '../../utils/stringHelpers'
 
 const getItemCount = (item: any): number => {
 	return typeof item === 'object' && item !== null && 'count' in item && typeof item.count === 'number'
