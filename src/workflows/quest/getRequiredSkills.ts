@@ -1,14 +1,11 @@
-import { extractTemplatesFromString } from '../../utils/wikimedia/extractTemplatesFromString'
+import { ParsedTemplate } from '../../types/wikimedia'
 
-export const getRequiredSkills = (requirements: string) => {
-	// Parse skill requirements from the requirements string
+export const getRequiredSkills = (templates: ParsedTemplate[]) => {
+	// Parse skill requirements from the parsed templates
 	const skillReqs: Record<string, number> = {}
 
-	// Extract SCP templates from the requirements string
-	const scpTemplates = extractTemplatesFromString(requirements)
-
 	// Filter for SCP templates (skill clickpic templates)
-	const skillTemplates = scpTemplates.filter(template =>
+	const skillTemplates = templates.filter(template =>
 		template.title === 'SCP' || template.title === 'Scp' || template.title === 'scp',
 	)
 

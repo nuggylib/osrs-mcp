@@ -7,6 +7,7 @@ import { loadPrompt } from '../../utils/promptLoader.js';
 import { createOSRSWikiAPIAction } from '../../utils/osrsWikiAPIActionFactory.js';
 import { SUPPORTED_API_ACTIONS, SUPPORTED_PARSETREE_TEMPLATE_TITLE, QuestDetailsTemplate, InfoboxQuestTemplate } from '../../types/osrsWiki.js';
 import { extractTemplatesFromXML as extractTemplatesFromXML } from '../../utils/wikimedia/extractTemplatesFromXML.js';
+import { extractTemplatesFromParameter } from '../../utils/wikimedia/extractTemplatesFromParameter.js';
 import { findTemplates } from '../../utils/templateHelpers.js';
 import { QuestInfoToolResponse } from '../../zod';
 import { QuestInfoToolResponseType } from '../../types/osrsMcp.js';
@@ -80,14 +81,20 @@ export async function getQuestInfo(
 		}
 
 		if (requirements) {
+			// Extract templates specifically from the requirements parameter
+			const requirementsTemplates = extractTemplatesFromParameter(questDetailsTemplate, 'requirements')
+
 			questInfoToolResponse.requiredItems = getRequiredItems(items)
 			questInfoToolResponse.requiredQuests = getRequiredQuests(requirements)
-			questInfoToolResponse.requiredSkills = getRequiredSkills(requirements)
+			questInfoToolResponse.requiredSkills = getRequiredSkills(requirementsTemplates)
 		}
 
 		if (recommended) {
+			// Extract templates specifically from the recommended parameter
+			const recommendedTemplates = extractTemplatesFromParameter(questDetailsTemplate, 'recommended')
+
 			questInfoToolResponse.recommendedItems = getRecommendedItems(recommended)
-			questInfoToolResponse.recommendedSkills = getRecommendedSkills(recommended)
+			questInfoToolResponse.recommendedSkills = getRecommendedSkills(recommendedTemplates)
 			// TODO: Travel recommendations (e.g., fairy rings, glider paths, gnome tree usage, etc.)
 		}
 
