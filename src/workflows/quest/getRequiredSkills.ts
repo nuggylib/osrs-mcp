@@ -1,9 +1,9 @@
 import { ParsedTemplate } from '../../types/wikimedia'
+import { toSnakeCase } from '../../utils/stringHelpers'
 
 export const getRequiredSkills = (templates: ParsedTemplate[]) => {
-	console.log('SKILL TEMPLATES: ', templates)
 	// Parse skill requirements from the parsed templates
-	const skillReqs: Record<string, number> = {}
+	const skillReqs: Record<string, { name: string; level: number }> = {}
 
 	// Filter for SCP templates (skill clickpic templates)
 	const skillTemplates = templates.filter(template =>
@@ -21,10 +21,15 @@ export const getRequiredSkills = (templates: ParsedTemplate[]) => {
 		if (skillName && levelStr) {
 			const level = parseInt(levelStr, 10)
 			if (!isNaN(level)) {
+				const snakeCaseKey = toSnakeCase(skillName)
+
 				// Store the skill requirement
 				// If the same skill appears multiple times, keep the highest requirement
-				if (!skillReqs[skillName] || skillReqs[skillName] < level) {
-					skillReqs[skillName] = level
+				if (!skillReqs[snakeCaseKey] || skillReqs[snakeCaseKey].level < level) {
+					skillReqs[snakeCaseKey] = {
+						name: skillName,
+						level,
+					}
 				}
 			}
 		}

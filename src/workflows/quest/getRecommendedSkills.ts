@@ -1,8 +1,9 @@
 import { ParsedTemplate } from '../../types/wikimedia'
+import { toSnakeCase } from '../../utils/stringHelpers'
 
 export const getRecommendedSkills = (templates: ParsedTemplate[]) => {
 	// Parse recommended skills from the parsed templates
-	const recommendedSkills: Record<string, number> = {}
+	const recommendedSkills: Record<string, { name: string; level: number }> = {}
 
 	// Filter for SCP templates (skill clickpic templates) - exact match only
 	const skillTemplates = templates.filter(template => template.title === 'SCP')
@@ -15,10 +16,15 @@ export const getRecommendedSkills = (templates: ParsedTemplate[]) => {
 		if (skillName && levelStr) {
 			const level = parseInt(levelStr, 10)
 			if (!isNaN(level)) {
+				const snakeCaseKey = toSnakeCase(skillName)
+
 				// Store the recommended skill level
 				// If the same skill appears multiple times, keep the highest
-				if (!recommendedSkills[skillName] || recommendedSkills[skillName] < level) {
-					recommendedSkills[skillName] = level
+				if (!recommendedSkills[snakeCaseKey] || recommendedSkills[snakeCaseKey].level < level) {
+					recommendedSkills[snakeCaseKey] = {
+						name: skillName,
+						level,
+					}
 				}
 			}
 		}
