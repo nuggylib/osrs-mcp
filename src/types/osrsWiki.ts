@@ -434,4 +434,27 @@ export type QuestDetailsTemplate = BaseOSRSWikiTemplate & {
 	}
 }
 
-
+/**
+ * Contains reward information for the Quest.
+ */
+export type QuestRewardsTemplate = BaseOSRSWikiTemplate & {
+	parameters: {
+		/**
+		 * The name of the Quest.
+		 */
+		name: string
+		/**
+		 * The name of the image (on the OSRS Wiki) for the reward scroll of the Quest.
+		 */
+		image: string
+		/**
+		 * The number of Quest Points awarded for the Quest.
+		 */
+		qp: string
+		/**
+		 * A string representation of a bulleted list for the Quest's rewards. It may also include an "Unlocks"
+		 * section, which are rewards that aren't Items or XP.
+		 */
+		rewards: string
+	}
+}

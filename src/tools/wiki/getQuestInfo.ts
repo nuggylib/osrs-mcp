@@ -5,7 +5,7 @@ import { server } from '../../utils/mcpServer.js';
 import { z } from 'zod';
 import { loadPrompt } from '../../utils/promptLoader.js';
 import { createOSRSWikiAPIAction } from '../../utils/osrsWikiAPIActionFactory.js';
-import { SUPPORTED_API_ACTIONS, SUPPORTED_PARSETREE_TEMPLATE_TITLE, QuestDetailsTemplate, InfoboxQuestTemplate } from '../../types/osrsWiki.js';
+import { SUPPORTED_API_ACTIONS, SUPPORTED_PARSETREE_TEMPLATE_TITLE, QuestDetailsTemplate, InfoboxQuestTemplate, QuestRewardsTemplate } from '../../types/osrsWiki.js';
 import { extractTemplatesFromXML as extractTemplatesFromXML } from '../../utils/wikimedia/extractTemplatesFromXML.js';
 import { extractTemplatesFromParameter } from '../../utils/wikimedia/extractTemplatesFromParameter.js';
 import { findTemplates } from '../../utils/templateHelpers.js';
@@ -53,6 +53,7 @@ export async function getQuestInfo(
 		const parsedTemplates = extractTemplatesFromXML(parseTreeJsDOM)
 		const questDetailsTemplate = findTemplates<QuestDetailsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_DETAILS)[0]
 		const infoboxQuestTemplate = findTemplates<InfoboxQuestTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.INFOBOX_QUEST)[0]
+		const questRewardsTemplate = findTemplates<QuestRewardsTemplate>(parsedTemplates, SUPPORTED_PARSETREE_TEMPLATE_TITLE.QUEST_REWARDS)[0]
 
 		await sendLog(serverContext, 'debug', 'getQuestInfo', {
 			message: 'Quest templates extracted from wiki',
@@ -81,7 +82,6 @@ export async function getQuestInfo(
 		}
 
 		if (requirements) {
-			console.log('QUEST DETAILS TEMPLATE: ', questDetailsTemplate)
 			// Extract templates specifically from the requirements parameter
 			const requirementsTemplates = extractTemplatesFromParameter(questDetailsTemplate, 'requirements')
 
@@ -129,6 +129,10 @@ export async function getQuestInfo(
 
 		questInfoToolResponse.series = series
 		questInfoToolResponse.developer = developer
+
+		const { qp } = questRewardsTemplate.parameters
+
+		questInfoToolResponse.questPoints = parseInt(qp)
 
 		// TODO: Get batched item list info: https://oldschool.runescape.wiki/api.php?action=query&titles=[ITEM_LIST]&prop=revisions&rvprop=content&format=json
 		// - ITEM_LIST is a URL-encoded list of strings; one string per item, separated by the '|' character (e.g., Bucket|Egg|Feather for a list containing the items Bucket, Egg and Feather)
