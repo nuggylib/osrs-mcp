@@ -9,15 +9,12 @@ const getItemCount = (item: any): number => {
 export const getRequiredItems = (items: string) => {
 	// Parse item requirements from the items string
 	const itemReqs: Record<string, Record<string, string | number>> = {}
-	console.log('Getting required items from requirements string:', items)
 
 	// The items string is already the content we need to parse
 	// Split by lines to process each item entry
 	const lines = items.split('\n')
-	console.log('Lines: ', lines)
 
 	for (const line of lines) {
-		console.log('Evaluating line: ', line)
 		// Match patterns like "4 [[steel bar]]s" or "[[Bronze bar]]" or "2 [[Guam leaves]]"
 		// First try to match with a number prefix
 		const quantityMatch = line.match(/(\d+)\s*\[\[([^\]]+)\]\]/)

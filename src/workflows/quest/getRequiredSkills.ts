@@ -1,6 +1,7 @@
 import { ParsedTemplate } from '../../types/wikimedia'
 
 export const getRequiredSkills = (templates: ParsedTemplate[]) => {
+	console.log('SKILL TEMPLATES: ', templates)
 	// Parse skill requirements from the parsed templates
 	const skillReqs: Record<string, number> = {}
 

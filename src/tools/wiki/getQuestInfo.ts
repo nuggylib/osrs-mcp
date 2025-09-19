@@ -81,6 +81,7 @@ export async function getQuestInfo(
 		}
 
 		if (requirements) {
+			console.log('QUEST DETAILS TEMPLATE: ', questDetailsTemplate)
 			// Extract templates specifically from the requirements parameter
 			const requirementsTemplates = extractTemplatesFromParameter(questDetailsTemplate, 'requirements')
 
