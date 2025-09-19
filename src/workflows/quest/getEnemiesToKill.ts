@@ -1,6 +1,8 @@
+import { toSnakeCase } from '../../utils/stringHelpers'
+
 export const getEnemiesToKill = (kills: string) => {
 	// Parse enemies to defeat from the kills string
-	const enemiesToDefeat: Record<string, { levels: number[] }> = {}
+	const enemiesToDefeat: Record<string, { name: string; levels: number[] }> = {}
 
 	// Split by lines to process each enemy entry
 	const lines = kills.split('\n')
@@ -33,7 +35,11 @@ export const getEnemiesToKill = (kills: string) => {
 				}
 
 				// If we found levels, use them; otherwise default to empty array
-				enemiesToDefeat[enemyName] = { levels }
+				const snakeCaseKey = toSnakeCase(enemyName)
+				enemiesToDefeat[snakeCaseKey] = {
+					name: enemyName,
+					levels,
+				}
 			}
 		}
 	}
