@@ -49,8 +49,8 @@ export const QuestInfoToolResponse = {
 		z.string().describe('The name of the Item reward.'),
 	).describe('The Items awarded to the player upon completion of this Quest with the number of how many of each are awarded.').optional(),
 	xpRewards: z.record(
-		z.string().describe('The name of the Skill granted XP.').optional(),
-	).describe('The Skills which are granted reward XP upon completion of this Quest, as well as how much XP is granted for each.'),
+		z.string().describe('The name of the Skill granted XP.'),
+	).describe('The Skills which are granted reward XP upon completion of this Quest, as well as how much XP is granted for each.').optional(),
 	uniqueRewards: z.set(
 		z.string().describe('A description of the unique reward.'),
 	).describe('The list of unique rewards granted upon completion of this Quest.').optional(),
