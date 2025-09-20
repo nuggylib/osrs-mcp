@@ -8,6 +8,7 @@
    - An MCP Inspector instance is spun up along side the MCP Server.
 
 # Bash Commands
+- `yarn typescript:check` checks the validity of the TypeScript types.
 - `yarn build` builds the server as a Node application for use with Heroku.
 - `docker-compose up -d --build` builds the MCP server and starts up the containers described in `docker-compose.yml`.
 	- `-d` flag means "detached" and runs the containers in the background.
@@ -30,6 +31,7 @@ See `./docs/deployment.md` for complete deployment instructions.
 
 # Repository Etiquette
 - ALWAYS use `yarn`, NEVER `npm`.
+- NEVER cast as `any` or `unkown`.
 
 # Project Structure
 

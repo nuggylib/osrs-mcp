@@ -5,3 +5,5 @@ This directory contains various utility files that contain helper logic or share
    - `wikijs` does not export its types, so we have a mirror of their internally-defined types in `../types/wikijs.ts`.
 - `mcpServer.ts` contains the base `@modelcontextprotocol/sdk` `MCPServer` initialization.
 	- This is used by the root `../server.ts` file as well as all tools and resources.
+- `osrsWikiAPIActionFactory.ts` builds action helpers for various actions and is intended to be the NEW way of working with the OSRS Wiki.
+	- All tool implementations of the `wikijs`-based logic should be considered deprecated.

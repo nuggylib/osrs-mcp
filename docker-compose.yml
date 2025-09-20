@@ -27,6 +27,7 @@ services:
       - NODE_ENV=production
       - ALLOW_MCP_INSPECTOR=true
       - REDIS_URL=redis://redis:6379
+      - BASE_URL=https://dev-osrs-mcp.mcnuggies.dev
     ports:
       # Bind to localhost only on host machine for security - prevents external network access
       # while allowing MCP Inspector and local clients to connect via Docker port forwarding
@@ -34,12 +35,28 @@ services:
     volumes:
       - ./config:/app/config:ro
       - ./fixtures:/app/fixtures:ro
-      - ./certs:/app/certs:ro
+      - ./prompts:/app/prompts:ro
     networks:
       - mcp-network
     depends_on:
       redis:
         condition: service_healthy
+
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: osrs-mcp-nginx
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certs/mcnuggies.dev-ssl-bundle:/etc/nginx/certs:ro
+    networks:
+      - mcp-network
+    depends_on:
+      - osrs-mcp
 
 
 networks:

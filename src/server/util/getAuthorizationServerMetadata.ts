@@ -4,7 +4,7 @@ export const getAuthorizationServerMetadata = (requestBaseUrl?: string) => {
 	const baseUrl = requestBaseUrl 
 		|| (process.env.HEROKU_APP_NAME ? `https://${process.env.HEROKU_APP_NAME}.herokuapp.com` : undefined)
 		|| process.env.BASE_URL 
-		|| 'https://localhost:3000';
+		|| 'http://localhost:3000';
 
 	return {
 		issuer: baseUrl,

@@ -14,6 +14,7 @@ export interface SessionMetadata {
 }
 
 const activeTransports = new Map<string, StreamableHTTPServerTransport>();
+const closingTransports = new Set<string>();
 
 export const sessionStore = {
 	async get(sessionId: string): Promise<StreamableHTTPServerTransport | null> {
@@ -55,28 +56,43 @@ export const sessionStore = {
 	},
 
 	async delete(sessionId: string): Promise<void> {
-		const transport = activeTransports.get(sessionId);
-		if (transport) {
-			try {
-				await transport.close();
-			} catch (error) {
-				console.error(`Error closing transport for session ${sessionId}:`, error);
-			}
-			activeTransports.delete(sessionId);
+		// Prevent infinite recursion by checking if already closing
+		if (closingTransports.has(sessionId)) {
+			return;
 		}
+		
+		closingTransports.add(sessionId);
+		
+		try {
+			const transport = activeTransports.get(sessionId);
+			if (transport) {
+				try {
+					await transport.close();
+				} catch (error) {
+					console.error(`Error closing transport for session ${sessionId}:`, error);
+				}
+				activeTransports.delete(sessionId);
+			}
 
-		await deleteKey(SESSION_KEY(sessionId));
+			await deleteKey(SESSION_KEY(sessionId));
+		} finally {
+			closingTransports.delete(sessionId);
+		}
 	},
 
 	async clear(): Promise<void> {
 		for (const [sessionId, transport] of activeTransports) {
-			try {
-				await transport.close();
-			} catch (error) {
-				console.error(`Error closing transport for session ${sessionId}:`, error);
+			if (!closingTransports.has(sessionId)) {
+				closingTransports.add(sessionId);
+				try {
+					await transport.close();
+				} catch (error) {
+					console.error(`Error closing transport for session ${sessionId}:`, error);
+				}
 			}
 		}
 		activeTransports.clear();
+		closingTransports.clear();
 
 		const keys = await redis.keys(SESSION_KEY('*'));
 		if (keys.length > 0) {
