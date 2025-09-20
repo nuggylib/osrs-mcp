@@ -39,11 +39,10 @@ export const QuestInfoToolResponse = {
 	recommendedSkills: QuestRequirementOrRecommended.describe('The Skill levels recommended for this Quest that will make completing it easier.').optional(),
 	enemiesToDefeat: z.record(
 		z.string(),
-		z.union([
-			z.string(),
-			z.number(),
-			z.record(z.string(), z.union([z.string(), z.number()]).optional()),
-		]),
+		z.object({
+			name: z.string(),
+			levels: z.array(z.number()),
+		}),
 	).describe('The enemies that need to be defeated to complete this Quest with their possible levels.').optional(),
 	questPoints: z.number().describe('The number of Quest Points this Quest awards on completion.'),
 	itemRewards: z.record(
