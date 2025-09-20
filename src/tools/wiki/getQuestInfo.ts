@@ -134,15 +134,6 @@ export async function getQuestInfo(
 
 		questInfoToolResponse.questPoints = parseInt(qp)
 
-		// TODO: Get batched item list info: https://oldschool.runescape.wiki/api.php?action=query&titles=[ITEM_LIST]&prop=revisions&rvprop=content&format=json
-		// - ITEM_LIST is a URL-encoded list of strings; one string per item, separated by the '|' character (e.g., Bucket|Egg|Feather for a list containing the items Bucket, Egg and Feather)
-
-		// TODO: Get location map data: https://oldschool.runescape.wiki/api.php?action=query&titles=[LOCATION]&prop=revisions&rvprop=content&format=json
-		// - LOCATION is a URL-encoded string name of the location to get the info for
-		// - Need to make sure this targets the given Quest's Quest giver.
-
-		// TODO: Get batched enemy data: https://oldschool.runescape.wiki/api.php?action=query&titles=Enemy1|Enemy2&prop=revisions&rvprop=content&format=json
-
 		await sendLog(serverContext, 'debug', 'getQuestInfo', {
 			message: 'Quest info extraction completed',
 			questName,
@@ -150,12 +141,7 @@ export async function getQuestInfo(
 		})
 		// Always return a compatible result, even if there was a failure. Logging should inform of the issue.
 		return {
-			content: [
-				{
-					type: 'text',
-					text: '',
-				},
-			],
+			content: [],
 			structuredContent: questInfoToolResponse,
 		}
 	} catch (error) {

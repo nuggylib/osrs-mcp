@@ -13,7 +13,6 @@ export const QuestRequirementOrRecommended = z.record(
 	]),
 ).describe('The general shape of requirement data for a Quest (Skills, Items and Quests).')
 
-
 /**
  * The output schema for the Quest Info Tool response.
  */
@@ -39,10 +38,12 @@ export const QuestInfoToolResponse = {
 	recommendedItems: QuestRequirementOrRecommended.describe('The recommended Items for this Quest that will make completing it easier.').optional(),
 	recommendedSkills: QuestRequirementOrRecommended.describe('The Skill levels recommended for this Quest that will make completing it easier.').optional(),
 	enemiesToDefeat: z.record(
-		z.string().describe('The name of an enemy Monster.'),
-		z.object({
-			levels: z.array(z.number()).describe('The possible levels of this enemy.'),
-		}),
+		z.string(),
+		z.union([
+			z.string(),
+			z.number(),
+			z.record(z.string(), z.union([z.string(), z.number()]).optional()),
+		]),
 	).describe('The enemies that need to be defeated to complete this Quest with their possible levels.').optional(),
 	questPoints: z.number().describe('The number of Quest Points this Quest awards on completion.'),
 	itemRewards: z.record(
