@@ -1,0 +1,12 @@
+Retrieves comprehensive information about a specific Old School RuneScape quest from the OSRS Wiki API. Use this tool when you need detailed quest data including requirements, rewards, difficulty, and metadata.
+
+This tool extracts structured quest information from wiki page templates including: quest giver details, starting location, difficulty level, quest length, skill and quest requirements, required and recommended items, enemies to defeat, quest points awarded, release information, series membership, and developer details. The tool processes wiki markup and returns clean, structured data suitable for quest planning and guidance.
+
+Examples of usage:
+1. Input "Dragon Slayer" returns quest info including 32 Quest Points requirement, combat level recommendations, and anti-dragon shield requirement
+2. Input "Recipe for Disaster" returns complex subquest structure with multiple skill requirements and extensive item lists
+3. Input "Cook's Assistant" returns beginner quest info with simple item requirements and no skill prerequisites
+
+Common use cases include quest planning, checking prerequisites before starting a quest, understanding quest difficulty and time investment, finding quest givers and starting locations, and determining what items to gather before beginning a quest.
+
+Related tools: Use search_osrs_wiki_for_page first to find the exact quest name if uncertain about spelling or formatting. Use get_osrs_item_info for detailed information about specific required or recommended items mentioned in quest requirements.
